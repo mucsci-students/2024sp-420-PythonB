@@ -52,9 +52,7 @@ class SaveLoad:
 
         file_path = os.path.join(save_folder, file_name)
 
-        name_exists = True
-        # Patrick: This will be replaced with os.path.exists(file_name).
-        # Patrick: This is in place, so we can easily test.
+        name_exists = os.path.exists(file_path)
 
         print("Filename : " + file_name)
         if name_exists:
