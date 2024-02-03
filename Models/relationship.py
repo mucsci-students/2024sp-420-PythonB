@@ -25,7 +25,7 @@ class Relationship:
         # Zhang: Check and see if the relationship tuple already exist in the list.
         found = False
         for rel in self.relationships:
-            if (rel[0] == src and rel[1] == des) or (rel[0] == des and rel[1] == src):
+            if rel[0] == src and rel[1] == des:
                 found = True
         if found:
             print(f"Relationship from '{src}' to '{des}' already exists.")
