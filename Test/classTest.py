@@ -15,11 +15,10 @@ class TestClass(unittest.TestCase):
         result = self.classname.add_class('Students')
         self.assertEqual(result, 'Students')
 
-    """
     def test_empty_class(self):
         result = self.classname.add_class('')
-        self.assertEqual(result, '')
-    """
+        self.assertIsNone(result, 'empty class')
+
     # test for rename class
     def test_rename_class(self):
         self.classname.add_class('Student')

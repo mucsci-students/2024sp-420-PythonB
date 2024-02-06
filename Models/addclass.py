@@ -76,6 +76,7 @@ class UMLClass:
 # for my testing
 
 umlclass = UMLClass()
+umlclass.add_class('Cla ss')
 umlclass.add_class('Student')
 umlclass.add_class('1hello')
 umlclass.add_class('dani')
@@ -86,6 +87,7 @@ umlclass.add_class('class')
 umlclass.add_class('Grades')
 umlclass.add_class('Student')
 umlclass.add_class('Student')
+
 umlclass.add_class(' ')
 print("all classes after adding ", umlclass.list_class())
 umlclass.rename_class('MID', 'Student1')
