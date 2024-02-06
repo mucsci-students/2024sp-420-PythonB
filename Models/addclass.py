@@ -46,14 +46,15 @@ class UMLClass:
             return name
         # Danish: if class is not exist then it'll  display "class name not exist
         if name not in self.classes:
-            print(f"{name} not exist")
+            print(f"Unable to delete! {name} Class does not exist")
+            # print(f"{name} not exist, so we can not delete the class")
             return name
 
     # Danish: I'm writing this function to rename a class
     def rename_class(self, name, newname):
         # Danish: If the class do not exist, it will display "Class name does not exist."
         if name not in self.classes:
-            print(f"{name} does not exist")
+            print(f"Unable to rename! {name} Class does not exist")
             return name
 
         # Danish: If the class exists, it will be renamed to the new name,
@@ -65,7 +66,7 @@ class UMLClass:
             print(f"{name} renamed to {newname} successfully")
             return newname
         else:
-            print(f"{newname} already exist ")
+            print(f"Unable to rename! {newname} Class already exist ")
             return name
 
     # print all the classes using list

@@ -13,7 +13,7 @@ class Diagram:
             print("Invalid Name")
             return False
         if len(name) == 0:
-            print("Error! Name cannot be empty")
+            print("Error! Empty name")
             return False
         reserved_keywords = ["and", "as", "assert", "break", "continue", "class", "def", "del", "else", "finally",
                              "elif",
