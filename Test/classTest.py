@@ -1,5 +1,5 @@
-import unittest
 from Models.addclass import UMLClass
+import unittest
 
 
 class TestClass(unittest.TestCase):
