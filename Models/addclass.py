@@ -74,7 +74,7 @@ class UMLClass:
 
 
 # for my testing
-
+"""
 umlclass = UMLClass()
 umlclass.add_class('Cla ss')
 umlclass.add_class('Student')
@@ -96,3 +96,4 @@ umlclass.rename_class('Ali', 'Danish')
 print("all classes after rename ", umlclass.list_class())
 umlclass.delete_class('Student')
 print("all classes after delete ", umlclass.list_class())
+"""
