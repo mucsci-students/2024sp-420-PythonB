@@ -8,12 +8,12 @@ from Models.diagram import Diagram
 class UMLClass:
     def __init__(self):
         # Danish: create an empty dictionary
-        self.classes = {}
+        #self.classes = {}
         # self.relationships = relationships
 
         # create object from diagram class
         self.diagram = Diagram()
-
+        self.classes = self.diagram.classes
     # Danish: I'm writing this function to add a class name
 
     def add_class(self, name):
@@ -71,7 +71,7 @@ class UMLClass:
 
 
 # for my testing
-"""
+
 umlclass = UMLClass()
 umlclass.add_class('Cla ss')
 umlclass.add_class('Student')
@@ -94,4 +94,3 @@ umlclass.rename_class('Dani', 'Student1')
 print("all classes after rename ", umlclass.list_class())
 umlclass.delete_class('Student')
 print("all classes after delete ", umlclass.list_class())
-"""
