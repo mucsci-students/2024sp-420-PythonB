@@ -55,19 +55,15 @@ class UMLClass:
         # Danish: If the class do not exist, it will display "Class name does not exist."
         if name not in self.classes:
             print(f"Unable to rename! {name} Class does not exist")
-            return name
+            return None
+        # Danish: If the newName already exists, or it's a reserved word, then it will display an error.
+        if not self.diagram.name_checker(newname) or newname in self.classes:
+            print(f"Unable to rename! {newname}")
+            return None
 
-        # Danish: If the class exists, it will be renamed to the new name,
-        # and the message "Class name renamed to new_name successfully" will be displayed
-        # Danish: If the class name exists, it will remove the old name and assign it a new name.
-        # if  self.diagram.class_name_checker(name):
-        if name in self.classes and newname not in self.classes:
-            self.classes[newname] = self.classes.pop(name)
-            print(f"{name} renamed to {newname} successfully")
-            return newname
-        else:
-            print(f"Unable to rename! {newname} Class already exist ")
-            return name
+        self.classes[newname] = self.classes.pop(name)
+        print(f"{name} renamed to {newname} successfully")
+        return newname
 
     # print all the classes using list
     def list_class(self):
@@ -80,7 +76,7 @@ umlclass = UMLClass()
 umlclass.add_class('Cla ss')
 umlclass.add_class('Student')
 umlclass.add_class('1hello')
-umlclass.add_class('dani')
+umlclass.add_class('Dani')
 umlclass.add_class('MID')
 umlclass.add_class('')
 umlclass.add_class('assert')
@@ -93,7 +89,8 @@ umlclass.add_class(' ')
 print("all classes after adding ", umlclass.list_class())
 umlclass.rename_class('MID', 'Student1')
 umlclass.rename_class('Grades', 'Student1')
-umlclass.rename_class('Ali', 'Danish')
+umlclass.rename_class('Grades', 'class')
+umlclass.rename_class('Dani', 'Student1')
 print("all classes after rename ", umlclass.list_class())
 umlclass.delete_class('Student')
 print("all classes after delete ", umlclass.list_class())

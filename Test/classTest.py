@@ -11,11 +11,11 @@ class TestClass(unittest.TestCase):
         result = self.classname.add_class('Students')
         self.assertEqual(result, 'Students')
 
-    def test_existing_class(self):
+    def test_add_existing_class(self):
         result = self.classname.add_class('Students')
         self.assertEqual(result, 'Students')
 
-    def test_empty_class(self):
+    def test_add_empty_class(self):
         result = self.classname.add_class('')
         self.assertIsNone(result, 'empty class')
 
@@ -24,9 +24,21 @@ class TestClass(unittest.TestCase):
         self.classname.add_class('Student')
         self.classname.rename_class('Student', 'Manager')
 
+    def test_rename_NotExist(self):
+        self.classname.rename_class('Student', 'Manager')
+
+    def test_rename_To_reservedWord(self):
+        self.classname.add_class('Student')
+        self.classname.rename_class('Student', 'class')
+
     def test_delete_class(self):
+        self.classname.add_class('Student')
         result = self.classname.delete_class('Student')
         self.assertEqual(result, 'Student')
+
+    def test_delete_class_notExist(self):
+        result = self.classname.delete_class('Grade')
+        self.assertEqual(result, 'Grade')
 
     def test_listclasses(self):
         self.classname.add_class('Students')
