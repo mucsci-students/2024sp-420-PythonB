@@ -42,7 +42,7 @@ class TestRelationship(unittest.TestCase):
     def test_delete_relationship(self):
         self.relationships.add_relationship('Source', 'Destination', 'Aggregation')
         self.relationships.delete_relationship('Source', 'Destination')
-        self.assertNotIn(('Source', 'Destination', 'Aggregation'), self.relationships.relationships)
+        self.assertNotIn(['Source', 'Destination', 'Aggregation'], self.relationships.relationships)
 
     # Zhang: Test for deleting non-existing relationship.
     def test_delete_non_existing_relationship(self):
