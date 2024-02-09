@@ -1,7 +1,7 @@
 import sys
 import os
 
-from saveload import SaveLoad
+from Models.saveload import SaveLoad
 
 SaveLoad.save()
 SaveLoad.load()
