@@ -2,35 +2,25 @@
 # secondary : Zhang
 # updated_version Feb 5,2024
 from Models.diagram import Diagram
-# from relationship import Relationship
+import Models.relationship as relationship
+# from Models.relationship import UMLRelationship
 
 
 class UMLClass:
     def __init__(self):
         # Danish: create an empty dictionary
-        #self.classes = {}
+        # self.classes = {}
         # self.relationships = relationships
 
         # create object from diagram class
         self.diagram = Diagram()
         self.classes = self.diagram.classes
+        self.relationships = relationship.UMLRelationship(self.classes)
     # Danish: I'm writing this function to add a class name
 
     def add_class(self, name):
         # Danish: If the class name doesn't exist it will print the "class name added successfully"
-        """if name in self.classes:
-            print(f"{name} already exist")
-            return name
-            # Danish: If the class name doesn't exist it will print the "class name added successfully"
-        if name not in self.classes:
-            if len(name) == 0:
-                print("invalid name")
-                return name
-            else:
-                self.classes[name] = {}
-                print(f"{name} added successfully")
-                return name
-        """
+
         if self.diagram.name_checker(name):
             self.classes[name] = []
             print(f"{name} added successfully")
@@ -40,8 +30,8 @@ class UMLClass:
     def delete_class(self, name):
         # Danish: if class is exist then it'll delete and display "class name deleted successfully
         if name in self.classes:
-            # self.relationship.delete_classes(name)
             del self.classes[name]
+            self.relationships.removed_class(name)
             print(f"{name} deleted successfully")
             return name
         # Danish: if class is not exist then it'll  display "class name not exist
@@ -61,6 +51,7 @@ class UMLClass:
             print(f"Unable to rename! {newname}")
             return None
 
+        self.relationships.renamed_class(name, newname)
         self.classes[newname] = self.classes.pop(name)
         print(f"{name} renamed to {newname} successfully")
         return newname
@@ -71,6 +62,7 @@ class UMLClass:
 
 
 # for my testing
+
 """
 umlclass = UMLClass()
 umlclass.add_class('Cla ss')
