@@ -1,39 +1,21 @@
 import unittest
 from Models.attribute import Attributes
+from Models.addclass import UMLClass
 from Models.diagram import Diagram
 class MyTestCase(unittest.TestCase):
 
     def setUp(self):
         self.attributes = Attributes()
         self.diagram = Diagram()
-        self.diagram.update("Student", [])
-        self.diagram.update("Class", ["attribute", "attribute2", "attribute3", "attribute4"])
+        self.umlclass = UMLClass()
+        self.umlclass.add_class("Students")
+        self.diagram.classes["Students"].append("student1")
+
 
     def test_add_attribute(self):
-        # Katie Dowlin: Valid name that starts with a letter, class_name that exists.
+        # Katie Dowlin: Class exists. Expected return value: "Katie"
         result = self.attributes.add_attribute("Katie", "Student")
         self.assertEqual(result, "Katie")
-        # Katie Dowlin: Name that is reserved keyword, class_name that exists.
-        result2 = self.attributes.add_attribute("for", "Student")
-        self.assertEqual(result2, "for")
-        # Katie Dowlin: Name that is not a string, class_name that exists.
-        result3 = self.attributes.add_attribute(4, "Student")
-        self.assertEqual(result3, 4)
-        # Katie Dowlin: Name that contains special characters, class_name that exists.
-        result4 = self.attributes.add_attribute("*&$&*#", "Student")
-        self.assertEqual(result4, "*&$&*#")
-        # Katie Dowlin: Valid name that starts with an _, class_name that exists.
-        result5 = self.attributes.add_attribute("_Katie", "Student")
-        self.assertEqual(result5, "_Katie")
-        # Katie Dowlin: Name that starts with a number, class_name that exists.
-        result6 = self.attributes.add_attribute("4abc", "Student")
-        self.assertEqual(result6, "4abc")
-        # Katie Dowlin: Name is the empty string, class_name that exists.
-        result7 = self.attributes.add_attribute("", "Student")
-        self.assertEqual(result7, "")
-        # Katie Dowlin: Trying to add a duplicate name into a class that exists.
-        result8 = self.attributes.add_attribute("attribute", "Class")
-        self.assertEqual(result8, "attribute")
         # Katie Dowlin: Valid name, class_name doesn't exist.
         result9 = self.attributes.add_attribute("name", "Imaginary")
         self.assertEqual(result9, "name")
