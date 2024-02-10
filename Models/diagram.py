@@ -1,14 +1,15 @@
-# Primary: Jillian Daggs, Katie Dowlin
-# Secondary: Danish Zubari
-# Last updated by Jillian on February 9, 2024, at 5:35 PM.
-from Models.addclass import UMLClass
-from Models.relationship import Relationship
+# Primary: Jill Daggs, Katie Dowlin
+# Secondary: Danish Zubari, Patrick McCullough
+# Last updated by Jill on February 9, 2024, at 5:35 PM.
+from addclass import UMLClass
+from relationship import Relationship
 
 class Diagram:
     # used_attribute_names = list()
     def __init__(self):
         self.classes = {}
         
+    #Jill: A list of surface level commands    
     def command_help(self):
         return ("Commands:"
                 "help                                                       Displays this menu"
@@ -18,7 +19,7 @@ class Diagram:
                 "save                                                       Saves your UML diagram as a JSON file"
                 "load                                                       Loads a UML diagram from a JSON file"
                 "exit                                                       Exits the program")      
-        
+    #Jill: Commands for classes      
     def class_help(self):
         return ("Commands:"
                 "help class                                                 Displays this menu"
@@ -36,13 +37,15 @@ class Diagram:
                 "delete attribute <attribute_name>                          Deletes attribute named <attribute_name>"
                 "rename attribute <current_name> <new_name>                 Renames attribute <current_name> to <new_name>"                 
                 "list attribute                                             Lists all attributes in class")
-    
+    #Jill: Commands for relationships
     def relationship_help(self):
         return ("Commands:"
                 "help relationships                                         Displays this menu"
                 "add relationship <src_class> <des_class> <relation_type>   Adds a relationship between <src_class> and <des_class>"
                 "delete relationship <src_class> <des_class>                Deletes the relationship between <src_class> <des_class>"
                 "list relationship <class_name>                             Lists all relationships to <class_name>")
+
+
 
     def name_checker(self, name):
         if not isinstance(name, str):
@@ -70,11 +73,6 @@ class Diagram:
             if not name.startswith("_"):
                 print("Invalid Name! Name should start with a letter or underscore")
                 return False
-        # Katie Dowlin: If the name the user entered doesn't start with a capital letter, then the name is
-        # not valid for a class.
-        if not name[0].isupper():
-            print("Invalid Name! Name should start with a Capital Letter")
-            return False
         for x in name:
             # Katie Dowlin: If the name the user entered contains any special characters other than underscores, then
             # the name is invalid.
@@ -100,32 +98,89 @@ class Diagram:
  #*************************************************************CLI*************************************************************************
     def CLI(self):
         userinput = 0
+        #Jill: closes loop when 'exit'
         while userinput != "exit":
-            userinput = input("Enter Command, or type 'help' for a list of commands\n")            
+            userinput = input("Enter Command, or type 'help' for a list of commands\n") 
+            #Jill: Splits input into tokens           
             tokens = userinput.split()
+            #Jill:All versions of help command
             if tokens[0] == "help" or tokens[0] == "Help" or tokens[0] == "h":
-                if tokens[1] == "":
-                    self.command_help()
-                elif tokens[1] == "class" or tokens[1] == "Class":
-                    self.class_help()
+                #Jill: Checks that token list contains only one token
+                if len(tokens) == 1:
+                    print(self.command_help())
+                elif tokens[1] == "class" or tokens[1] == "Class" or tokens[1] == "classes" or tokens[1] == "Classes":
+                    print(self.class_help())
                 elif tokens[1] == "attribute" or tokens[1] == "Attribute" or tokens[1] == "attributes" or tokens[1] == "Attributes":
-                    self.attribute_help()
-                elif tokens[1] == "relationship" or tokens[1] == "Relationship":
-                    self.relationship_help()
+                    print(self.attribute_help())
+                elif tokens[1] == "relationship" or tokens[1] == "Relationship" or tokens[1] == "relationship" or tokens[1] == "Relationships":
+                    print(self.relationship_help())
                 else:
                     print("Command not recognized\n")
                     self.CLI()
+                    
+            #Jill: All versions of add command
             elif tokens[0] == "add" or tokens[0] =="Add":
+                name = tokens[2] 
+                #Jill: Calls namechecker
+                if self.name_checker(name):
+                    #Class
+                    if tokens[1] == "class" or tokens[1] == "Class":
+                        #Jill: checks for capitalization 
+                        if name.istitle():
+                            UMLClass.add_class(self,tokens[2])
+                        else:
+                            print("Class names must start with capital letters, try again\n")                           
+                    #Attribute
+                    elif tokens[1] == "attribute" or tokens[1] == "Attribute":
+                        #TODO when attribute is done
+                        print("TODO")
+                    #Relationship
+                    elif tokens[1] == "relationship" or tokens[1] == "Relationship":
+                        Relationship.add_relationship(self,tokens[2],tokens[3],tokens[4])
+                    else:
+                        print("Command not recognized\n")
+                        self.CLI()
+                else:
+                    print("Name not valid, try again\n")
+                    
+            #Jill: All versions of delete command
+            elif tokens[0] == 'delete' or tokens[0]== "Delete":
+                #Class
                 if tokens[1] == "class" or tokens[1] == "Class":
-                    UMLClass.add_class(tokens[2])
+                    UMLClass.delete_class(self, tokens[2])
+                #Attribute
                 elif tokens[1] == "attribute" or tokens[1] == "Attribute":
                     #TODO when attribute is done
                     print("TODO")
+                #Relationship
                 elif tokens[1] == "relationship" or tokens[1] == "Relationship":
-                    Relationship.add_relationship(tokens[2],tokens[3],tokens[4])
+                    Relationship.delete_relationship(self, tokens[2], tokens[3])
                 else:
                     print("Command not recognized\n")
-                    self.CLI()
-            elif tokens[1] == 
+                    self.CLI() 
                     
-                                                       
+            #Jill: All versions of rename command
+            elif tokens[0] == "rename" or tokens[0] == "Rename":
+                new_name = tokens[3]
+                old_name = tokens[2] 
+                #Jill: Calls namechecker                                   
+                if self.name_checker(new_name):
+                    #Class
+                    if tokens[1] == "class" or tokens[1] == "Class":
+                        #Jill: Checks capitalization
+                        if new_name.istitle:
+                            UMLClass.rename_class(self,old_name,new_name)
+                    #Attribute
+                    elif tokens[1] == "attribute" or tokens[1] == "Attribute":
+                        #TODO when katie finishes 
+                        print("TODO")                                 
+                else:
+                    print("Name not valid, try again")
+                    self.CLI() 
+            #Jill: All versions of list command       
+            elif tokens[0] == "list" or tokens[0] =="List":
+                if tokens[1] == "class" or tokens[1] == "lass":
+                    UMLClass.list_class()
+                
+        print("Exiting, would you like to save?") 
+    CLI()             
