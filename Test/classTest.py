@@ -1,4 +1,4 @@
-from Models.addclass import UMLClass
+from Models.classadd import UMLClass
 import unittest
 
 
@@ -31,6 +31,11 @@ class TestClass(unittest.TestCase):
         self.classname.add_class('Student')
         self.classname.rename_class('Student', 'class')
 
+    def test_rename_Exist(self):
+        self.classname.add_class('Student')
+        self.classname.add_class('MID')
+        self.classname.rename_class('Student', 'MID')
+
     def test_delete_class(self):
         self.classname.add_class('Student')
         result = self.classname.delete_class('Student')
@@ -39,6 +44,11 @@ class TestClass(unittest.TestCase):
     def test_delete_class_notExist(self):
         result = self.classname.delete_class('Grade')
         self.assertEqual(result, 'Grade')
+
+    def test_delete_classrelationship(self):
+        self.classname.add_class('Teacher')
+        result = self.classname.delete_class('Teacher')
+        self.assertEqual(result,'Teacher')
 
     def test_listclasses(self):
         self.classname.add_class('Students')
