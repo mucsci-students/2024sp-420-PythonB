@@ -1,4 +1,4 @@
-from Models.addclass import UMLClass
+from Models.classadd import UMLClass
 import unittest
 
 
@@ -45,7 +45,10 @@ class TestClass(unittest.TestCase):
         result = self.classname.delete_class('Grade')
         self.assertEqual(result, 'Grade')
 
-
+    def test_delete_classrelationship(self):
+        self.classname.add_class('Teacher')
+        result = self.classname.delete_class('Teacher')
+        self.assertEqual(result,'Teacher')
 
     def test_listclasses(self):
         self.classname.add_class('Students')
