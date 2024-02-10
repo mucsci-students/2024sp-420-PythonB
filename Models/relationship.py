@@ -1,7 +1,6 @@
 # Primary: Zhang
 # secondary : Danish
 # Feb 9,2024
-from Models.classadd import UMLClass
 
 
 class UMLRelationship:
