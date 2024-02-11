@@ -39,7 +39,6 @@ class UMLClass:
     # Danish: I'm writing this function to delete a class name
 
     def delete_class(self, name):
-        self.relationships.removed_class(name)
         # Danish: if class is exist then it'll delete and display "class name deleted successfully
         if name in self.classes:
             del self.classes[name]
