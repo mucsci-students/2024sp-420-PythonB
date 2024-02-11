@@ -1,8 +1,8 @@
 # Primary: Danish
 # secondary : Zhang
-# updated_version Feb 5,2024
-from Models.diagram import Diagram
-from Models.relationship import UMLRelationship
+# updated_version Feb 10,2024
+from diagram import Diagram
+from relationship import UMLRelationship
 
 
 class UMLClass:
@@ -69,30 +69,30 @@ class UMLClass:
 
     # print all the classes using list
     def list_class(self):
-        return self.classes
+        return list(self.classes.keys())
 
 
 # for my testing
 
-umlclass = UMLClass()
-umlclass.add_class('Cla ss')
-umlclass.add_class('Student')
-umlclass.add_class('1hello')
-umlclass.add_class('Dani')
-umlclass.add_class('MID')
-umlclass.add_class('')
-umlclass.add_class('assert')
-umlclass.add_class('class')
-umlclass.add_class('Grades')
-umlclass.add_class('Student')
-umlclass.add_class('Student')
+# umlclass = UMLClass()
+# umlclass.add_class('Cla ss')
+# umlclass.add_class('Student')
+# umlclass.add_class('1hello')
+# umlclass.add_class('Dani')
+# umlclass.add_class('MID')
+# umlclass.add_class('')
+# umlclass.add_class('assert')
+# umlclass.add_class('class')
+# umlclass.add_class('Grades')
+# umlclass.add_class('Student')
+# umlclass.add_class('Student')
 
-umlclass.add_class(' ')
-print("all classes after adding ", umlclass.list_class())
-umlclass.rename_class('MID', 'Student1')
-umlclass.rename_class('Grades', 'Student1')
-umlclass.rename_class('Grades', 'class')
-umlclass.rename_class('Dani', 'Student1')
-print("all classes after rename ", umlclass.list_class())
-umlclass.delete_class('Student')
-print("all classes after delete ", umlclass.list_class())
+# umlclass.add_class(' ')
+# print("all classes after adding ", umlclass.list_class())
+# umlclass.rename_class('MID', 'Student1')
+# umlclass.rename_class('Grades', 'Student1')
+# umlclass.rename_class('Grades', 'class')
+# umlclass.rename_class('Dani', 'Student1')
+# print("all classes after rename ", umlclass.list_class())
+# umlclass.delete_class('Student')
+# print("all classes after delete ", umlclass.list_class())

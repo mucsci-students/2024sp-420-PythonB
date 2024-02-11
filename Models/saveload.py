@@ -4,7 +4,6 @@ import json
 
 class SaveLoad:
 
-    @staticmethod
     def save():
 
         test_data = {
@@ -73,7 +72,6 @@ class SaveLoad:
                 json.dump(test_data, f)
                 # Patrick: test_data will be replaced with proper diagram data once Diagram is complete
 
-    @staticmethod
     def load():
 
         save_folder = 'save_folder'
