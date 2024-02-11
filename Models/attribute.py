@@ -1,10 +1,10 @@
-from Models.diagram import Diagram
+from diagram import Diagram
 
 
 class Attributes:
-    def __init__(self, classes):
-        self.diagram_classes = classes
-
+    def __init__(self, diagram):
+        self.diagram = diagram
+        
     def add_attribute(self, name, class_name):
         # Katie Dowlin: Check if the class you want to add the attribute to exists.
         if class_name in self.diagram.classes.keys():

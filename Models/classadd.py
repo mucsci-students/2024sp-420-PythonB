@@ -6,13 +6,13 @@ from relationship import UMLRelationship
 
 
 class UMLClass:
-    def __init__(self):
+    def __init__(self, diagram):
         # Danish: create an empty dictionary
         # self.classes = {}
         # self.relationships = relationships
 
         # create object from diagram class
-        self.diagram = Diagram()
+        self.diagram = diagram
         self.classes = self.diagram.classes
         self.relationships = UMLRelationship(self.classes)
     # Danish: I'm writing this function to add a class name
