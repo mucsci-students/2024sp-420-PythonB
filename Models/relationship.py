@@ -94,7 +94,7 @@ class UMLRelationship:
                 rel[1] = new_name
                 renamed = True
         if renamed:
-            print("relationship renamed!")
+            print("Relationship renamed!")
 
     #Jill: prints list of lists of relationships
     def list_relationships(self):
