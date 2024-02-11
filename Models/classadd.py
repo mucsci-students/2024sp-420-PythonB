@@ -119,7 +119,7 @@ umlclass.rename_class('Dani', 'Student1')
 print("all classes after rename ", umlclass.list_class())
 umlclass.delete_class('Student')
 print("all classes after delete ", umlclass.list_class())'''
-=======
+
 # umlclass = UMLClass()
 # umlclass.add_class('Cla ss')
 # umlclass.add_class('Student')

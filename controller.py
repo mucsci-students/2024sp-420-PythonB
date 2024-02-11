@@ -3,10 +3,10 @@
 #Last Updated: 2/11/24
 
 
-from diagram import Diagram
-from classadd import UMLClass
-from relationship import UMLRelationship
-from attribute import Attributes
+from Models.diagram import Diagram
+from Models.classadd import UMLClass
+from Models.relationship import UMLRelationship
+from Models.attribute import Attributes
 
 
 #Jill: initializes types of commands
@@ -111,6 +111,7 @@ class CLIController:
                 if type == "class":
                     if newname.istitle():
                         self.classes.rename_class(oldname,newname)
+                        self.relationship.renamed_class(oldname,newname)
                     else:
                         print("Class names must start with capital letters.")
                 elif type == "attribute":
@@ -129,7 +130,8 @@ class CLIController:
             type = tokens[1].lower()
             name = tokens[2]
             if type == "class":
-                self.classes.delete_class(name) 
+                self.classes.delete_class(name)
+                self.relationship.removed_class(name) 
             elif len(tokens) >=4:
                 dest = tokens[3]
                 if type == "attribute":
@@ -158,6 +160,9 @@ class CLIController:
                 print(self.relationship.list_relationships())
         else:
             print("Missing arguments.")
+    
+    def save(self):
+        
             
     #Jill: checks commands against given list of commands, also handles exit                 
     def execute_command(self, user_input):
