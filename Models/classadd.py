@@ -68,8 +68,11 @@ class UMLClass:
         return newname
 
     # print all the classes using list
-    def list_class(self):
+    def list_classes(self):
         return list(self.classes.keys())
+    
+    def list_class(self):
+        return self.classes
 
 
 # for my testing
