@@ -1,12 +1,47 @@
-# Primary: Katie Dowlin
-# Secondary: Danish Zubari
-# Last updated by Danish on February 6, 2024, at 6:35 PM.
+# Primary: Jill Daggs, Katie Dowlin
+# Secondary: Danish Zubari, Patrick McCullough
+# Last updated by Jill on February 9, 2024, at 5:35 PM.
 class Diagram:
     # used_attribute_names = list()
     def __init__(self):
         self.classes = {}
+        
+    #Jill: A list of surface level commands    
+    def command_help(self):
+        return ("\nCommands:\n"
+                "help                                                       Displays this menu\n"
+                "help class                                                 Displays commands related to classes\n"
+                "help attribute                                             Displays commands related to attributes\n"
+                "help relationship                                          Displays commands related to relationships\n"
+                "save                                                       Saves your UML diagram as a JSON file\n"
+                "load                                                       Loads a UML diagram from a JSON file\n"
+                "exit                                                       Exits the program\n")      
+    #Jill: Commands for classes      
+    def class_help(self):
+        return ("\nClass Commands:\n"
+                "help class                                                 Displays this menu\n"
+                "add class <class_name>                                     Adds a class named <class_name>\n"
+                "delete class <class_name>                                  Deletes class named <class_name> and all of its attributes/relationships\n"
+                "rename class <current_name> <new_name>                     Renames class <current_name> to <new_name>\n"
+                "list class <class_name>                                    Lists all atributes/relatioships pertaining to <class_name>\n"
+                "list classes                                               Lists all classes in current UML\n")
+    
+    #TODO after katie finishes attributes
+    def attribute_help(self):
+        return ("\nAttribute Commands:\n"
+                "help attribute                                             Displays this menu\n"
+                "add attribute <attribute_name>                             Adds attribute named <attribute_name>\n"               
+                "delete attribute <attribute_name>                          Deletes attribute named <attribute_name>\n"
+                "rename attribute <current_name> <new_name>                 Renames attribute <current_name> to <new_name>\n")
+    #Jill: Commands for relationships
+    def relationship_help(self):
+        return ("\nRelationship Commands:\n"
+                "help relationships                                         Displays this menu\n"
+                "add relationship <src_class> <des_class> <relation_type>   Adds a relationship between <src_class> and <des_class>\n"
+                "delete relationship <src_class> <des_class>                Deletes the relationship between <src_class> <des_class>\n"
+                "list relationship <class_name>                             Lists all relationships to <class_name>\n")
 
-    # used_class_names = list()
+
 
     def name_checker(self, name):
         if not isinstance(name, str):
@@ -34,11 +69,6 @@ class Diagram:
             if not name.startswith("_"):
                 print("Invalid Name! Name should start with a letter or underscore")
                 return False
-        # Katie Dowlin: If the name the user entered doesn't start with a capital letter, then the name is
-        # not valid for a class.
-        if not name[0].isupper():
-            print("Invalid Name! Name should start with a Capital Letter")
-            return False
         for x in name:
             # Katie Dowlin: If the name the user entered contains any special characters other than underscores, then
             # the name is invalid.
@@ -58,3 +88,4 @@ class Diagram:
     # name is valid, returns False if the name is invalid.
     # Katie Dowlin: Method should be called before adding a new class or attribute or renaming a class
     # or attribute.
+
