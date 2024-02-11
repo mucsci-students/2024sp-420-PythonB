@@ -6,13 +6,15 @@
 from diagram import Diagram
 from classadd import UMLClass
 from relationship import UMLRelationship
+from attribute import Attributes
 
 
 #Jill: initializes types of commands
 class CLIController:
-    def __init__(self, diagram, relationship, classes):
+    def __init__(self, diagram, relationship, classes, attributes):
         self.classes = classes
         self.relationship = relationship
+        self.attributes = attributes
         self.diagram = diagram
         self.commands = {
             "help": self.help,
@@ -87,8 +89,11 @@ class CLIController:
                     else:
                         print("Class names must start with capital letters.")
                 if type == "attribute":
-                    #TODO 
-                    print("TODO")
+                    if len(tokens) >= 4:
+                        class_name = tokens[3] 
+                        self.attributes.add_attribute(name, class_name)
+                    else:
+                        print("Missing arguments.")    
             else:
                 print("Not a valid name.")
         else:
@@ -109,8 +114,9 @@ class CLIController:
                     else:
                         print("Class names must start with capital letters.")
                 elif type == "attribute":
-                    #TODO
-                    print("TODO")         
+                     if len(tokens) >= 5:
+                         class_name = tokens[4]
+                         self.attributes.rename_attribute(oldname, newname, class_name)        
             else:
                 print("Not a valid name.")
         else:
@@ -124,15 +130,14 @@ class CLIController:
             name = tokens[2]
             if type == "class":
                 self.classes.delete_class(name) 
-            elif type == "attribute":
-                #TODO
-                print("TODO")
-            elif type == "relationship":
-                if len(tokens) >=4:
-                    dest = tokens[3]
+            elif len(tokens) >=4:
+                dest = tokens[3]
+                if type == "attribute":
+                    self.attributes.delete_attribute(name,dest)
+                elif type == "relationship":
                     self.relationship.delete_relationship(name,dest)
-                else:
-                    print("Missing arguments.")
+            else:
+                print("Missing arguments.")
         else:
             print("Missing arguments")
             
@@ -171,13 +176,14 @@ class CLIController:
     #Jill: what the user interacts with
     def CLI(self):
         while True:
-            user_input = input("Enter command, or type 'help' for a list of commands: ").strip()
+            user_input = input("Enter command or type 'help' for a list of commands: ").strip()
             if not self.execute_command(user_input):
                 break
             
-            
-classes = UMLClass()
+
+diagram = Diagram()            
+classes = UMLClass(diagram)
 relationship = UMLRelationship(classes)
-diagram = Diagram()
-diagram_cli = CLIController(diagram,relationship,classes)
+attributes = Attributes(classes)
+diagram_cli = CLIController(diagram,relationship,classes, attributes)
 diagram_cli.CLI()
