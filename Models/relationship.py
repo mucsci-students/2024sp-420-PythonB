@@ -42,7 +42,7 @@ class UMLRelationship:
             else:
                 # Zhang: Append to the new relationship to the list.
                 self.relationships.append([src, des, type_rel])
-                print("relationship added!")
+                print("Relationship added!")
 
     '''delete_relationship'''
     def delete_relationship(self, src, des):
@@ -96,5 +96,6 @@ class UMLRelationship:
         if renamed:
             print("relationship renamed!")
 
+    #Jill: prints list of lists of relationships
     def list_relationships(self):
         return self.relationships
