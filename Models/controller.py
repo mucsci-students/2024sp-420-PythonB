@@ -30,7 +30,7 @@ class CLIController:
         all_classattributes = self.classes.list_class()
         #Jill: a list of all classes
         all_classes = self.classes.list_classes()
-        #Jill: checks if 'name' is a class
+        #Jill: checks if 'name is a class
         if name in all_classes:
             #Jill: uses 'name' as a key to access attributes
             attributes = all_classattributes[name]
