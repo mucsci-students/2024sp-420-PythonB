@@ -39,9 +39,9 @@ class UMLClass:
     # Danish: I'm writing this function to delete a class name
 
     def delete_class(self, name):
+        self.relationships.removed_class(name)
         # Danish: if class is exist then it'll delete and display "class name deleted successfully
         if name in self.classes:
-            self.relationships.removed_class(name)
             del self.classes[name]
             print(f"{name} deleted successfully")
             return name
@@ -62,7 +62,6 @@ class UMLClass:
             print(f"Unable to rename! {newname}")
             return None
 
-        self.relationships.renamed_class(name, newname)
         self.classes[newname] = self.classes.pop(name)
         print(f"{name} renamed to {newname} successfully")
         return newname
@@ -72,10 +71,33 @@ class UMLClass:
         return self.classes
 
 
-# for my testing
 
+# Zhang: testing
+'''
 umlclass = UMLClass()
-umlclass.add_class('Cla ss')
+umlrelation = UMLRelationship(umlclass)
+
+umlclass.add_class('CS')
+umlclass.add_class('BIO')
+umlrelation.add_relationship('CS','BIO','Aggregation')
+
+umlclass.add_class('Apple')
+umlclass.add_class('Banana')
+umlrelation.add_relationship('Apple','Banana','Aggregation')
+print("===============================")
+umlclass.rename_class('CS','CSCI')
+umlrelation.renamed_class('CS','CSCI')
+
+umlclass.delete_class('Banana')
+umlrelation.removed_class('Banana')
+
+
+print(umlrelation.list_relationships())
+print(umlclass.list_class())
+
+'''
+# for my testing
+'''umlclass.add_class('Cla ss')
 umlclass.add_class('Student')
 umlclass.add_class('1hello')
 umlclass.add_class('Dani')
@@ -95,4 +117,4 @@ umlclass.rename_class('Grades', 'class')
 umlclass.rename_class('Dani', 'Student1')
 print("all classes after rename ", umlclass.list_class())
 umlclass.delete_class('Student')
-print("all classes after delete ", umlclass.list_class())
+print("all classes after delete ", umlclass.list_class())'''
