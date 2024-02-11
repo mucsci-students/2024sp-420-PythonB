@@ -4,40 +4,8 @@ import json
 
 class SaveLoad:
 
-    def save():
+    def save(self, data):
 
-        test_data = {
-            "contacts": [
-                {
-                    "id": 1,
-                    "name": "John Doe",
-                    "email": "johndoe@example.com",
-                    "phone": "555-1234",
-                    "tags": ["friend", "colleague"]
-                },
-                {
-                    "id": 2,
-                    "name": "Jane Smith",
-                    "email": "janesmith@example.com",
-                    "phone": "555-5678",
-                    "tags": ["family"]
-                }
-            ],
-            "products": [
-                {
-                    "id": 101,
-                    "name": "Widget",
-                    "price": 19.99,
-                    "in_stock": True
-                },
-                {
-                    "id": 102,
-                    "name": "Gadget",
-                    "price": 29.99,
-                    "in_stock": False
-                }
-            ]
-        }
         # Patrick : Once we have the ability to convert the Diagram to a JSON text format,
         # Patrick : this test data will be removed.
         save_folder = 'save_folder'
@@ -61,7 +29,7 @@ class SaveLoad:
                 print(f"Overwriting {file_name}...")
 
                 with open(file_path, 'w') as f:
-                    json.dump(test_data, f)
+                    json.dump(data, f)
                     # Patrick: test_data will be replaced with proper diagram data once Diagram is complete
 
             else:
@@ -69,18 +37,18 @@ class SaveLoad:
         else:
             print(f"Saving {file_name}")
             with open(file_path, 'w') as f:
-                json.dump(test_data, f)
+                json.dump(data, f)
                 # Patrick: test_data will be replaced with proper diagram data once Diagram is complete
 
-    def load():
+    def load(self, filename):
 
         save_folder = 'save_folder'
         # Patrick : Makes method aware of the save folder
 
-        file_name = input("Enter a valid filename: ") + ".json"
+
 
         # Patrick: Prompts user to input the name of the file they would like to load
-        file_path = os.path.join(save_folder, file_name)
+        file_path = os.path.join(save_folder, filename)
         file_exists = os.path.exists(file_path)
         if file_exists:
             # Patrick: If file exists, open the file

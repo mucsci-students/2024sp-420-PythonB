@@ -23,3 +23,15 @@ class TestSaveLoad(TestCase):
             mock_makedirs.assert_not_called()
 # Patrick : If folder exists, assert "os.makedirs" is not called.
 
+    @mock.patch('os.path.exists', return_value=True)  # Simulates that the file already exists
+    @mock.patch('builtins.input',
+                side_effect=['testfile', 'y'])  # Simulates user input for filename and overwrite confirmation
+    def test_save_overwrites_if_user_confirms(self, mock_input, mock_exists):
+        SaveLoad.save()
+        # Assertions to verify the correct behavior
+        # Verify the user was prompted for a filename and then for overwrite confirmation
+        expected_calls = [mock.call("Enter a valid filename: "),
+                          mock.call("The file testfile.json already exists. Do you want to overwrite it? Y/N ")]
+        mock_input.assert_has_calls(expected_calls, any_order=False)
+
+
