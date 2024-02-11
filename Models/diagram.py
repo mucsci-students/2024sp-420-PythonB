@@ -15,7 +15,8 @@ class Diagram:
                 "help relationship                                          Displays commands related to relationships\n"
                 "save                                                       Saves your UML diagram as a JSON file\n"
                 "load                                                       Loads a UML diagram from a JSON file\n"
-                "exit                                                       Exits the program\n")      
+                "exit                                                       Exits the program\n")   
+          
     #Jill: Commands for classes      
     def class_help(self):
         return ("\nClass Commands:\n"
@@ -33,11 +34,12 @@ class Diagram:
                 "add attribute <attribute_name>                             Adds attribute named <attribute_name>\n"               
                 "delete attribute <attribute_name>                          Deletes attribute named <attribute_name>\n"
                 "rename attribute <current_name> <new_name>                 Renames attribute <current_name> to <new_name>\n")
+        
     #Jill: Commands for relationships
     def relationship_help(self):
         return ("\nRelationship Commands:\n"
                 "help relationships                                         Displays this menu\n"
-                "add relationship <src_class> <des_class> <relation_type>   Adds a relationship between <src_class> and <des_class>\n"
+                "add relationship <src_class> <des_class> <relation_type>   Adds a relationship between <src_class> and <des_class> of <relation_type>: (Aggregation, Composition, Generalization, Inheritance)\n"
                 "delete relationship <src_class> <des_class>                Deletes the relationship between <src_class> <des_class>\n"
                 "list relationship <class_name>                             Lists all relationships to <class_name>\n")
 

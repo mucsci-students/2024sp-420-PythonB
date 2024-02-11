@@ -24,6 +24,31 @@ class CLIController:
             # "load" : self.load   
         }
         
+    #Jill: takes a class name as input, returns a dictionary from class name to dictionaries from 'Attribute' to a list of attributes and 'Relationship' to a list of relationships
+    def class_breakdown(self, name):
+        #Jill: a dict of all classes to their attributes
+        all_classattributes = self.classes.list_class()
+        #Jill: a list of all classes
+        all_classes = self.classes.list_classes()
+        #Jill: checks if 'name is a class
+        if name in all_classes:
+            #Jill: uses 'name' as a key to access attributes
+            attributes = all_classattributes[name]
+            all_relationships = self.relationship.list_relationships()
+            #an empty list to fill with relationships containing 'name'
+            class_relationships = []
+            
+            #loops over realtionships to find any/all relationships 'name' is a part of
+            for relation in all_relationships:
+                for item in relation:
+                    if item == name:
+                        class_relationships.append(relation)
+
+            all_class_aspects = {name : {'Attributes' : attributes, 'Relationships' : class_relationships } }
+            return all_class_aspects
+        else:
+            print (f"No class named {name}")
+            
         
     #Jill: All varients of the help command 
     def help (self, tokens):
@@ -116,11 +141,14 @@ class CLIController:
     def list(self,tokens):
         if len(tokens) >= 2:
             type = tokens[1]
-            if type == "class":
-                print(self.classes.list_class())
-            elif type == "classes":
-                #TODO
-                print("TODO")
+            if type == "classes":
+                print(self.classes.list_classes())
+            elif type == "class":
+                if len(tokens) >= 3:
+                    name = tokens[2] 
+                    print(self.class_breakdown(name))
+                else:
+                    print("Missing arguments.")
             elif type == "relationship" or type == "relationships":
                 print(self.relationship.list_relationships())
         else:
@@ -143,7 +171,7 @@ class CLIController:
     #Jill: what the user interacts with
     def CLI(self):
         while True:
-            user_input = input("Enter Command, or type 'help' for a list of commands: ").strip()
+            user_input = input("Enter command, or type 'help' for a list of commands: ").strip()
             if not self.execute_command(user_input):
                 break
             

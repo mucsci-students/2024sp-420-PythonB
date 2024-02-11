@@ -55,9 +55,9 @@ class SaveLoad:
 
         print("Filename : " + file_name)
         if name_exists:
-            overwrite = input(f"The file {file_name} already exists. Do you want to overwrite it? Y/N ")
+            overwrite = input(f"The file {file_name} already exists. Do you want to overwrite it? Y/N ").lower()
 
-            if overwrite == 'Y' or overwrite == 'y':
+            if overwrite == 'y':
                 print(f"Overwriting {file_name}...")
 
                 with open(file_path, 'w') as f:
