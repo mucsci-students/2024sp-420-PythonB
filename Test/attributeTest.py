@@ -1,6 +1,5 @@
 import unittest
 from Models.attribute import Attributes
-from Models.addclass import UMLClass
 from Models.diagram import Diagram
 
 
@@ -8,8 +7,6 @@ class MyTestCase(unittest.TestCase):
 
     def setUp(self):
         self.attributes = Attributes(self.classes)
-        self.classes = UMLClass()
-        # self.umlclass.add_class("Students")
         diagram.classes.update({"Students": []})
         diagram.classes["Students"].append("student1")
         diagram.classes["Students"].append("student2")
