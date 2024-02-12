@@ -1,5 +1,5 @@
 
-# UML Program (CLI Edition) V1.0
+# LambdaLegion UML Program (CLI Edition) V1.0
 The UML Diagram (CLI Edition) is a command-line tool
 designed to help users create, manage, and visualize
 UML (Unified Modeling Language) diagrams directly from the terminal.
@@ -56,4 +56,11 @@ To interact with the UML Diagram CLI Manager, start the application and use the 
   * Added basic functionality for Save/Load
   * Added a CLI interface
   * Removed Herobrine
+
+## Members
+* Danish Zubari 
+* Katie Downlin
+* Jillian Daggs
+* Patrick McCullough
+* Zhang Chen
                
