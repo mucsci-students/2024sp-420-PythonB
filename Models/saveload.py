@@ -23,10 +23,10 @@ class SaveLoad:
 
         print("Filename : " + file_name)
         if name_exists:
-            overwrite = input(f"The file {file_name} already exists. Do you want to overwrite it? Y/N ").lower()
+            overwrite = input(f"The file '{file_name}' already exists. Do you want to overwrite it? Y/N ").lower()
 
             if overwrite == 'y':
-                print(f"Overwriting {file_name}...")
+                print(f"Overwriting '{file_name}'...")
 
                 with open(file_path, 'w') as f:
                     json.dump(data, f)
@@ -35,7 +35,7 @@ class SaveLoad:
             else:
                 print(f"Aborting save...")
         else:
-            print(f"Saving {file_name}")
+            print(f"Saving '{file_name}'")
             with open(file_path, 'w') as f:
                 json.dump(data, f)
                 # Patrick: test_data will be replaced with proper diagram data once Diagram is complete
