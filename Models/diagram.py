@@ -24,7 +24,7 @@ class Diagram:
                 "add class <class_name>                                     Adds a class named <class_name>\n"
                 "delete class <class_name>                                  Deletes class named <class_name> and all of its attributes/relationships\n"
                 "rename class <current_name> <new_name>                     Renames class <current_name> to <new_name>\n"
-                "list class <class_name>                                    Lists all atributes/relatioships pertaining to <class_name>\n"
+                "list class <class_name>                                    Lists all attributes/relationships pertaining to <class_name>\n"
                 "list classes                                               Lists all classes in current UML\n")
     
     #Jill: Commands for attributes
