@@ -1,8 +1,8 @@
 # Primary: Danish
 # secondary : Zhang
 # updated_version Feb 10,2024
-from diagram import Diagram
-from relationship import UMLRelationship
+from Models.diagram import Diagram
+from Models.relationship import UMLRelationship
 
 
 class UMLClass:

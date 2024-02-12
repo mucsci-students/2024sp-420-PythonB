@@ -1,4 +1,4 @@
-from diagram import Diagram
+from Models.diagram import Diagram
 
 
 class Attributes:

@@ -4,7 +4,7 @@ import json
 
 class SaveLoad:
 
-    def save(self, data):
+    def save(self, data, file_name):
 
         # Patrick : Once we have the ability to convert the Diagram to a JSON text format,
         # Patrick : this test data will be removed.
@@ -15,7 +15,7 @@ class SaveLoad:
             # Patrick: Checks if the save_folder already exists
             # Patrick: If not, the os will create the folder at the projects root.
 
-        file_name = input("Enter a valid filename: ") + ".json"
+        file_name = str(file_name + ".json")
 
         file_path = os.path.join(save_folder, file_name)
 
@@ -40,7 +40,7 @@ class SaveLoad:
                 json.dump(data, f)
                 # Patrick: test_data will be replaced with proper diagram data once Diagram is complete
 
-    def load(self, filename):
+    def load(self, file_name):
 
         save_folder = 'save_folder'
         # Patrick : Makes method aware of the save folder
@@ -48,7 +48,7 @@ class SaveLoad:
 
 
         # Patrick: Prompts user to input the name of the file they would like to load
-        file_path = os.path.join(save_folder, filename)
+        file_path = os.path.join(save_folder, file_name)
         file_exists = os.path.exists(file_path)
         if file_exists:
             # Patrick: If file exists, open the file
