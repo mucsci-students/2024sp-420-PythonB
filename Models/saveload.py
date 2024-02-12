@@ -45,21 +45,20 @@ class SaveLoad:
         save_folder = 'save_folder'
         # Patrick : Makes method aware of the save folder
 
-
-
-        # Patrick: Prompts user to input the name of the file they would like to load
         file_path = os.path.join(save_folder, file_name)
         file_exists = os.path.exists(file_path)
         if file_exists:
             # Patrick: If file exists, open the file
             with open(file_path, 'r+') as file:
                 # Read the content
-                content = file.read()
-                print('Current Content:', content)
-                file.seek(0, 2)
+                data = json.load(file)
+                print('Current Content:', data)
+
+                return data
         else:
             # Patrick: If file does not exist, alert user
             print("File does not exist!")
+            return None
 
 
 
