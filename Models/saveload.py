@@ -44,6 +44,8 @@ class SaveLoad:
 
         save_folder = 'save_folder'
         # Patrick : Makes method aware of the save folder
+        
+        file_name = str(file_name + ".json")
 
 
 

@@ -25,7 +25,7 @@ class UMLRelationship:
 
         # Zhang: Check the validation of the relationship types.
         if type_rel not in self.relationship_types:
-            print(f"Relationship type: '{type_rel}' is not valid.")
+            print(f"Relationship type, '{type_rel}' is not valid.")
 
         # Zhang: Relationship can't be created by the same class.
         if src == des:
@@ -42,18 +42,18 @@ class UMLRelationship:
             else:
                 # Zhang: Append to the new relationship to the list.
                 self.relationships.append([src, des, type_rel])
-                print("Relationship added!")
+                print("Relationship added.")
 
     '''delete_relationship'''
     def delete_relationship(self, src, des):
 
         # Zhang: Check the existent of the source class.
         if src not in self.uml_class.classes:
-            print(f"Source class, '{src}' does not exist.")
+            print(f"Source class- '{src}' does not exist.")
 
         # Zhang: Check the existent of the destination.
         if des not in self.uml_class.classes:
-            print(f"Destination class, '{des}' does not exist.")
+            print(f"Destination class- '{des}' does not exist.")
 
         removed = False
         # Zhang: For each relationship tuple in the list, if relationship exist, remove it.
@@ -79,7 +79,7 @@ class UMLRelationship:
                 self.relationships.remove(rel)
                 removed = True
         if removed:
-            print("Relationship removed!")
+            print("Relationship removed.")
 
     '''renamed_class'''
     def renamed_class(self, old_name, new_name):
@@ -94,7 +94,7 @@ class UMLRelationship:
                 rel[1] = new_name
                 renamed = True
         if renamed:
-            print("Relationship renamed!")
+            print("Relationship renamed.")
 
     #Jill: prints list of lists of relationships
     def list_relationships(self):

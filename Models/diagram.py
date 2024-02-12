@@ -47,10 +47,10 @@ class Diagram:
 
     def name_checker(self, name):
         if not isinstance(name, str):
-            print("Invalid Name")
+            print("Invalid name.")
             return False
         if len(name) == 0:
-            print("Error! Empty name")
+            print("Error! Empty name.")
             return False
         reserved_keywords = ["and", "as", "assert", "break", "continue", "class", "def", "del", "else", "finally",
                              "elif",
@@ -59,28 +59,28 @@ class Diagram:
                              "or", "pass", "print", "raise", "return", "try", "while", "with", "yield"]
         # Katie Dowlin: If the name the user entered is a reserved keyword in Python, then the name is invalid.
         if name in reserved_keywords:
-            print("Invalid Name! You cannot use a word that is a reserved word. ")
+            print("Invalid name! You cannot use a word that is a reserved word. ")
             return False
         # Katie Dowlin: If the name the user entered starts with a number, then the name is invalid.
         if name[0].isdigit():
-            print("Invalid Name! Name can not start with a number")
+            print("Invalid name! Name can not start with a number.")
             return False
         # Katie Dowlin: If the name the user entered doesn't start with a letter, it has to start with an underscore
         # to be valid.
         if not name[0].isalpha():
             if not name.startswith("_"):
-                print("Invalid Name! Name should start with a letter or underscore")
+                print("Invalid name. Name should start with a letter or underscore.")
                 return False
         for x in name:
             # Katie Dowlin: If the name the user entered contains any special characters other than underscores, then
             # the name is invalid.
             if not x.isalnum() and not x == "_":
-                print("Invalid Name! Special Characters not allowed")
+                print("Invalid name! Special characters are not allowed.")
                 return False
 
             # Katie Dowlin: The name the user entered can't already be used for another class.
             if name in self.classes:
-                print("Class Already Exists")
+                print("Class already exists.")
                 return False
         # Katie Dowlin: If the name the user entered passed all checks and isn't used, then the user can
         # use that name for the attribute or class.
