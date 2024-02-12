@@ -1,37 +1,64 @@
-from unittest import TestCase, mock
-from Models.saveload import SaveLoad
+import json
+import unittest
+from unittest.mock import patch, mock_open
+from saveload import SaveLoad
 
 
-class TestSaveLoad(TestCase):
-    @mock.patch('os.makedirs')
-    @mock.patch('os.path.exists')
-    @mock.patch('builtins.input', return_value='testfile2')
-    def test_save_creates_folder_if_not_exists(self, mock_input, mock_exists, mock_makedirs):
-        mock_exists.side_effect = [False, True]
-        with mock.patch('os.makedirs') as mock_makedirs:
-            SaveLoad.save()
-            mock_makedirs.assert_called_with('save_folder')
+class TestSaveLoad(unittest.TestCase):
+    def setUp(self):
+        self.sl = SaveLoad()
+        self.test_data = {"key": "value"}
+        self.file_name = "testfile"
+        self.full_path = f"save_folder/{self.file_name}.json"
 
-    # Patrick : If save folder does not exist, assert that 'os.makedirs' is called
-    @mock.patch('os.makedirs')
-    @mock.patch('os.path.exists')
-    @mock.patch('builtins.input', return_value='testfile')
-    def test_save_does_not_create_folder_if_exists(self, mock_input, mock_exists, mock_makedirs):
-        mock_exists.side_effect = [True, False]
-        with mock.patch('os.makedirs') as mock_makedirs:
-            SaveLoad.save()
-            mock_makedirs.assert_not_called()
-# Patrick : If folder exists, assert "os.makedirs" is not called.
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("os.path.exists", return_value=False)
+    @patch("os.makedirs")
+    def test_save_new_file(self, mock_makedirs, mock_exists, mock_open):
+        self.sl.save(self.test_data, self.file_name)
+        mock_makedirs.assert_called_once_with('save_folder')
+        # Pat: Check that the file was opened in write mode
+        mock_open.assert_called_once_with(self.full_path, 'w')
 
-    @mock.patch('os.path.exists', return_value=True)  # Simulates that the file already exists
-    @mock.patch('builtins.input',
-                side_effect=['testfile', 'y'])  # Simulates user input for filename and overwrite confirmation
-    def test_save_overwrites_if_user_confirms(self, mock_input, mock_exists):
-        SaveLoad.save()
-        # Assertions to verify the correct behavior
-        # Verify the user was prompted for a filename and then for overwrite confirmation
-        expected_calls = [mock.call("Enter a valid filename: "),
-                          mock.call("The file testfile.json already exists. Do you want to overwrite it? Y/N ")]
-        mock_input.assert_has_calls(expected_calls, any_order=False)
+        # Pat: Check that the correct data was written
+        written_content = "".join(call.args[0] for call in mock_open().write.call_args_list)
+        self.assertEqual(written_content, json.dumps(self.test_data))
+
+    @patch("builtins.input", return_value='y')
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("os.path.exists", side_effect=[True, True])  # First for folder, second for file
+    def test_save_overwrite_file(self, mock_exists, mock_open, mock_input):
+        self.sl.save(self.test_data, self.file_name)
+        mock_open.assert_called_once_with(self.full_path, 'w')
+        mock_input.assert_called_once_with(f"The file {self.file_name}.json already exists. Do you want to overwrite it? Y/N ")
+
+    @patch("builtins.input", return_value='n')
+    @patch("os.path.exists", side_effect=[True, True])
+    @patch("builtins.print")
+    def test_save_abort_overwrite(self, mock_print, mock_exists, mock_input):
+        self.sl.save(self.test_data, self.file_name)
+        mock_print.assert_called_with(f"Aborting save...")
+        mock_input.assert_called_once()
+
+    @patch("os.path.exists", return_value=True)
+    @patch("builtins.open", new_callable=mock_open, read_data=json.dumps({"key": "value"}))
+    def test_load_existing_file(self, mock_open, mock_exists):
+        sl = SaveLoad()
+        file_name = "existing_file.json"
+
+        # Load data from the file
+        data = sl.load(file_name)
+
+        # Assertions
+        self.assertEqual(data, self.test_data)
+        mock_open.assert_called_once_with(f"save_folder/{file_name}", 'r+')
+
+    @patch("os.path.exists", return_value=False)
+    @patch("builtins.print")
+    def test_load_nonexistent_file(self, mock_print, mock_exists):
+        self.sl.load(f"{self.file_name}.json")
+        mock_print.assert_called_with("File does not exist!")
+
+
 
 
