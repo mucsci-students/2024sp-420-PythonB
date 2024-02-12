@@ -1,15 +1,17 @@
 import unittest
 from Models.attribute import Attributes
+from Models.addclass import UMLClass
 from Models.diagram import Diagram
 
 
 class MyTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.attributes = Attributes(self.classes)
-        diagram.classes.update({"Students": []})
-        diagram.classes["Students"].append("student1")
-        diagram.classes["Students"].append("student2")
+        self.diagram = Diagram()
+        self.diagram.classes.update({"Students": []})
+        self.diagram.classes["Students"].append("student1")
+        self.diagram.classes["Students"].append("student2")
+        self.attributes = Attributes(self.diagram)
 
     def test_add_attribute(self):
         # Katie Dowlin: Class exists. Add should be successful, so should return True.
