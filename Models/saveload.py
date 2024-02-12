@@ -44,6 +44,8 @@ class SaveLoad:
 
         save_folder = 'save_folder'
         # Patrick : Makes method aware of the save folder
+        
+        file_name = str(file_name + ".json")
 
         file_path = os.path.join(save_folder, file_name)
         file_exists = os.path.exists(file_path)

@@ -34,7 +34,7 @@ class UMLClass:
         """
         if self.diagram.name_checker(name):
             self.classes[name] = []
-            print(f"{name} added successfully")
+            print(f"Class '{name}' added successfully.")
             return name
     # Danish: I'm writing this function to delete a class name
 
@@ -42,11 +42,11 @@ class UMLClass:
         # Danish: if class is exist then it'll delete and display "class name deleted successfully
         if name in self.classes:
             del self.classes[name]
-            print(f"{name} deleted successfully")
+            print(f"Class '{name}' deleted successfully.")
             return name
         # Danish: if class is not exist then it'll  display "class name not exist
         if name not in self.classes:
-            print(f"Unable to delete! {name} Class does not exist")
+            print(f"Unable to delete! Class '{name}' does not exist.")
             # print(f"{name} not exist, so we can not delete the class")
             return name
 
@@ -54,15 +54,15 @@ class UMLClass:
     def rename_class(self, name, newname):
         # Danish: If the class do not exist, it will display "Class name does not exist."
         if name not in self.classes:
-            print(f"Unable to rename! {name} Class does not exist")
+            print(f"Unable to rename! Class '{name}' does not exist.")
             return None
         # Danish: If the newName already exists, or it's a reserved word, then it will display an error.
         if not self.diagram.name_checker(newname) or newname in self.classes:
-            print(f"Unable to rename! {newname}")
+            print(f"Unable to rename to '{newname}'.")
             return None
 
         self.classes[newname] = self.classes.pop(name)
-        print(f"{name} renamed to {newname} successfully")
+        print(f"Class '{name}' renamed to '{newname}' successfully.")
         return newname
 
     # print all the classes using list

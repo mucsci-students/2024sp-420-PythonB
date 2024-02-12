@@ -7,23 +7,25 @@ from Models.diagram import Diagram
 from Models.classadd import UMLClass
 from Models.relationship import UMLRelationship
 from Models.attribute import Attributes
+from Models.saveload import SaveLoad
 
 
 #Jill: initializes types of commands
 class CLIController:
-    def __init__(self, diagram, relationship, classes, attributes):
+    def __init__(self, diagram, relationship, classes, attributes, save_load):
         self.classes = classes
         self.relationship = relationship
         self.attributes = attributes
         self.diagram = diagram
+        self.save_load = save_load
         self.commands = {
             "help": self.help,
             "add" : self.add,
             "rename" : self.rename,
             "delete" : self.delete,
             "list" : self.list,
-            # "save" : self.save,
-            # "load" : self.load   
+            "save" : self.save,
+            "load" : self.load   
         }
         
     #Jill: takes a class name as input, returns a dictionary from class name to dictionaries from 'Attribute' to a list of attributes and 'Relationship' to a list of relationships
@@ -94,8 +96,7 @@ class CLIController:
                         self.attributes.add_attribute(name, class_name)
                     else:
                         print("Missing arguments.")    
-            else:
-                print("Not a valid name.")
+
         else:
             print("Missing arguments.")
             
@@ -118,8 +119,6 @@ class CLIController:
                      if len(tokens) >= 5:
                          class_name = tokens[4]
                          self.attributes.rename_attribute(oldname, newname, class_name)        
-            else:
-                print("Not a valid name.")
         else:
             print("Missing arguments.") 
                
@@ -161,9 +160,35 @@ class CLIController:
         else:
             print("Missing arguments.")
     
-    def save(self):
-        
+    def save(self, tokens): 
+        if len(tokens) >= 2:
+            name = tokens[1]
+            all_classes = self.classes.list_classes()
+            saveitem = {}
+            for item in all_classes:
+                # Jill: Update saveitem with each class's breakdown. Ensure updates don't overwrite each other.
+                class_info = self.class_breakdown(item)  
+                saveitem.update(class_info)  
             
+            self.save_load.save(saveitem, name)
+            
+
+    def load(self, tokens):
+        if len(tokens) >= 2:
+            name = tokens[1]
+            saveitem = self.save_load.load(name)  
+            for classname, details in saveitem.items():  #Jill: iterating over items to get both key and value
+                
+                if classname not in self.diagram.classes:
+                    self.diagram.classes[classname] = {}  
+                if "Attributes" in details:
+                    
+                    self.diagram.classes[classname]["Attributes"] = details["Attributes"]
+                if "Relationships" in details:
+                   
+                    self.relationship.relationships.extend(details["Relationships"])  
+
+                     
     #Jill: checks commands against given list of commands, also handles exit                 
     def execute_command(self, user_input):
         tokens = user_input.split()
@@ -190,5 +215,7 @@ diagram = Diagram()
 classes = UMLClass(diagram)
 relationship = UMLRelationship(classes)
 attributes = Attributes(classes)
-diagram_cli = CLIController(diagram,relationship,classes, attributes)
+saveload = SaveLoad()
+diagram_cli = CLIController(diagram,relationship,classes, attributes, saveload)
 diagram_cli.CLI()
+
