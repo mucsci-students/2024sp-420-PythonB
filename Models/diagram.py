@@ -13,8 +13,8 @@ class Diagram:
                 "help class                                                 Displays commands related to classes\n"
                 "help attribute                                             Displays commands related to attributes\n"
                 "help relationship                                          Displays commands related to relationships\n"
-                "save                                                       Saves your UML diagram as a JSON file\n"
-                "load                                                       Loads a UML diagram from a JSON file\n"
+                "save <file_name>                                           Saves your UML diagram as a JSON file\n"
+                "load <file_name>                                           Loads a UML diagram from a JSON file\n"
                 "exit                                                       Exits the program\n")   
           
     #Jill: Commands for classes      
