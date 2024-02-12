@@ -20,15 +20,15 @@ class UMLRelationship:
             print(f"Source class, '{src}' does not exist.")
 
         # Zhang: Check the existent of the destination class.
-        if des not in self.uml_class.classes:
+        elif des not in self.uml_class.classes:
             print(f"Destination class, '{des}' does not exist.")
 
         # Zhang: Check the validation of the relationship types.
-        if type_rel not in self.relationship_types:
+        elif type_rel not in self.relationship_types:
             print(f"Relationship type, '{type_rel}' is not valid.")
 
         # Zhang: Relationship can't be created by the same class.
-        if src == des:
+        elif src == des:
             print(f"The source class, '{src}', cannot be the same as the destination class.")
 
         else:
@@ -52,7 +52,7 @@ class UMLRelationship:
             print(f"Source class- '{src}' does not exist.")
 
         # Zhang: Check the existent of the destination.
-        if des not in self.uml_class.classes:
+        elif des not in self.uml_class.classes:
             print(f"Destination class- '{des}' does not exist.")
 
         removed = False
