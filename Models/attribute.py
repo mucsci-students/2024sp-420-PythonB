@@ -8,9 +8,12 @@ class Attributes:
     def add_attribute(self, name, class_name):
         # Katie Dowlin: Check if the class you want to add the attribute to exists.
         if class_name in self.diagram.classes.keys():
-            self.diagram.classes[class_name].append(name)
-            print(f"Attribute '{name}' added successfully.")
-            return True
+            if name not in self.diagram.classes[class_name]:                   
+                self.diagram.classes[class_name].append(name)
+                print(f"Attribute '{name}' added successfully.")
+                return True
+            else:
+                print(f"Add failed- attribute '{name}' already exists.")
         # Katie Dowlin: If the class you want to add the attribute to doesn't exist.
         else:
             print(f"Add failed- class '{class_name}' doesn't exist.")

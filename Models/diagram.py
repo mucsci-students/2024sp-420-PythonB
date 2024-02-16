@@ -77,11 +77,6 @@ class Diagram:
             if not x.isalnum() and not x == "_":
                 print("Invalid name! Special characters are not allowed.")
                 return False
-
-            # Katie Dowlin: The name the user entered can't already be used for another class.
-            if name in self.classes:
-                print("Class already exists.")
-                return False
         # Katie Dowlin: If the name the user entered passed all checks and isn't used, then the user can
         # use that name for the attribute or class.
         else:
