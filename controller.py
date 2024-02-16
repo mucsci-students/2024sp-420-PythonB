@@ -163,14 +163,19 @@ class CLIController:
     def save(self, tokens): 
         if len(tokens) >= 2:
             name = tokens[1]
-            all_classes = self.classes.list_classes()
-            saveitem = {}
-            for item in all_classes:
-                # Jill: Update saveitem with each class's breakdown. Ensure updates don't overwrite each other.
-                class_info = self.class_breakdown(item)  
-                saveitem.update(class_info)  
-            
-            self.save_load.save(saveitem, name)
+
+            if (len("name")) == 0:
+                print("No file name provided")
+
+            else:
+                all_classes = self.classes.list_classes()
+                saveitem = {}
+                for item in all_classes:
+                    # Jill: Update saveitem with each class's breakdown. Ensure updates don't overwrite each other.
+                    class_info = self.class_breakdown(item)
+                    saveitem.update(class_info)
+
+                self.save_load.save(saveitem, name)
             
 
     def load(self, tokens):
