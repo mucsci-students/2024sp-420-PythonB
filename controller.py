@@ -53,6 +53,33 @@ class CLIController:
         else:
             print (f"No class named {name}")
             
+    def pretty_breakdown(self, name):
+        #Jill: a dict of all classes to their attributes
+        all_classattributes = self.classes.list_class()
+        #Jill: a list of all classes
+        all_classes = self.classes.list_classes()
+        #Jill: checks if 'name is a class
+        if name in all_classes:
+            #Jill: uses 'name' as a key to access attributes
+            attributes = all_classattributes[name]
+            all_relationships = self.relationship.list_relationships()
+            #an empty list to fill with relationships containing 'name'
+            class_relationships = []
+            
+            #loops over realtionships to find any/all relationships 'name' is a part of
+            for relation in all_relationships:
+                for item in relation:
+                    if item == name:
+                        class_relationships.append(relation)
+
+            all_class_aspects = (f"\t{name}:\n"
+                                 f"\tAttributes: {attributes}\n"
+                                 f"\tRelationships: {class_relationships}\n")
+            
+            return all_class_aspects
+        else:
+            print (f"No class named {name}")
+            
         
     #Jill: All varients of the help command 
     def help (self, tokens):
@@ -148,7 +175,11 @@ class CLIController:
         if len(tokens) >= 2:
             type = tokens[1]
             if type == "classes":
-                print(self.classes.list_classes())
+                all_classes = self.classes.list_classes()
+                print("Classes:")
+                for item in all_classes:
+                    class_info = self.pretty_breakdown(item)    
+                    print(class_info)                   
             elif type == "class":
                 if len(tokens) >= 3:
                     name = tokens[2] 
@@ -171,6 +202,8 @@ class CLIController:
                 saveitem.update(class_info)  
             
             self.save_load.save(saveitem, name)
+        else:
+            print("Missing arguments.")
             
 
     def load(self, tokens):
@@ -186,7 +219,9 @@ class CLIController:
                     self.diagram.classes[classname]["Attributes"] = details["Attributes"]
                 if "Relationships" in details:
                    
-                    self.relationship.relationships.extend(details["Relationships"])  
+                    self.relationship.relationships.extend(details["Relationships"]) 
+        else:
+            print("Missing arguments.") 
 
                      
     #Jill: checks commands against given list of commands, also handles exit                 
