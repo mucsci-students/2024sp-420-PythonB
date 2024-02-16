@@ -6,10 +6,6 @@ class SaveLoad:
 
     def save(self, data, file_name):
 
-        if (len("file_name")) == 0:
-            print("No file name provided")
-            return None
-
         save_folder = 'save_folder'
 
         if not os.path.exists(save_folder):
