@@ -100,27 +100,28 @@ class CLIController:
     def add (self, tokens):
         if len(tokens) >= 3:
             type = tokens[1].lower()
-            name = tokens[2]
+            class_name = tokens[2]
             #Jill: adding a relationship does not call namechecker
             if type == "relationship":
                 if len(tokens) >= 5:
                     dest = tokens[3]
                     r_type = tokens[4]
-                    self.relationship.add_relationship(name,dest,r_type)
+                    self.relationship.add_relationship(class_name,dest,r_type)
                 else:
                     print("Missing arguments.")
             #Jill: Adding classes and attributes do
-            elif self.diagram.name_checker(name):
+            elif self.diagram.name_checker(class_name):
                 if type == "class":
                     #Jill: checks for capitalization
-                    if name.istitle():
-                        self.classes.add_class(name)
+                    if class_name.istitle():
+                        self.classes.add_class(class_name)
                     else:
                         print("Class names must start with capital letters.")
                 if type == "attribute":
                     if len(tokens) >= 4:
-                        class_name = tokens[3] 
-                        self.attributes.add_attribute(name, class_name)
+                        attribute_name = tokens[3] 
+                        if self.diagram.name_checker(attribute_name):
+                            self.attributes.add_attribute(class_name, attribute_name)
                     else:
                         print("Missing arguments.")    
 
@@ -132,20 +133,24 @@ class CLIController:
     def rename(self, tokens):
         if len(tokens) >= 4:
             type = tokens[1].lower()
-            oldname = tokens[2]
-            newname = tokens[3]
-            #Jill: Checks name
-            if self.diagram.name_checker(newname):
-                if type == "class":
+            if type == "class":
+                oldname = tokens[2]
+                newname = tokens[3]
+                    #Jill: Checks name
+                if self.diagram.name_checker(newname):
                     if newname.istitle():
                         self.classes.rename_class(oldname,newname)
                         self.relationship.renamed_class(oldname,newname)
                     else:
                         print("Class names must start with capital letters.")
-                elif type == "attribute":
-                     if len(tokens) >= 5:
-                         class_name = tokens[4]
-                         self.attributes.rename_attribute(oldname, newname, class_name)        
+            elif type == "attribute":
+                oldname = tokens[3]
+                newname = tokens[4]
+                    #Jill: Checks name
+                if self.diagram.name_checker(newname):
+                    if len(tokens) >= 5:
+                        class_name = tokens[2]
+                        self.attributes.rename_attribute(class_name, oldname, newname)        
         else:
             print("Missing arguments.") 
                
@@ -154,15 +159,18 @@ class CLIController:
     def delete(self, tokens):
         if len(tokens) >= 3:
             type = tokens[1].lower()
-            name = tokens[2]
             if type == "class":
+                name = tokens[2]
                 self.classes.delete_class(name)
                 self.relationship.removed_class(name) 
             elif len(tokens) >=4:
-                dest = tokens[3]
                 if type == "attribute":
-                    self.attributes.delete_attribute(name,dest)
+                    name = tokens[3]
+                    classname = tokens[2]
+                    self.attributes.delete_attribute(classname, name)
                 elif type == "relationship":
+                    name = tokens[2]
+                    dest = tokens[3]
                     self.relationship.delete_relationship(name,dest)
             else:
                 print("Missing arguments.")
