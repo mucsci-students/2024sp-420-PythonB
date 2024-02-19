@@ -41,7 +41,9 @@ class Diagram:
                 "help relationships                                         Displays this menu\n"
                 "add relationship <src_class> <des_class> <relation_type>   Adds a relationship between <src_class> and <des_class> of <relation_type>: (Aggregation, Composition, Generalization, Inheritance)\n"
                 "delete relationship <src_class> <des_class>                Deletes the relationship between <src_class> <des_class>\n"
-                "list relationship <class_name>                             Lists all relationships to <class_name>\n")
+                "list relationships                                         Lists all relationships\n"
+                "list relationships <class_name>                             Lists all relationships to <class_name>\n")
+                
 
 
 

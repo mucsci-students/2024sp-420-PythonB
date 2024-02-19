@@ -194,8 +194,19 @@ class CLIController:
                     print(self.class_breakdown(name))
                 else:
                     print("Missing arguments.")
-            elif type == "relationship" or type == "relationships":
-                print(self.relationship.list_relationships())
+            elif type == "relationships" or type == "relationship":
+                if len(tokens) >= 3:
+                    name = tokens[2]
+                    all_relationships = self.relationship.list_relationships()
+                    class_relationships = []
+
+                    for relation in all_relationships:
+                        if name in relation:  # Check if name is in the list
+                            class_relationships.append(relation)
+
+                    print(class_relationships)
+                else:
+                    print(self.relationship.list_relationships())
         else:
             print("Missing arguments.")
     
