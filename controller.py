@@ -113,7 +113,7 @@ class CLIController:
             elif self.diagram.name_checker(name):
                 if type == "class":
                     #Jill: checks for capitalization
-                    if name.istitle():
+                    if name[0].isupper():
                         self.classes.add_class(name)
                     else:
                         print("Class names must start with capital letters.")
