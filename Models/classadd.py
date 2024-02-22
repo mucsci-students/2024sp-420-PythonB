@@ -55,6 +55,7 @@ class UMLClass:
         # Danish: If the class do not exist, it will display "Class name does not exist."
         if name not in self.classes:
             print(f"Unable to rename! Class '{name}' does not exist.")
+            # return False
             return False
         # Danish: If the newName already exists, or it's a reserved word, then it will display an error.
         if not self.diagram.name_checker(newname) or newname in self.classes:
