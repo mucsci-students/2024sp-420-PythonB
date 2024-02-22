@@ -8,12 +8,46 @@ class UMLRelationship:
     # Zhang: Interacting with UMLClass
     # Zhang: Note that the data structure of relationship is a list of lists:
     def __init__(self, classes):
+        """
+        Initializes the UMLRelationship instance.
+
+        Parameters:
+            classes (dictionary): A dictionary of class names.
+
+        Precondition:
+            'classes' should be a non-empty.
+
+        Postcondition:
+            Initializes 'uml_class' with the given dictionary of classes, 'relationships' with an empty list, and
+        'relationship_types' with a list of predefined types.
+
+        Returns:
+            None
+        """
+
         self.uml_class = classes
         self.relationships = []
         self.relationship_types = ["Aggregation", "Composition", "Generalization", "Inheritance"]
 
-    '''add_relationship function.'''
     def add_relationship(self, src, des, type_rel):
+        """
+        Adds a new relationship if it's valid and doesn't already exist.
+
+        Parameters:
+            src (str): The source class name.
+            des (str): The destination class name.
+            type_rel (str): The type of relationship.
+
+        Precondition:
+            Both 'src' and 'des' must exist in 'uml_class', 'type_rel' must be in 'relationship_types', and 'src'
+        should not be equal to 'des'.
+
+        Postcondition:
+            Adds a new relationship to 'relationships' if all conditions are met.
+
+        Returns:
+            None
+        """
 
         # Zhang: Check the existent of the source class.
         if src not in self.uml_class.classes:
@@ -44,8 +78,23 @@ class UMLRelationship:
                 self.relationships.append([src, des, type_rel])
                 print("Relationship added.")
 
-    '''delete_relationship'''
     def delete_relationship(self, src, des):
+        """
+        Deletes an existing relationship between the specified source and destination classes.
+
+        Parameters:
+            src (str): The source class name.
+            des (str): The destination class name.
+
+        Precondition:
+            A relationship between 'src' and 'des' must exist in 'relationships'.
+
+        Postcondition:
+            The specified relationship is removed from 'relationships'.
+
+        Returns:
+            None
+        """
 
         # Zhang: Check the existent of the source class.
         if src not in self.uml_class.classes:
@@ -68,9 +117,24 @@ class UMLRelationship:
         else:
             print("Relationship deleted!")
 
-    '''removed_class'''
     # Zhang: When a class is deleted, remove all its relationships
     def removed_class(self, removed_class):
+        """
+        Removes all relationships involving a specified class when it's removed.
+
+        Parameters:
+            removed_class (str): The name of the class being removed.
+
+        Precondition:
+            'removed_class' should exist in 'uml_class'.
+
+        Postcondition:
+            All relationships involving 'removed_class' are removed from 'relationships'.
+
+        Returns:
+            None
+        """
+
         removed = False
 
         # Zhang: Remove the relationship for each removed source or destination class.
@@ -81,8 +145,24 @@ class UMLRelationship:
         if removed:
             print("Relationship removed.")
 
-    '''renamed_class'''
     def renamed_class(self, old_name, new_name):
+        """
+        Updates relationships to reflect a class name change.
+
+        Parameters:
+            old_name (str): The current class name.
+            new_name (str): The new class name.
+
+        Precondition:
+            'old_name' should exist in 'uml_class' and 'new_name' should not already exist in 'uml_class'.
+
+        Postcondition:
+            All relationships involving 'old_name' are updated to use 'new_name'.
+
+        Returns:
+            None
+        """
+
         renamed = False
 
         # Zhang: Update each renamed source or destination class in the relationship list.
@@ -96,6 +176,73 @@ class UMLRelationship:
         if renamed:
             print("Relationship renamed.")
 
-    #Jill: prints list of lists of relationships
+    def update_types(self, src, des, new_type):
+        """
+        Changes the type of existing relationship.
+
+        Parameters:
+            src (str): The source class name.
+            des (str): The destination class name.
+            new_type (str): The new type of the relationship.
+
+        Precondition:
+            A relationship between 'src' and 'des' class must exist, and the 'new_type' must be in
+        the 'relationship_types'.
+
+        Postcondition:
+            The type of the specified relationship is updated to 'new_type'.
+
+        Returns:
+            None
+        """
+
+        if new_type not in self.relationship_types:
+            print("Invalid relationship type!")
+        else:
+            valid_src_des = False
+            for rel in self.relationships[:]:
+                if rel[0] == src and rel[1] == des:
+                    rel[2] = new_type
+                    valid_src_des = True
+
+            if not valid_src_des:
+                print(f"{src} and {des} do not currently have relationships.")
+            else:
+                print(f"The relationship type from {src} to {des} have been updated.")
+
+    def list_relationship_types(self):
+        """
+        Returns all predefined relationship types.
+
+        Precondition:
+            None
+
+        Postcondition:
+            Returns 'relationships_types'.
+
+        Returns:
+            list: A list of all relationships types.
+        """
+        return self.relationship_types
+
+    # Jill: prints list of lists of relationships
     def list_relationships(self):
+        """
+        Returns a list of all current relationships.
+
+        Precondition:
+            None
+
+        Postcondition:
+            Returns the current scene of 'relationships'.
+
+        Returns:
+            list: A list of all relationships, each formatted as [source, destination, type].
+        """
         return self.relationships
+
+
+if __name__ == "__main__":
+
+    help(UMLRelationship)
+    # help(UMLRelationship.add_relationship)
