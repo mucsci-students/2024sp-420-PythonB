@@ -77,13 +77,13 @@ def test_list_class():
     test_method = Methods(test_diagram, test_class)
     test_parameter = Parameters(test_method)
     test_class.add_class('CSCI420')
-    test_field.add_field('Katie', 'CSCI420')
-    test_field.add_field('Danish', 'CSCI420')
-    test_field.add_field('Jillian', 'CSCI420')
-    test_field.add_field('Patrick', 'CSCI420')
-    test_field.add_field('Zhang', 'CSCI420')
-    test_method.add_method('Project', 'CSCI420')
-    test_parameter.add_parameter('due_date', 'Project')
+    test_field.add_field('CSCI420', 'Katie')
+    test_field.add_field('CSCI420', 'Danish')
+    test_field.add_field('CSCI420', 'Jillian')
+    test_field.add_field('CSCI420', 'Patrick')
+    test_field.add_field('CSCI420', 'Zhang')
+    test_method.add_method('CSCI420', 'Project')
+    test_parameter.add_parameter('Project', 'due_date')
     expected = {'CSCI420': {'Fields': ['Katie', 'Danish', 'Jillian', 'Patrick', 'Zhang'],
                             'Methods': [{'Project': {'Parameters': ['due_date']}}]}}
     assert test_class.list_class() == expected
