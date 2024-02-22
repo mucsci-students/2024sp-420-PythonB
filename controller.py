@@ -1,7 +1,7 @@
 #Primary: Jillian Daggs
 #Secondary: Patrick McCullough
 #Last Updated: 2/11/24
-
+import os
 
 from Models.diagram import Diagram
 from Models.classadd import UMLClass
@@ -217,36 +217,52 @@ class CLIController:
     def save(self, tokens): 
         if len(tokens) >= 2:
             name = tokens[1]
+
             all_classes = self.classes.list_classes()
             saveitem = {}
             for item in all_classes:
                 # Jill: Update saveitem with each class's breakdown. Ensure updates don't overwrite each other.
-                class_info = self.class_breakdown(item)  
-                saveitem.update(class_info)  
-            
+                class_info = self.class_breakdown(item)
+                saveitem.update(class_info)
+
             self.save_load.save(saveitem, name)
-        else:
-            print("Missing arguments.")
-            
+
+
+        elif len(tokens) <= 1:
+            print("No filename provided.")
+            # Protects against attempting to save a file without a filename. (2/15/24)
+
 
     def load(self, tokens):
+
+        save_folder = 'save_folder'
+
         if len(tokens) >= 2:
             name = tokens[1]
-            saveitem = self.save_load.load(name)  
-            for classname, details in saveitem.items():  #Jill: iterating over items to get both key and value
-                
-                if classname not in self.diagram.classes:
-                    self.diagram.classes[classname] = {}  
-                if "Attributes" in details:
-                    
-                    self.diagram.classes[classname]["Attributes"] = details["Attributes"]
-                if "Relationships" in details:
-                   
-                    self.relationship.relationships.extend(details["Relationships"]) 
-        else:
-            print("Missing arguments.") 
 
-                     
+            file_path = os.path.join(save_folder, name + ".json")
+
+            if not os.path.exists(file_path):
+                print("File does not exist.")
+            # Protects against loading a file that does not exist. (2/15/24)
+
+            else:
+                saveitem = self.save_load.load(name)
+                for classname, details in saveitem.items():  #Jill: iterating over items to get both key and value
+
+                    if classname not in self.diagram.classes:
+                        self.diagram.classes[classname] = {}
+                    if "Attributes" in details:
+
+                        self.diagram.classes[classname]["Attributes"] = details["Attributes"]
+                    if "Relationships" in details:
+
+                        self.relationship.relationships.extend(details["Relationships"])
+        elif len(tokens) <= 1:
+            print("No filename provided.")
+            # Protects against attempting to loading a file without a filename. (2/15/24)
+
+
     #Jill: checks commands against given list of commands, also handles exit                 
     def execute_command(self, user_input):
         tokens = user_input.split()
