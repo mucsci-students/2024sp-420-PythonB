@@ -113,8 +113,10 @@ class CLIController:
             elif self.diagram.name_checker(class_name):
                 if type == "class":
                     #Jill: checks for capitalization
-                    if class_name.istitle():
-                        self.classes.add_class(class_name)
+
+                    if name[0].isupper():
+                        self.classes.add_class(name)
+
                     else:
                         print("Class names must start with capital letters.")
                 if type == "attribute":
@@ -133,12 +135,14 @@ class CLIController:
     def rename(self, tokens):
         if len(tokens) >= 4:
             type = tokens[1].lower()
-            if type == "class":
-                oldname = tokens[2]
-                newname = tokens[3]
-                    #Jill: Checks name
-                if self.diagram.name_checker(newname):
-                    if newname.istitle():
+            oldname = tokens[2]
+            newname = tokens[3]
+            #Jill: Checks name
+            if self.diagram.name_checker(newname):
+                if type == "class":
+                    if newname[0].isupper():
+
+
                         self.classes.rename_class(oldname,newname)
                         self.relationship.renamed_class(oldname,newname)
                     else:
