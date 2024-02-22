@@ -137,7 +137,7 @@ class CLIController:
             #Jill: Checks name
             if self.diagram.name_checker(newname):
                 if type == "class":
-                    if newname.istitle():
+                    if newname[0].isupper():
                         self.classes.rename_class(oldname,newname)
                         self.relationship.renamed_class(oldname,newname)
                     else:
