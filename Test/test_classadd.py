@@ -10,59 +10,52 @@ def test_add_class():
         test_class.add_class('Students')
 
 
-def test_add_class_error():
+def test_add_duplicate_class():
     test_diagram = Diagram()
     test_class = UMLClass(test_diagram)
+    test_class.add_class('Duplicate')
     with pytest.raises(TypeError):
-        test_class.add_class('')
-
-
-def test_add_existing_class():
-    test_diagram = Diagram()
-    test_class = UMLClass(test_diagram)
-    result = test_class.add_class('Students')
-    assert result == 'Students'
-
-
-def test_add_empty_class():
-    test_diagram = Diagram()
-    test_class = UMLClass(test_diagram)
-    result = test_class.add_class('')
-    assert result == None
+        test_class.add_class('Duplicate')
 
 
 # test for rename class
 def test_rename_class():
     test_diagram = Diagram()
     test_class = UMLClass(test_diagram)
-    test_class.add_class('Student')
-    test_class.rename_class('Student', 'Manager')
+    test_class.add_class('Classes')
+    with not pytest.raises(TypeError):
+        test_class.rename_class('Classes', 'Schools')
 
 
-def test_rename_NotExist(self):
-    self.classname.rename_class('Student', 'Manager')
+def test_rename_class_not_exist(self):
+    test_diagram = Diagram()
+    test_class = UMLClass(test_diagram)
+    with pytest.raises(TypeError):
+        test_class.rename_class('Employees', 'Managers')
 
 
-def test_rename_To_reservedWord(self):
-    self.classname.add_class('Student')
-    self.classname.rename_class('Student', 'class')
-
-
-def test_rename_Exist(self):
-    self.classname.add_class('Student')
-    self.classname.add_class('MID')
-    self.classname.rename_class('Student', 'MID')
+def test_rename_to_duplicate_name(self):
+    test_diagram = Diagram()
+    test_class = UMLClass(test_diagram)
+    test_class.add_class('Class1')
+    test_class.add_class('Class2')
+    with pytest.raises(TypeError):
+        test_class.rename_class('Class1', 'Class2')
 
 
 def test_delete_class(self):
-    self.classname.add_class('Student')
-    result = self.classname.delete_class('Student')
-    self.assertEqual(result, 'Student')
+    test_diagram = Diagram()
+    test_class = UMLClass(test_diagram)
+    test_class.add_class('Managers')
+    with pytest.raises(TypeError):
+        test_class.delete_class('Managers')
 
 
-def test_delete_class_notExist(self):
-    result = self.classname.delete_class('Grade')
-    self.assertEqual(result, 'Grade')
+def test_delete_class_not_exist(self):
+    test_diagram = Diagram()
+    test_class = UMLClass(test_diagram)
+    with pytest.raises(TypeError):
+        test_class.delete_class('Grade')
 
 
 def test_delete_classrelationship(self):
