@@ -51,19 +51,19 @@ class UMLRelationship:
 
         # Zhang: Check the existent of the source class.
         if src not in self.uml_class.classes:
-            print(f"Source class, '{src}' does not exist.")
+            raise ValueError(f"Source class, '{src}' does not exist.")
 
         # Zhang: Check the existent of the destination class.
         elif des not in self.uml_class.classes:
-            print(f"Destination class, '{des}' does not exist.")
+            raise ValueError(f"Destination class, '{des}' does not exist.")
 
         # Zhang: Check the validation of the relationship types.
         elif type_rel not in self.relationship_types:
-            print(f"Relationship type, '{type_rel}' is not valid.")
+            raise ValueError(f"Relationship type, '{type_rel}' is not valid.")
 
         # Zhang: Relationship can't be created by the same class.
         elif src == des:
-            print(f"The source class, '{src}', cannot be the same as the destination class.")
+            raise ValueError(f"The source class, '{src}', cannot be the same as the destination class.")
 
         else:
             # Zhang: Check the existent of the relationship.
@@ -72,7 +72,7 @@ class UMLRelationship:
                 if rel[0] == src and rel[1] == des:
                     found = True
             if found:
-                print(f"Relationship from '{src}' to '{des}' already exists.")
+                raise ValueError(f"Relationship from '{src}' to '{des}' already exists.")
             else:
                 # Zhang: Append to the new relationship to the list.
                 self.relationships.append([src, des, type_rel])
@@ -98,11 +98,11 @@ class UMLRelationship:
 
         # Zhang: Check the existent of the source class.
         if src not in self.uml_class.classes:
-            print(f"Source class- '{src}' does not exist.")
+            raise ValueError(f"Source class- '{src}' does not exist.")
 
         # Zhang: Check the existent of the destination.
         elif des not in self.uml_class.classes:
-            print(f"Destination class- '{des}' does not exist.")
+            raise ValueError(f"Destination class- '{des}' does not exist.")
 
         removed = False
         # Zhang: For each relationship tuple in the list, if relationship exist, remove it.
@@ -113,7 +113,7 @@ class UMLRelationship:
 
         # Zhang: Show error message if relationship exists.
         if not removed:
-            print(f"No relationship from '{src}' to '{des}' exists.")
+            raise ValueError(f"No relationship from '{src}' to '{des}' exists.")
         else:
             print("Relationship deleted!")
 
@@ -197,7 +197,7 @@ class UMLRelationship:
         """
 
         if new_type not in self.relationship_types:
-            print("Invalid relationship type!")
+            raise ValueError("Invalid relationship type!")
         else:
             valid_src_des = False
             for rel in self.relationships[:]:
@@ -206,7 +206,7 @@ class UMLRelationship:
                     valid_src_des = True
 
             if not valid_src_des:
-                print(f"{src} and {des} do not currently have relationships.")
+                raise ValueError(f"{src} and {des} do not currently have relationships.")
             else:
                 print(f"The relationship type from {src} to {des} have been updated.")
 
