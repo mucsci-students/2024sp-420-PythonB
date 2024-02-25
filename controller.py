@@ -5,7 +5,7 @@ import os
 
 from Models.diagram import Diagram
 from Models.classadd import UMLClass
-from Models.relationship import UMLRelationship
+#from Models.relationship import UMLRelationship
 from Models.attribute import Attributes
 from Models.saveload import SaveLoad
 
@@ -144,7 +144,8 @@ class CLIController:
 
 
                         self.classes.rename_class(oldname,newname)
-                        self.relationship.renamed_class(oldname,newname)
+                        # Zhang: will rename automatically now
+                        #self.relationship.renamed_class(oldname,newname)
                     else:
                         print("Class names must start with capital letters.")
             elif type == "attribute":
@@ -166,7 +167,8 @@ class CLIController:
             if type == "class":
                 name = tokens[2]
                 self.classes.delete_class(name)
-                self.relationship.removed_class(name) 
+                # Zhang: will remove automatically now
+                #self.relationship.removed_class(name)
             elif len(tokens) >=4:
                 if type == "attribute":
                     name = tokens[3]
@@ -287,7 +289,9 @@ class CLIController:
 
 diagram = Diagram()            
 classes = UMLClass(diagram)
-relationship = UMLRelationship(classes)
+# Zhang: UMLClass will also initialize a relationship object by default
+#relationship = UMLRelationship(classes)
+relationship = classes.relationships
 attributes = Attributes(classes)
 saveload = SaveLoad()
 diagram_cli = CLIController(diagram,relationship,classes, attributes, saveload)
