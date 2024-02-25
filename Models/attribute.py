@@ -80,7 +80,7 @@ class Methods:
             None
         """
 
-        if class_name not in self.diagram_class.classes:
+        if class_name not in self.diagram_class.classes.keys():
             raise ValueError(f"Class '{class_name}' does not exist.")
 
         methods = self.diagram_class.classes[class_name]['Methods']
@@ -114,7 +114,7 @@ class Methods:
             None
         """
 
-        if class_name not in self.diagram_class.classes:
+        if class_name not in self.diagram_class.classes.keys():
             raise ValueError(f"Class '{class_name}' does not exist.")
 
         methods = self.diagram_class.classes[class_name]['Methods']
@@ -139,6 +139,8 @@ some_class.add_class('Csci')
 
 method1 = Methods(some_class)
 method1.add_method('Csci', 'Software Development')
+method1.rename_method('Csci', 'Software Development', '420')
+method1.delete_method('Csci', '420')
 #method1.add_method('Csci', 'Software Development')
 # method1.delete_method('Csci', 'Software Development')
 
