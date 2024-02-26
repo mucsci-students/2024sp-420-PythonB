@@ -25,9 +25,9 @@ class CLIController:
             "delete" : self.delete,
             "list" : self.list,
             "save" : self.save,
-            "load" : self.load   
+            "load" : self.load
         }
-        
+
     #Jill: takes a class name as input, returns a dictionary from class name to dictionaries from 'Attribute' to a list of attributes and 'Relationship' to a list of relationships
     def class_breakdown(self, name):
         #Jill: a dict of all classes to their attributes
@@ -41,7 +41,7 @@ class CLIController:
             all_relationships = self.relationship.list_relationships()
             #an empty list to fill with relationships containing 'name'
             class_relationships = []
-            
+
             #loops over realtionships to find any/all relationships 'name' is a part of
             for relation in all_relationships:
                 for item in relation:
@@ -52,7 +52,7 @@ class CLIController:
             return all_class_aspects
         else:
             print (f"No class named {name}")
-            
+
     def pretty_breakdown(self, name):
         #Jill: a dict of all classes to their attributes
         all_classattributes = self.classes.list_class()
@@ -65,7 +65,7 @@ class CLIController:
             all_relationships = self.relationship.list_relationships()
             #an empty list to fill with relationships containing 'name'
             class_relationships = []
-            
+
             #loops over realtionships to find any/all relationships 'name' is a part of
             for relation in all_relationships:
                 for item in relation:
@@ -75,15 +75,15 @@ class CLIController:
             all_class_aspects = (f"\t{name}:\n"
                                  f"\tAttributes: {attributes}\n"
                                  f"\tRelationships: {class_relationships}\n")
-            
+
             return all_class_aspects
         else:
             print (f"No class named {name}")
-            
-        
-    #Jill: All varients of the help command 
+
+
+    #Jill: All varients of the help command
     def help (self, tokens):
-        
+
         if len(tokens) == 1:
             print(self.diagram.command_help())
         else:
@@ -94,7 +94,7 @@ class CLIController:
                 print(self.diagram.attribute_help())
             elif type == "relationship" or type == "relationships":
                 print(self.diagram.relationship_help())
-                
+
 
     #Jill: All Varients of add command
     def add (self, tokens):
@@ -114,23 +114,23 @@ class CLIController:
                 if type == "class":
                     #Jill: checks for capitalization
 
-                    if name[0].isupper():
-                        self.classes.add_class(name)
+                    if class_name[0].isupper():
+                        self.classes.add_class(class_name)
 
                     else:
                         print("Class names must start with capital letters.")
                 if type == "attribute":
                     if len(tokens) >= 4:
-                        attribute_name = tokens[3] 
+                        attribute_name = tokens[3]
                         if self.diagram.name_checker(attribute_name):
                             self.attributes.add_attribute(class_name, attribute_name)
                     else:
-                        print("Missing arguments.")    
+                        print("Missing arguments.")
 
         else:
             print("Missing arguments.")
-            
-    
+
+
     #Jill: All varients of rename command
     def rename(self, tokens):
         if len(tokens) >= 4:
@@ -155,12 +155,12 @@ class CLIController:
                 if self.diagram.name_checker(newname):
                     if len(tokens) >= 5:
                         class_name = tokens[2]
-                        self.attributes.rename_attribute(class_name, oldname, newname)        
+                        self.attributes.rename_attribute(class_name, oldname, newname)
         else:
-            print("Missing arguments.") 
-               
-                
-    #Jill: all varients of delete command                       
+            print("Missing arguments.")
+
+
+    #Jill: all varients of delete command
     def delete(self, tokens):
         if len(tokens) >= 3:
             type = tokens[1].lower()
@@ -182,8 +182,8 @@ class CLIController:
                 print("Missing arguments.")
         else:
             print("Missing arguments")
-            
-            
+
+
     #Jill: all varients of list command
     def list(self,tokens):
         if len(tokens) >= 2:
@@ -192,11 +192,11 @@ class CLIController:
                 all_classes = self.classes.list_classes()
                 print("Classes:")
                 for item in all_classes:
-                    class_info = self.pretty_breakdown(item)    
-                    print(class_info)                   
+                    class_info = self.pretty_breakdown(item)
+                    print(class_info)
             elif type == "class":
                 if len(tokens) >= 3:
-                    name = tokens[2] 
+                    name = tokens[2]
                     print(self.class_breakdown(name))
                 else:
                     print("Missing arguments.")
@@ -215,8 +215,8 @@ class CLIController:
                     print(self.relationship.list_relationships())
         else:
             print("Missing arguments.")
-    
-    def save(self, tokens): 
+
+    def save(self, tokens):
         if len(tokens) >= 2:
             name = tokens[1]
 
@@ -265,29 +265,29 @@ class CLIController:
             # Protects against attempting to loading a file without a filename. (2/15/24)
 
 
-    #Jill: checks commands against given list of commands, also handles exit                 
+    #Jill: checks commands against given list of commands, also handles exit
     def execute_command(self, user_input):
         tokens = user_input.split()
         if tokens:
             command = tokens[0].lower()
             if command in self.commands:
                 self.commands[command](tokens)
-            #Exits 
+            #Exits
             elif command == "exit":
                     return False  # Signal to exit CL
             else:
                 print("Command not recognized.")
-        return True  # Continue running CLI   
-     
+        return True  # Continue running CLI
+
     #Jill: what the user interacts with
     def CLI(self):
         while True:
             user_input = input("Enter command or type 'help' for a list of commands: ").strip()
             if not self.execute_command(user_input):
                 break
-            
 
-diagram = Diagram()            
+
+diagram = Diagram()
 classes = UMLClass(diagram)
 # Zhang: UMLClass will also initialize a relationship object by default
 #relationship = UMLRelationship(classes)
