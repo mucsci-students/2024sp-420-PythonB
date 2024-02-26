@@ -14,14 +14,14 @@ class Methods:
         Initializes the Methods instance with a reference to the diagram's class structure.
 
         Parameters:
-            diagram_class (DiagramClass): An instance containing the UML diagram's class structure.
+            diagram_class (Diagram): An instance containing the UML diagram's class structure.
 
         Precondition:
-            `diagram_class` should be an initialized instance of DiagramClass or a similar structure that contains
+            'diagram_class' should be an initialized instance of DiagramClass or a similar structure that contains
              a 'classes' attribute.
 
         Postcondition:
-            Initializes `diagram_class` with the given DiagramClass instance.
+            Initializes 'diagram_class' with the given DiagramClass instance.
 
         Returns:
             None
@@ -39,8 +39,8 @@ class Methods:
             method_name (str): The name of the method to be added.
 
         Precondition:
-            `class_name` must exist within `diagram_class.classes`.
-            `method_name` must not already exist within the methods of `class_name`.
+            'class_name' must exist within 'diagram_class.classes'.
+            'method_name' must not already exist within the methods of 'class_name'.
 
         Postcondition:
             Adds a new method to the specified class with no parameters.
@@ -70,8 +70,8 @@ class Methods:
             method_name (str): The name of the method to be removed.
 
         Precondition:
-            `class_name` must exist within `diagram_class.classes`.
-            `method_name` must exist within the methods of `class_name`.
+            'class_name' must exist within 'diagram_class.classes'.
+            'method_name' must exist within the methods of 'class_name'.
 
         Postcondition:
             Removes the specified method from the class.
@@ -103,12 +103,12 @@ class Methods:
             new_name (str): The new name for the method.
 
         Precondition:
-            `class_name` must exist within `diagram_class.classes`.
-            `old_name` must exist within the methods of `class_name`.
-            `new_name` must not already exist within the methods of `class_name`.
+            'class_name' must exist within 'diagram_class.classes'.
+            'old_name' must exist within the methods of 'class_name'.
+            'new_name' must not already exist within the methods of 'class_name'.
 
         Postcondition:
-            Renames the specified method to `new_name`.
+            Renames the specified method to 'new_name'.
 
         Returns:
             None
@@ -131,7 +131,7 @@ class Parameters:
     def __init__(self, method):
         self.method = method
 
-
+'''
 # Zhang testing:
 dia = Diagram()
 some_class = UMLClass(dia)
@@ -141,8 +141,7 @@ method1 = Methods(some_class)
 method1.add_method('Csci', 'Software Development')
 method1.rename_method('Csci', 'Software Development', '420')
 method1.delete_method('Csci', '420')
-#method1.add_method('Csci', 'Software Development')
-# method1.delete_method('Csci', 'Software Development')
 
 print(some_class.list_class())
-
+help(Methods)
+'''
