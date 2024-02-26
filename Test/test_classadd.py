@@ -9,7 +9,7 @@ import pytest
 def test_add_class():
     test_diagram = Diagram()
     test_class = UMLClass(test_diagram)
-    with not pytest.raises(TypeError):
+    with not pytest.raises(ValueError):
         test_class.add_class('Students')
 
 
@@ -17,7 +17,7 @@ def test_add_duplicate_class():
     test_diagram = Diagram()
     test_class = UMLClass(test_diagram)
     test_class.add_class('Duplicate')
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         test_class.add_class('Duplicate')
 
 
@@ -25,14 +25,14 @@ def test_rename_class():
     test_diagram = Diagram()
     test_class = UMLClass(test_diagram)
     test_class.add_class('Classes')
-    with not pytest.raises(TypeError):
+    with not pytest.raises(ValueError):
         test_class.rename_class('Classes', 'Schools')
 
 
 def test_rename_class_not_exist():
     test_diagram = Diagram()
     test_class = UMLClass(test_diagram)
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         test_class.rename_class('Employees', 'Managers')
 
 
@@ -41,7 +41,7 @@ def test_rename_to_duplicate_name():
     test_class = UMLClass(test_diagram)
     test_class.add_class('Class1')
     test_class.add_class('Class2')
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         test_class.rename_class('Class1', 'Class2')
 
 
@@ -49,14 +49,14 @@ def test_delete_class():
     test_diagram = Diagram()
     test_class = UMLClass(test_diagram)
     test_class.add_class('Managers')
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         test_class.delete_class('Managers')
 
 
 def test_delete_class_not_exist():
     test_diagram = Diagram()
     test_class = UMLClass(test_diagram)
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         test_class.delete_class('Grade')
 
 
