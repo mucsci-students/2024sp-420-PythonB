@@ -130,58 +130,79 @@ class Methods:
         if not renamed:
             raise ValueError(f"Method '{old_name}' not found in class '{class_name}'.")
 
+
 class Parameters:
-    def __init__(self, method):
-        self.method = method
-        # self.parameters = []
+    def __init__(self, method_class):
+        self.method_class = method_class
 
     @ErrorHandler.handle_error
-    def add_parameters(self, m_name, p_name):
-        if m_name in self.method.methods.keys():
-            if p_name not in self.method.methods[m_name]:
-                self.method.methods[m_name].append(p_name)
-                print(f"parameters '{p_name}' added successfully.")
-
+    def add_parameters(self, class_name, m_name, p_name):
+        if class_name not in self.method_class.diagram_class.classes:
+            raise ValueError(f"Class '{class_name}' does not exist")
+        for method_dict in self.method_class.diagram_class.classes[class_name]['Methods']:
+            if m_name in method_dict:
+                if p_name not in method_dict[m_name]['Parameters']:
+                    method_dict[m_name]['Parameters'].append(p_name)
+                    print(f"Parameter '{p_name}' added to method '{m_name}' in class '{class_name}'.")
+                else:
+                    raise ValueError(f"Parameter '{p_name}' already exists in method '{m_name}'.")
             else:
-                raise ValueError(f"parameters '{p_name}'already exist")
+                raise ValueError(f"Method '{m_name}' not found in class '{class_name}'.")
 
-        else:
-            raise ValueError(f"Method '{m_name}' does not exist")
 
     @ErrorHandler.handle_error
-    def delete_parameters(self, m_name, p_name):
-        if m_name in self.method.methods.keys():
-            if p_name in self.method.methods[m_name]:
-                self.method.methods[m_name].remove(p_name)
-                print(f"parameters '{p_name}' deleted successfully.")
-            else:
-                raise ValueError(f"parameters '{p_name}'does not exist")
+    def delete_parameters(self,class_name, m_name, p_name):
+        if class_name not in self.method_class.diagram_class.classes:
+            remove = False
+            raise ValueError(f"Class '{class_name}' does not exist")
+        for method_dict in self.method_class.diagram_class.classes[class_name]['Methods']:
+            if m_name in method_dict:
+                if p_name in method_dict[m_name]['Parameters']:
+                    method_dict[m_name]['Parameters'].remove(p_name)
+                    print(f"parameters '{p_name}' removed successfully.")
 
-        else:
-            raise ValueError(f"Method '{m_name}' does not exist")
+                else:
+                    raise ValueError(f"parameters '{p_name}'does not exist")
+
+            else:
+                raise ValueError(f"Method '{m_name}' does not exist")
 
     @ErrorHandler.handle_error
-    def rename_parameters(self, m_name, old_p_name, new_p_name):
-        if m_name in self.method.methods.keys():
-            if old_p_name in self.method.methods[m_name]:
-                self.method.methods[m_name].remove(old_p_name)
-                self.method.methods[m_name].append(new_p_name)
-                print(f"Parameters '{old_p_name}' has been renamed to '{new_p_name}.'")
+    def rename_parameters(self, class_name, m_name, old_p_name, new_p_name):
+        if class_name not in self.method_class.diagram_class.classes:
+            raise ValueError(f"Class '{class_name}' does not exist")
+        for method_dict in self.method_class.diagram_class.classes[class_name]['Methods']:
+            if m_name in method_dict:
+                if old_p_name in method_dict[m_name]['Parameters'] and new_p_name not in method_dict[m_name]['Parameters']:
+                    method_dict[m_name]['Parameters'].remove(old_p_name)
+                    method_dict[m_name]['Parameters'].append(new_p_name)
+                    print(f"Parameters '{old_p_name}' has been renamed to '{new_p_name}.'")
+                else:
+                    raise ValueError(f"Rename failed- parameter")
             else:
-                raise ValueError(f"Rename failed- parameter '{old_p_name}' doesn't exist.")
-        else:
-            raise ValueError(f"Rename failed- method '{m_name}' doesn't exist.")
+                raise ValueError(f"Rename failed- method '{m_name}' doesn't exist.")
 
 
+"""
 # Zhang testing:
+
 dia = Diagram()
 some_class = UMLClass(dia)
 some_class.add_class('Csci')
 
 method1 = Methods(some_class)
-method1.add_method('Csci', 'Software Development')
-method1.rename_method('Csci', 'Software Development', '420')
-Parameter1 = Parameters(method1)
-Parameter1.add_parameters('software Development', 'Exams')
+method1.add_method('Csci', 'Software')
 print(some_class.list_class())
-help(Methods)
+# Danish: Parameters Testing
+method1.parameters.add_parameters('Csci', 'Software', 'SQL')
+method1.parameters.add_parameters('Csci', 'Software', 'DL')
+method1.parameters.add_parameters('Csci', 'Software', 'DL')
+print(some_class.list_class())
+method1.parameters.delete_parameters('Csci', 'Software', 'YYL')
+# method1.parameters.delete_parameters('Csci', 'Software', 'SQL')
+print(some_class.list_class())
+
+method1.parameters.rename_parameters('Csci', 'Software', 'SQL','DL')
+
+print(some_class.list_class())
+"""
