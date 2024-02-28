@@ -183,20 +183,7 @@ class Parameters:
 
 """
 # Zhang testing:
-dia = Diagram()
-some_class = UMLClass(dia)
-some_class.add_class('Csci')
 
-method1 = Methods(some_class)
-method1.add_method('Csci', 'Software Development')
-# method1.rename_method('Csci', 'Software Development', '420')
-# method1.delete_method('Csci', '420')
-Parameter1 = Parameters(method1)
-Parameter1.add_parameters('Software Development', 'Exams')
-
-print(some_class.list_class())
-# help(Methods)
-"""
 dia = Diagram()
 some_class = UMLClass(dia)
 some_class.add_class('Csci')
@@ -217,3 +204,4 @@ print(some_class.list_class())
 method1.parameters.rename_parameters('Csci', 'Software', 'SQL', 'DL')
 
 print(some_class.list_class())
+"""
