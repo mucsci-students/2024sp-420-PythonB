@@ -149,11 +149,9 @@ class Parameters:
             else:
                 raise ValueError(f"Method '{m_name}' not found in class '{class_name}'.")
 
-
     @ErrorHandler.handle_error
-    def delete_parameters(self,class_name, m_name, p_name):
+    def delete_parameters(self, class_name, m_name, p_name):
         if class_name not in self.method_class.diagram_class.classes:
-            remove = False
             raise ValueError(f"Class '{class_name}' does not exist")
         for method_dict in self.method_class.diagram_class.classes[class_name]['Methods']:
             if m_name in method_dict:
@@ -185,15 +183,29 @@ class Parameters:
 
 """
 # Zhang testing:
+dia = Diagram()
+some_class = UMLClass(dia)
+some_class.add_class('Csci')
 
+method1 = Methods(some_class)
+method1.add_method('Csci', 'Software Development')
+# method1.rename_method('Csci', 'Software Development', '420')
+# method1.delete_method('Csci', '420')
+Parameter1 = Parameters(method1)
+Parameter1.add_parameters('Software Development', 'Exams')
+
+print(some_class.list_class())
+# help(Methods)
+"""
 dia = Diagram()
 some_class = UMLClass(dia)
 some_class.add_class('Csci')
 
 method1 = Methods(some_class)
 method1.add_method('Csci', 'Software')
+
 print(some_class.list_class())
-# Danish: Parameters Testing
+# Adding parameters to the method
 method1.parameters.add_parameters('Csci', 'Software', 'SQL')
 method1.parameters.add_parameters('Csci', 'Software', 'DL')
 method1.parameters.add_parameters('Csci', 'Software', 'DL')
@@ -202,7 +214,6 @@ method1.parameters.delete_parameters('Csci', 'Software', 'YYL')
 # method1.parameters.delete_parameters('Csci', 'Software', 'SQL')
 print(some_class.list_class())
 
-method1.parameters.rename_parameters('Csci', 'Software', 'SQL','DL')
+method1.parameters.rename_parameters('Csci', 'Software', 'SQL', 'DL')
 
 print(some_class.list_class())
-"""
