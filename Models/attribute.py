@@ -83,14 +83,16 @@ class Methods:
         if class_name not in self.diagram_class.classes.keys():
             raise ValueError(f"Class '{class_name}' does not exist.")
 
+        remove = False
         methods = self.diagram_class.classes[class_name]['Methods']
         for method in methods:
             if method_name in method:
                 methods.remove(method)
                 print(f"Method '{method_name}' removed from class '{class_name}' successfully.")
+                remove = True
                 break
-
-        raise ValueError(f"Method '{method_name}' not found in class '{class_name}'.")
+        if not remove:
+            raise ValueError(f"Method '{method_name}' not found in class '{class_name}'.")
 
     @ErrorHandler.handle_error
     def rename_method(self, class_name, old_name, new_name):
@@ -117,21 +119,23 @@ class Methods:
         if class_name not in self.diagram_class.classes.keys():
             raise ValueError(f"Class '{class_name}' does not exist.")
 
+        renamed = False
         methods = self.diagram_class.classes[class_name]['Methods']
         for method in methods:
             if old_name in method:
                 method[new_name] = method.pop(old_name)
                 print(f"Method '{old_name}' in class '{class_name}' renamed to '{new_name}' successfully.")
+                renamed = True
                 break
-
-        raise ValueError(f"Method '{old_name}' not found in class '{class_name}'.")
+        if not renamed:
+            raise ValueError(f"Method '{old_name}' not found in class '{class_name}'.")
 
 
 class Parameters:
     def __init__(self, method):
         self.method = method
 
-'''
+
 # Zhang testing:
 dia = Diagram()
 some_class = UMLClass(dia)
@@ -144,4 +148,3 @@ method1.delete_method('Csci', '420')
 
 print(some_class.list_class())
 help(Methods)
-'''
