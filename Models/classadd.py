@@ -1,8 +1,9 @@
 # Primary: Danish
 # secondary : Zhang
-# updated_version Feb 10,2024
+# updated_version Feb 25, 2024
 from Models.diagram import Diagram
 from Models.relationship import UMLRelationship
+from Models.errorHandler import ErrorHandler
 
 
 class UMLClass:
@@ -14,9 +15,10 @@ class UMLClass:
         # create object from diagram class
         self.diagram = diagram
         self.classes = self.diagram.classes
-        self.relationships = UMLRelationship(self.classes)
+        self.relationships = UMLRelationship(self)
     # Danish: I'm writing this function to add a class name
 
+    @ErrorHandler.handle_error
     def add_class(self, name):
         # Danish: If the class name doesn't exist it will print the "class name added successfully"
         """if name in self.classes:
@@ -34,36 +36,40 @@ class UMLClass:
         """
         if self.diagram.name_checker(name):
             if name in self.classes:
-                raise TypeError("Class already exists.")
+                raise ValueError("Class already exists.")
             elif name not in self.classes:
-                self.classes[name] = []
+                self.classes[name] = {'Fields': [], 'Methods': []}
                 print(f"Class '{name}' added successfully.")
 
     # Danish: I'm writing this function to delete a class name
 
+    @ErrorHandler.handle_error
     def delete_class(self, name):
         # Danish: if class is exist then it'll delete and display "class name deleted successfully
         if name in self.classes:
             del self.classes[name]
+            # Zhang: make a function call to the relationship class
+            self.relationships.removed_class(name)
             print(f"Class '{name}' deleted successfully.")
             # return name
         # Danish: if class is not exist then it'll  display "class name not exist
         elif name not in self.classes:
-            raise TypeError(f"Unable to delete! Class '{name}' does not exist.")
+            raise ValueError(f"Unable to delete! Class '{name}' does not exist.")
             # print(f"{name} not exist, so we can not delete the class")
             # return name
 
     # Danish: I'm writing this function to rename a class
+    @ErrorHandler.handle_error
     def rename_class(self, name, newname):
         # Danish: If the class do not exist, it will display "Class name does not exist."
         if name not in self.classes:
-            raise TypeError(f"Unable to rename! Class '{name}' does not exist.")
+            raise ValueError(f"Unable to rename! Class '{name}' does not exist.")
             # return None
         # Danish: If the newName already exists, or it's a reserved word, then it will display an error.
         elif not self.diagram.name_checker(newname) or newname in self.classes:
-            raise TypeError(f"Unable to rename to '{newname}'.")
+            raise ValueError(f"Unable to rename to '{newname}'.")
             # return None
-
+        self.relationships.renamed_class(name, newname)
         self.classes[newname] = self.classes.pop(name)
         print(f"Class '{name}' renamed to '{newname}' successfully.")
         # return newname
@@ -71,34 +77,26 @@ class UMLClass:
     # print all the classes using list
     def list_classes(self):
         return list(self.classes.keys())
-    
+
     def list_class(self):
         return self.classes
 
 
-# Zhang: testing
+
 '''
-umlclass = UMLClass()
-umlrelation = UMLRelationship(umlclass)
-
-umlclass.add_class('CS')
-umlclass.add_class('BIO')
-umlrelation.add_relationship('CS','BIO','Aggregation')
-
-umlclass.add_class('Apple')
-umlclass.add_class('Banana')
-umlrelation.add_relationship('Apple','Banana','Aggregation')
-print("===============================")
-umlclass.rename_class('CS','CSCI')
-umlrelation.renamed_class('CS','CSCI')
-
-umlclass.delete_class('Banana')
-umlrelation.removed_class('Banana')
-
-
-print(umlrelation.list_relationships())
-print(umlclass.list_class())
-
+Zhang: testing
+dia = Diagram()
+some_class = UMLClass(dia)
+some_class.add_class('Csci')
+some_class.add_class('MU')
+some_relationship = some_class.relationships
+some_class.relationships.add_relationship(src='Csci', des='MU', type_rel='Composition')
+some_class.rename_class('Csci', 'CS')
+print(some_class.relationships.list_relationships())
+some_class.delete_class('CS')
+print(some_relationship.list_relationships())
+#some_relationship.delete_relationship('CS', 'MU')
+#print(some_relationship.list_relationships())
 '''
 # for my testing
 '''umlclass.add_class('Cla ss')
