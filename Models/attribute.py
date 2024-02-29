@@ -4,44 +4,43 @@ from Models.errorHandler import ErrorHandler
 
 
 class Fields:
-    """
-        Initializes a Field instance.
-
-        Parameters:
-            diagram_class: A UMLClass instance.
-
-        Precondition:
-            'diagram_class' should be a class that exists in the UML Diagram.
-
-        Postcondition:
-            Initializes a field in the given class.
-
-        Returns:
-            None
-    """
     def __init__(self, diagram_class):
+        """
+                Initializes a Field instance.
+
+                Parameters:
+                    diagram_class: A UMLClass instance.
+
+                Precondition:
+                    'diagram_class' should be a class that exists in the UML Diagram.
+
+                Postcondition:
+                    Initializes a field in the given class.
+
+                Returns:
+                    None
+        """
         self.diagram_class = diagram_class
 
-
-    """
-        Adds a new field to a class.
-
-        Parameters:
-            class_name: The name of the class to add the field to.
-            field_name: The name of the field to add.
-
-        Precondition:
-            class_name should be the name of a class that exists in the UML Diagram.
-            field_name should be a valid name for a field in Python.
-            There should be no field already called field_name in the class class_name.
-
-        Postcondition:
-            If successful: Adds a new field with the given name to the given class.
-
-        Returns:
-            None
-    """
     def add_field(self, class_name, field_name):
+        """
+                Adds a new field to a class.
+
+                Parameters:
+                    class_name: The name of the class to add the field to.
+                    field_name: The name of the field to add.
+
+                Precondition:
+                    class_name should be the name of a class that exists in the UML Diagram.
+                    field_name should be a valid name for a field in Python.
+                    There should be no field already called field_name in the class class_name.
+
+                Postcondition:
+                    If successful: Adds a new field with the given name to the given class.
+
+                Returns:
+                    None
+        """
         # Katie Dowlin: Check if the class you want to add the field to exists.
         if class_name in self.diagram_class.diagram.classes.keys():
             # Katie Dowlin: Check if the field name is already used.
@@ -54,25 +53,24 @@ class Fields:
         else:
             raise ValueError(f"Add failed- class '{class_name}' doesn't exist.")
 
-
-    """
-        Deletes a field from a class.
-
-        Parameters:
-            class_name: The name of the class to delete the field from.
-            field_name: The name of the field to delete.
-
-        Precondition:
-            class_name should be the name of a class that exists in the UML Diagram.
-            field_name should be the name of a field that exists in the class class_name.
-
-        Postcondition:
-            If successful: Renames the field old_name in the class class_name to new_name.
-
-        Returns:
-            None
-    """
     def delete_field(self, class_name, field_name):
+        """
+                Deletes a field from a class.
+
+                Parameters:
+                    class_name: The name of the class to delete the field from.
+                    field_name: The name of the field to delete.
+
+                Precondition:
+                    class_name should be the name of a class that exists in the UML Diagram.
+                    field_name should be the name of a field that exists in the class class_name.
+
+                Postcondition:
+                    If successful: Renames the field old_name in the class class_name to new_name.
+
+                Returns:
+                    None
+        """
         # Katie Dowlin: Check if class exists.
         if class_name in self.diagram_class.diagram.classes.keys():
             # Katie Dowlin: Check if a field with that name exists in that class.
@@ -86,28 +84,27 @@ class Fields:
         else:
             raise ValueError(f"Delete failed- class '{class_name}' doesn't exist.")
 
-
-    """
-        Renames a field in a class.
-
-        Parameters:
-            class_name: The name of the class to delete the field from.
-            old_name: The name of the field to rename.
-            new_name: The name the field should be renamed to.
-
-           Precondition:
-               class_name should be the name of a class that exists in the UML Diagram.
-               old_name should be the name of a field that exists in the class class_name.
-               new_name should be a valid name for a field in Python.
-               There should be no field already called new_name in the class class_name.
-
-           Postcondition:
-               If successful: Deletes the field field_name from the class class_name.
-
-           Returns:
-               None
-       """
     def rename_field(self, class_name, old_name, new_name):
+        """
+                Renames a field in a class.
+
+                Parameters:
+                    class_name: The name of the class to delete the field from.
+                    old_name: The name of the field to rename.
+                    new_name: The name the field should be renamed to.
+
+                   Precondition:
+                       class_name should be the name of a class that exists in the UML Diagram.
+                       old_name should be the name of a field that exists in the class class_name.
+                       new_name should be a valid name for a field in Python.
+                       There should be no field already called new_name in the class class_name.
+
+                   Postcondition:
+                       If successful: Deletes the field field_name from the class class_name.
+
+                   Returns:
+                       None
+        """
         # Katie Dowlin: Check if class exists.
         if class_name in self.diagram_class.diagram.classes.keys():
             # Katie Dowlin: Check if old name is an attribute in that class.
@@ -121,6 +118,7 @@ class Fields:
         # Katie Dowlin: If the class doesn't exist.
         else:
             raise ValueError(f"Rename failed- class '{class_name}' doesn't exist.")
+
 
 dia = Diagram()
 some_class = UMLClass(dia)
@@ -294,7 +292,8 @@ class Parameters:
             raise ValueError(f"Class '{class_name}' does not exist")
         for method_dict in self.method_class.diagram_class.classes[class_name]['Methods']:
             if m_name in method_dict:
-                if old_p_name in method_dict[m_name]['Parameters'] and new_p_name not in method_dict[m_name]['Parameters']:
+                if old_p_name in method_dict[m_name]['Parameters'] and new_p_name not in method_dict[m_name][
+                    'Parameters']:
                     method_dict[m_name]['Parameters'].remove(old_p_name)
                     method_dict[m_name]['Parameters'].append(new_p_name)
                     print(f"Parameters '{old_p_name}' has been renamed to '{new_p_name}.'")
