@@ -1,5 +1,6 @@
 from Models.diagram import Diagram
 from Models.classadd import UMLClass
+from Models.errorHandler import ErrorHandler
 
 
 class Fields:
