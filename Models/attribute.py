@@ -1,6 +1,6 @@
-from diagram import Diagram
-from classadd import UMLClass
-from errorHandler import ErrorHandler
+from Models.diagram import Diagram
+from Models.classadd import UMLClass
+from Models.errorHandler import ErrorHandler
 
 
 class Fields:
@@ -179,29 +179,3 @@ class Parameters:
                     raise ValueError(f"Rename failed- parameter")
             else:
                 raise ValueError(f"Rename failed- method '{m_name}' doesn't exist.")
-
-
-"""
-# Zhang testing:
-
-dia = Diagram()
-some_class = UMLClass(dia)
-some_class.add_class('Csci')
-
-method1 = Methods(some_class)
-method1.add_method('Csci', 'Software')
-
-print(some_class.list_class())
-# Adding parameters to the method
-method1.parameters.add_parameters('Csci', 'Software', 'SQL')
-method1.parameters.add_parameters('Csci', 'Software', 'DL')
-method1.parameters.add_parameters('Csci', 'Software', 'DL')
-print(some_class.list_class())
-method1.parameters.delete_parameters('Csci', 'Software', 'YYL')
-# method1.parameters.delete_parameters('Csci', 'Software', 'SQL')
-print(some_class.list_class())
-
-method1.parameters.rename_parameters('Csci', 'Software', 'SQL', 'DL')
-
-print(some_class.list_class())
-"""

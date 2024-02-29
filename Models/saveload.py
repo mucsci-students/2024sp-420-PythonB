@@ -6,8 +6,6 @@ class SaveLoad:
 
     def save(self, data, file_name):
 
-        # Patrick : Once we have the ability to convert the Diagram to a JSON text format,
-        # Patrick : this test data will be removed.
         save_folder = 'save_folder'
 
         if not os.path.exists(save_folder):
