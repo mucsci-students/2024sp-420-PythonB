@@ -32,6 +32,7 @@ class Fields:
         Precondition:
             class_name should be the name of a class that exists in the UML Diagram.
             field_name should be a valid name for a field in Python.
+            There should be no field already called field_name in the class class_name.
 
         Postcondition:
             If successful: Adds a new field with the given name to the given class.
@@ -52,6 +53,7 @@ class Fields:
         else:
             raise ValueError(f"Add failed- class '{class_name}' doesn't exist.")
 
+
     """
         Deletes a field from a class.
 
@@ -64,7 +66,7 @@ class Fields:
             field_name should be the name of a field that exists in the class class_name.
 
         Postcondition:
-            If successful: Deletes the field field_name from the class class_name.
+            If successful: Renames the field old_name in the class class_name to new_name.
 
         Returns:
             None
@@ -83,6 +85,27 @@ class Fields:
         else:
             raise ValueError(f"Delete failed- class '{class_name}' doesn't exist.")
 
+
+    """
+        Renames a field in a class.
+
+        Parameters:
+            class_name: The name of the class to delete the field from.
+            old_name: The name of the field to rename.
+            new_name: The name the field should be renamed to.
+
+           Precondition:
+               class_name should be the name of a class that exists in the UML Diagram.
+               old_name should be the name of a field that exists in the class class_name.
+               new_name should be a valid name for a field in Python.
+               There should be no field already called new_name in the class class_name.
+
+           Postcondition:
+               If successful: Deletes the field field_name from the class class_name.
+
+           Returns:
+               None
+       """
     def rename_field(self, class_name, old_name, new_name):
         # Katie Dowlin: Check if class exists.
         if class_name in self.diagram_class.diagram.classes.keys():
