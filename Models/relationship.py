@@ -30,7 +30,6 @@ class UMLRelationship:
         self.relationships = []
         self.relationship_types = ["Aggregation", "Composition", "Generalization", "Inheritance"]
 
-    @ErrorHandler.handle_error
     def add_relationship(self, src, des, type_rel):
         """
         Adds a new relationship if it's valid and doesn't already exist.
@@ -80,7 +79,6 @@ class UMLRelationship:
                 self.relationships.append([src, des, type_rel])
                 print("Relationship added.")
 
-    @ErrorHandler.handle_error
     def delete_relationship(self, src, des):
         """
         Deletes an existing relationship between the specified source and destination classes.
@@ -179,7 +177,6 @@ class UMLRelationship:
         if renamed:
             print("Relationship renamed.")
 
-    @ErrorHandler.handle_error
     def update_types(self, src, des, new_type):
         """
         Changes the type of existing relationship.
