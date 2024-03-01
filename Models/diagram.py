@@ -1,6 +1,8 @@
 # Primary: Jill Daggs, Katie Dowlin
 # Secondary: Danish Zubari, Patrick McCullough
 # Last updated by Jill on February 9, 2024, at 5:35 PM.
+import keyword
+
 class Diagram:
     # used_attribute_names = list()
     def __init__(self):
@@ -43,10 +45,11 @@ class Diagram:
                 "delete relationship <src_class> <des_class>                Deletes the relationship between <src_class> <des_class>\n"
                 "list relationships                                         Lists all relationships\n"
                 "list relationships <class_name>                             Lists all relationships to <class_name>\n")
-                
 
-
-
+    # Katie Dowlin: Method to check if a name of a class, field, method, or parameter is valid.
+    # Returns True if the name is valid, returns False if the name is invalid.
+    # Katie Dowlin: Method should be called before adding a new class, field, method, or parameter
+    # or renaming a class, field, method, or parameter.
     def name_checker(self, name):
         if not isinstance(name, str):
             print("Invalid name.")
@@ -54,13 +57,8 @@ class Diagram:
         if len(name) == 0:
             print("Error! Empty name.")
             return False
-        reserved_keywords = ["and", "as", "assert", "break", "continue", "class", "def", "del", "else", "finally",
-                             "elif",
-                             "except", "for", "from", "global", "if", "in", "is", "lambda", "import", "nonlocal",
-                             "not",
-                             "or", "pass", "print", "raise", "return", "try", "while", "with", "yield"]
         # Katie Dowlin: If the name the user entered is a reserved keyword in Python, then the name is invalid.
-        if name in reserved_keywords:
+        if keyword.iskeyword(name):
             print("Invalid name! You cannot use a word that is a reserved word. ")
             return False
         # Katie Dowlin: If the name the user entered starts with a number, then the name is invalid.
@@ -83,8 +81,4 @@ class Diagram:
         # use that name for the attribute or class.
         else:
             return True
-    # Katie Dowlin: Method to check if a name of a class or attribute is valid. Returns True if the
-    # name is valid, returns False if the name is invalid.
-    # Katie Dowlin: Method should be called before adding a new class or attribute or renaming a class
-    # or attribute.
 
