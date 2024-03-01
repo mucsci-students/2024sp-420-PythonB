@@ -9,8 +9,8 @@ def test_add_field():
     test_class = UMLClass(test_diagram)
     test_field = Fields(test_class)
     test_class.add_class('Students')
-    with not pytest.raises(ValueError):
-        test_field.add_field('Students', 'Katie')
+    test_field.add_field('Students', 'Katie')
+    assert 'Katie' in test_class.classes['Students']['Fields']
 
 
 def test_add_duplicate_field():
@@ -37,8 +37,9 @@ def test_rename_field():
     test_field = Fields(test_class)
     test_class.add_class('Students')
     test_field.add_field('Students', 'Katie')
-    with not pytest.raises(ValueError):
-        test_field.rename_field('Students', 'Katie', 'Jillian')
+    test_field.rename_field('Students', 'Katie', 'Jillian')
+    assert 'Katie' not in test_class.classes['Students']['Fields']
+    assert 'Jillian' in test_class.classes['Students']['Fields']
 
 
 def test_rename_field_not_exist():
@@ -75,8 +76,8 @@ def test_delete_field():
     test_field = Fields(test_class)
     test_class.add_class('Classes')
     test_field.add_field('Classes', 'CSCI420')
-    with not pytest.raises(ValueError):
-        test_field.delete_field('Classes', 'CSCI420')
+    test_field.delete_field('Classes', 'CSCI420')
+    assert 'CSCI420' not in test_class.classes['Classes']['Fields']
 
 
 def test_delete_field_not_exist():

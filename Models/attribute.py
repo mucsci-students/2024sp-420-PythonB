@@ -49,7 +49,7 @@ class Fields:
                 print(f"Field '{field_name}' added successfully.")
             else:
                 raise ValueError(f"Add failed- field '{field_name}' already exists.")
-        # Katie Dowlin: If the class you want to add the attribute to doesn't exist.
+        # Katie Dowlin: If the class you want to add the field to doesn't exist.
         else:
             raise ValueError(f"Add failed- class '{class_name}' doesn't exist.")
 
@@ -77,7 +77,7 @@ class Fields:
             if field_name in self.diagram_class.classes[class_name]["Fields"]:
                 self.diagram_class.classes[class_name]["Fields"].remove(field_name)
                 print(f"Field '{field_name}' deleted successfully.")
-            # Katie Dowlin: If there is no attribute with that name in that class.
+            # Katie Dowlin: If there is no field with that name in that class.
             else:
                 raise ValueError(f"Delete failed- field '{field_name}' doesn't exist.")
         # Katie Dowlin: If the class doesn't exist.
@@ -107,26 +107,21 @@ class Fields:
         """
         # Katie Dowlin: Check if class exists.
         if class_name in self.diagram_class.classes.keys():
-            # Katie Dowlin: Check if old name is an attribute in that class.
+            # Katie Dowlin: Check if old name is a field in that class.
             if old_name in self.diagram_class.classes[class_name]["Fields"]:
-                self.diagram_class.classes[class_name]["Fields"].remove(old_name)
-                self.diagram_class.classes[class_name]["Fields"].append(new_name)
-                print(f"Field '{old_name}' has been renamed to '{new_name}'.")
+                # Katie Dowlin: Check if new name is a field in that class.
+                if new_name in self.diagram_class.classes[class_name]["Fields"]:
+                    raise ValueError(f"Rename failed- field '{new_name}' already exists.")
+                else:
+                    self.diagram_class.classes[class_name]["Fields"].remove(old_name)
+                    self.diagram_class.classes[class_name]["Fields"].append(new_name)
+                    print(f"Field '{old_name}' has been renamed to '{new_name}'.")
             # Katie Dowlin: If the old name does not exist.
             else:
                 raise ValueError(f"Rename failed- field '{old_name}' doesn't exist.")
         # Katie Dowlin: If the class doesn't exist.
         else:
             raise ValueError(f"Rename failed- class '{class_name}' doesn't exist.")
-
-
-dia = Diagram()
-some_class = UMLClass(dia)
-some_class.add_class("Students")
-fields = Fields(some_class)
-fields.add_field("Students", "Field")
-fields.rename_field("Students", "Field", "Field2")
-some_class.list_class()
 
 
 class Methods:
