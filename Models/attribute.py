@@ -106,9 +106,9 @@ class Fields:
                        None
         """
         # Katie Dowlin: Check if class exists.
-        if class_name in self.diagram_class.diagram.classes.keys():
+        if class_name in self.diagram_class.classes.keys():
             # Katie Dowlin: Check if old name is a field in that class.
-            if old_name in self.diagram_class.diagram.classes[class_name]["Fields"]:
+            if old_name in self.diagram_class.classes[class_name]["Fields"]:
                 # Katie Dowlin: Check if new name is a field in that class.
                 if new_name in self.diagram_class.classes[class_name]["Fields"]:
                     raise ValueError(f"Rename failed- field '{new_name}' already exists.")
