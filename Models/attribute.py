@@ -1,6 +1,5 @@
-from diagram import Diagram
-from classadd import UMLClass
-from errorHandler import ErrorHandler
+from Models.diagram import Diagram
+from Models.classadd import UMLClass
 
 
 class Fields:
