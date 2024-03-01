@@ -6,7 +6,6 @@ from Models.classadd import UMLClass
 import pytest
 
 
-
 @pytest.fixture
 def setup():
     diagram = Diagram()
