@@ -113,8 +113,8 @@ class Fields:
                 if new_name in self.diagram_class.classes[class_name]["Fields"]:
                     raise ValueError(f"Rename failed- field '{new_name}' already exists.")
                 else:
-                    self.diagram_class.diagram.classes[class_name]["Fields"].remove(old_name)
-                    self.diagram_class.diagram.classes[class_name]["Fields"].append(new_name)
+                    self.diagram_class.classes[class_name]["Fields"].remove(old_name)
+                    self.diagram_class.classes[class_name]["Fields"].append(new_name)
                     print(f"Field '{old_name}' has been renamed to '{new_name}'.")
             # Katie Dowlin: If the old name does not exist.
             else:
