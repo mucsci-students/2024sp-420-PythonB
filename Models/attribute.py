@@ -42,7 +42,7 @@ class Fields:
                     None
         """
         # Katie Dowlin: Check if the class you want to add the field to exists.
-        if class_name in self.diagram_class.diagram.classes.keys():
+        if class_name in self.diagram_class.classes.keys():
             # Katie Dowlin: Check if the field name is already used.
             if field_name not in self.diagram_class.classes[class_name]["Fields"]:
                 self.diagram_class.classes[class_name]["Fields"].append(field_name)
@@ -145,7 +145,6 @@ class Methods:
         self.diagram_class = diagram_class
         self.parameters = Parameters(self)
 
-    @ErrorHandler.handle_error
     def add_method(self, class_name, method_name):
         """
         Adds a new method to a specified class if the method does not already exist.
@@ -176,7 +175,6 @@ class Methods:
         methods.append({method_name: {'Parameters': []}})
         print(f"Method '{method_name}' added to class '{class_name}' successfully.")
 
-    @ErrorHandler.handle_error
     def delete_method(self, class_name, method_name):
         """
         Deletes an existing method from a specified class.
@@ -210,7 +208,6 @@ class Methods:
         if not remove:
             raise ValueError(f"Method '{method_name}' not found in class '{class_name}'.")
 
-    @ErrorHandler.handle_error
     def rename_method(self, class_name, old_name, new_name):
         """
         Renames an existing method in a specified class.
@@ -251,7 +248,6 @@ class Parameters:
     def __init__(self, method_class):
         self.method_class = method_class
 
-    @ErrorHandler.handle_error
     def add_parameters(self, class_name, m_name, p_name):
         if class_name not in self.method_class.diagram_class.classes:
             raise ValueError(f"Class '{class_name}' does not exist")
@@ -265,7 +261,6 @@ class Parameters:
             else:
                 raise ValueError(f"Method '{m_name}' not found in class '{class_name}'.")
 
-    @ErrorHandler.handle_error
     def delete_parameters(self, class_name, m_name, p_name):
         if class_name not in self.method_class.diagram_class.classes:
             raise ValueError(f"Class '{class_name}' does not exist")
@@ -281,7 +276,6 @@ class Parameters:
             else:
                 raise ValueError(f"Method '{m_name}' does not exist")
 
-    @ErrorHandler.handle_error
     def rename_parameters(self, class_name, m_name, old_p_name, new_p_name):
         if class_name not in self.method_class.diagram_class.classes:
             raise ValueError(f"Class '{class_name}' does not exist")
