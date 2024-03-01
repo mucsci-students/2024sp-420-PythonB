@@ -17,8 +17,6 @@ class UMLClass:
         self.classes = self.diagram.classes
         self.relationships = UMLRelationship(self)
     # Danish: I'm writing this function to add a class name
-
-    @ErrorHandler.handle_error
     def add_class(self, name):
         # Danish: If the class name doesn't exist it will print the "class name added successfully"
         """if name in self.classes:
@@ -42,8 +40,6 @@ class UMLClass:
                 print(f"Class '{name}' added successfully.")
 
     # Danish: I'm writing this function to delete a class name
-
-    @ErrorHandler.handle_error
     def delete_class(self, name):
         # Danish: if class is exist then it'll delete and display "class name deleted successfully
         if name in self.classes:
@@ -58,8 +54,7 @@ class UMLClass:
             # print(f"{name} not exist, so we can not delete the class")
             # return name
 
-    # Danish: I'm writing this function to rename a class
-    @ErrorHandler.handle_error
+    # Danish: I'm writing this function to rename a clas
     def rename_class(self, name, newname):
         # Danish: If the class do not exist, it will display "Class name does not exist."
         if name not in self.classes:
