@@ -1,5 +1,5 @@
-from Models.diagram import Diagram
-from Models.classadd import UMLClass
+from diagram import Diagram
+from classadd import UMLClass
 
 
 class Fields:
