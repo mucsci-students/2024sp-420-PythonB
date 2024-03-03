@@ -244,117 +244,148 @@ class Methods:
 
 
 class Parameters:
-        def __init__(self, method_class):
-            """
-                   Initializes the Methods instance .
+    def __init__(self, method_class):
+        """
+               Initializes the Methods instance .
 
-                   Parameters:
-                       'method_class' (Method): An instance containing the Method's class structure.
+               Parameters:
+                   'method_class' (Method): An instance containing the Method's class structure.
 
-                   Precondition:
-                       'method_class' should be an initialized instance of Method class.
+               Precondition:
+                   'method_class' should be an initialized instance of Method class.
 
-                   Postcondition:
-                       Initializes 'method_class' with the given Method class instance.
+               Postcondition:
+                   Initializes 'method_class' with the given Method class instance.
 
-                   Returns:
-                       None
-                   """
-            self.method_class = method_class
+               Returns:
+                   None
+               """
+        self.method_class = method_class
 
-        def add_parameters(self, class_name, m_name, p_name):
-            """
-                    Add a new Parameter to a specified method if the parameter does not already exist.
+    def add_parameters(self, class_name, m_name, p_name):
+        """
+                Add a new Parameter to a specified method if the parameter does not already exist.
 
-                    Parameters:
-                        class_name (str): The name of the class to which the method will check that exist or not.
-                        m_name (str): The name of the method to be added.
+                Parameters:
+                    class_name (str): The name of the class to which the method will check that exist or not.
+                    m_name (str): The name of the method to be added.
 
-                    Precondition:
-                        'class_name' must exist within 'diagram_class.classes'.
-                        'method_name' must not already exist within the methods of 'class_name'.
+                Precondition:
+                    'class_name' must exist within 'diagram_class.classes'.
+                    'method_name' must not already exist within the methods of 'class_name'.
 
-                    Postcondition:
-                        Adds a new Parameter to the specified Method.
+                Postcondition:
+                    Adds a new Parameter to the specified Method.
 
-                    Returns:
-                        None
-                    """
-            if class_name not in self.method_class.diagram_class.classes:
-                raise ValueError(f"Class '{class_name}' does not exist")
-            for method_dict in self.method_class.diagram_class.classes[class_name]['Methods']:
-                if m_name in method_dict:
-                    if p_name not in method_dict[m_name]['Parameters']:
-                        method_dict[m_name]['Parameters'].append(p_name)
-                        print(f"Parameter '{p_name}' added to method '{m_name}' in class '{class_name}'.")
-                    else:
-                        raise ValueError(f"Parameter '{p_name}' already exists in method '{m_name}'.")
+                Returns:
+                    None
+                """
+        if class_name not in self.method_class.diagram_class.classes:
+            raise ValueError(f"Class '{class_name}' does not exist")
+        for method_dict in self.method_class.diagram_class.classes[class_name]['Methods']:
+            if m_name in method_dict:
+                if p_name not in method_dict[m_name]['Parameters']:
+                    method_dict[m_name]['Parameters'].append(p_name)
+                    print(f"Parameter '{p_name}' added to method '{m_name}' in class '{class_name}'.")
                 else:
-                    raise ValueError(f"Method '{m_name}' not found in class '{class_name}'.")
+                    raise ValueError(f"Parameter '{p_name}' already exists in method '{m_name}'.")
+            else:
+                raise ValueError(f"Method '{m_name}' not found in class '{class_name}'.")
 
-        def delete_parameters(self, class_name, m_name, p_name):
-            """
-                   Deletes an existing Parameter from a specified method.
+    def delete_parameters(self, class_name, m_name, p_name):
+        """
+               Deletes an existing Parameter from a specified method.
 
-                   Parameters:
-                       class_name (str): The name of the class.
-                       m_name (str): The name of the method containing the Parameter to be removed.
+               Parameters:
+                   class_name (str): The name of the class.
+                   m_name (str): The name of the method containing the Parameter to be removed.
 
-                   Precondition:
-                       'class_name' must exist within 'diagram_class.classes'.
-                       'm_name' must exist within the methods of 'class_name'.
-                       p_name (str): must exist within method.
+               Precondition:
+                   'class_name' must exist within 'diagram_class.classes'.
+                   'm_name' must exist within the methods of 'class_name'.
+                   p_name (str): must exist within method.
 
-                   Postcondition:
-                       Removes the specified Parameter from the method.
+               Postcondition:
+                   Removes the specified Parameter from the method.
 
-                   Returns:
-                       None
-                   """
-            if class_name not in self.method_class.diagram_class.classes:
-                raise ValueError(f"Class '{class_name}' does not exist")
-            for method_dict in self.method_class.diagram_class.classes[class_name]['Methods']:
-                if m_name in method_dict:
-                    if p_name in method_dict[m_name]['Parameters']:
-                        method_dict[m_name]['Parameters'].remove(p_name)
-                        print(f"parameters '{p_name}' removed successfully.")
-
-                    else:
-                        raise ValueError(f"parameters '{p_name}'does not exist")
+               Returns:
+                   None
+               """
+        if class_name not in self.method_class.diagram_class.classes:
+            raise ValueError(f"Class '{class_name}' does not exist")
+        for method_dict in self.method_class.diagram_class.classes[class_name]['Methods']:
+            if m_name in method_dict:
+                if p_name in method_dict[m_name]['Parameters']:
+                    method_dict[m_name]['Parameters'].remove(p_name)
+                    print(f"parameters '{p_name}' removed successfully.")
 
                 else:
-                    raise ValueError(f"Method '{m_name}' does not exist")
+                    raise ValueError(f"parameters '{p_name}'does not exist")
 
-        def rename_parameters(self, class_name, m_name, old_p_name, new_p_name):
-            """
-                    Renames an existing Parameter in a specified method.
+            else:
+                raise ValueError(f"Method '{m_name}' does not exist")
 
-                    Parameters:
-                        class_name (str): The name of the class containing the method.
-                        m_name (str): The name of the method containing the Parameter to be renamed.
-                        old_p_name (str): The current name of the Parameter to be renamed.
-                        new_p_name (str): The new name for the Parameter.
+    def delete_all_parameters(self, class_name, m_name):
+        """
+               Deletes an existing Parameter from a specified method.
 
-                    Precondition:
-                        'class_name' must exist within 'diagram_class.classes'.
-                        'old_p_name' must exist within the Parameters of 'm_class'.
-                        'new_p_name' must not already exist within the Parameters of 'm_name'.
+               Parameters:
+                   class_name (str): The name of the class.
+                   m_name (str): The name of the method containing the Parameter to be removed.
 
-                    Postcondition:
-                        Renames the specified Parameter to 'new_p_name'.
+               Precondition:
+                   'class_name' must exist within 'diagram_class.classes'.
+                   'm_name' must exist within the methods of 'class_name'.
+                   p_name (str): must exist within method.
 
-                    Returns:
-                        None
-                    """
-            if class_name not in self.method_class.diagram_class.classes:
-                raise ValueError(f"Class '{class_name}' does not exist")
-            for method_dict in self.method_class.diagram_class.classes[class_name]['Methods']:
-                if m_name in method_dict:
-                    if old_p_name in method_dict[m_name]['Parameters'] and new_p_name not in method_dict[m_name]['Parameters']:
-                        method_dict[m_name]['Parameters'].remove(old_p_name)
-                        method_dict[m_name]['Parameters'].append(new_p_name)
-                        print(f"Parameters '{old_p_name}' has been renamed to '{new_p_name}.'")
-                    else:
-                        raise ValueError(f"Rename failed- parameter")
+               Postcondition:
+                   Removes all the Parameters from the method.
+
+               Returns:
+                   None
+               """
+        if class_name not in self.method_class.diagram_class.classes:
+            raise ValueError(f"Class '{class_name}' does not exist")
+        for method_dict in self.method_class.diagram_class.classes[class_name]['Methods']:
+            if m_name in method_dict:
+                method_dict[m_name]['Parameters'].clear()
+                print(f"All parameters removed successfully.")
+
+
+            else:
+                raise ValueError(f"Method '{m_name}' does not exist")
+
+    def change_parameters(self, class_name, m_name, old_p_name, new_p_name):
+        """
+                Renames an existing Parameter in a specified method.
+
+                Parameters:
+                    class_name (str): The name of the class containing the method.
+                    m_name (str): The name of the method containing the Parameter to be renamed.
+                    old_p_name (str): The current name of the Parameter to be renamed.
+                    new_p_name (str): The new name for the Parameter.
+
+                Precondition:
+                    'class_name' must exist within 'diagram_class.classes'.
+                    'old_p_name' must exist within the Parameters of 'm_class'.
+                    'new_p_name' must not already exist within the Parameters of 'm_name'.
+
+                Postcondition:
+                    Renames the specified Parameter to 'new_p_name'.
+
+                Returns:
+                    None
+                """
+        if class_name not in self.method_class.diagram_class.classes:
+            raise ValueError(f"Class '{class_name}' does not exist")
+        for method_dict in self.method_class.diagram_class.classes[class_name]['Methods']:
+            if m_name in method_dict:
+                if old_p_name in method_dict[m_name]['Parameters'] and new_p_name not in method_dict[m_name][
+                    'Parameters']:
+                    method_dict[m_name]['Parameters'].remove(old_p_name)
+                    method_dict[m_name]['Parameters'].append(new_p_name)
+                    print(f"Parameters '{old_p_name}' has been changed to '{new_p_name}.'")
                 else:
-                    raise ValueError(f"Rename failed- method '{m_name}' doesn't exist.")
+                    raise ValueError(f"Changed failed- parameter")
+            else:
+                raise ValueError(f"Changed failed- method '{m_name}' doesn't exist.")
