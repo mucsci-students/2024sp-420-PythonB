@@ -25,17 +25,19 @@ class SaveLoad:
 
             if overwrite == 'y':
                 print(f"Overwriting '{file_name}'...")
+        else:
+            print(f"Saving '{file_name}'")
 
-                with open(file_path, 'w') as f:
-                    json.dump(data, f)
-                    # Patrick: test_data will be replaced with proper diagram data once Diagram is complete
+        with open(file_path, 'w') as f:
+            # Ensure json.dump() uses the indent parameter for nicely formatted JSON
+            json.dump(data, f, indent=2)
 
-            else:
-                print(f"Aborting save...")
+        if name_exists and overwrite != 'y':
+            print(f"Aborting save...")
         else:
             print(f"Saving '{file_name}'")
             with open(file_path, 'w') as f:
-                json.dump(data, f)
+                json.dump(data, f, indent=2)
                 # Patrick: test_data will be replaced with proper diagram data once Diagram is complete
 
     def load(self, file_name):
@@ -57,7 +59,7 @@ class SaveLoad:
                 return data
         else:
             # Patrick: If file does not exist, alert user
-            print("File does not exist!")
+            raise ValueError ("File does not exist!")
             return None
 
 

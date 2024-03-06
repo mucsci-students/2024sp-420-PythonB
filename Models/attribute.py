@@ -1,3 +1,4 @@
+from Models.errorHandler import ErrorHandler
 from Models.diagram import Diagram
 from Models.classadd import UMLClass
 
@@ -171,7 +172,7 @@ class Methods:
             if method_name in method:
                 raise ValueError(f"Method '{method_name}' already exists in class '{class_name}'.")
 
-        methods.append({method_name: {'Parameters': []}})
+        methods.update({method_name: {'Parameters': []}})
         print(f"Method '{method_name}' added to class '{class_name}' successfully.")
 
     def delete_method(self, class_name, method_name):
@@ -262,7 +263,7 @@ class Parameters:
                """
         self.method_class = method_class
 
-    def add_parameters(self, class_name, m_name, p_name):
+    def add_parameter(self, class_name, m_name, p_name):
         """
                 Add a new Parameter to a specified method if the parameter does not already exist.
 
@@ -282,17 +283,18 @@ class Parameters:
                 """
         if class_name not in self.method_class.diagram_class.classes:
             raise ValueError(f"Class '{class_name}' does not exist")
-        for method_dict in self.method_class.diagram_class.classes[class_name]['Methods']:
-            if m_name in method_dict:
-                if p_name not in method_dict[m_name]['Parameters']:
-                    method_dict[m_name]['Parameters'].append(p_name)
-                    print(f"Parameter '{p_name}' added to method '{m_name}' in class '{class_name}'.")
-                else:
-                    raise ValueError(f"Parameter '{p_name}' already exists in method '{m_name}'.")
+        methods = self.method_class.diagram_class.classes[class_name]['Methods']
+        if m_name in methods:
+            method = methods[m_name]
+            if p_name not in method['Parameters']:
+                method['Parameters'].append(p_name)
+                print(f"Parameter '{p_name}' added to method '{m_name}' in class '{class_name}'.")
             else:
-                raise ValueError(f"Method '{m_name}' not found in class '{class_name}'.")
+                raise ValueError(f"Parameter '{p_name}' already exists in method '{m_name}'.")
+        else:
+            raise ValueError(f"Method '{m_name}' not found in class '{class_name}'.")
 
-    def delete_parameters(self, class_name, m_name, p_name):
+    def delete_parameter(self, class_name, m_name, p_name):
         """
                Deletes an existing Parameter from a specified method.
 
@@ -317,15 +319,15 @@ class Parameters:
             if m_name in method_dict:
                 if p_name in method_dict[m_name]['Parameters']:
                     method_dict[m_name]['Parameters'].remove(p_name)
-                    print(f"parameters '{p_name}' removed successfully.")
+                    print(f"Parameter '{p_name}' removed successfully.")
 
                 else:
-                    raise ValueError(f"parameters '{p_name}'does not exist")
+                    raise ValueError(f"Parameter '{p_name}'does not exist")
 
             else:
                 raise ValueError(f"Method '{m_name}' does not exist")
 
-    def delete_all_parameters(self, class_name, m_name):
+    def delete_all_parameter(self, class_name, m_name):
         """
                Deletes an existing Parameter from a specified method.
 
@@ -355,7 +357,7 @@ class Parameters:
             else:
                 raise ValueError(f"Method '{m_name}' does not exist")
 
-    def change_parameters(self, class_name, m_name, old_p_name, new_p_name):
+    def rename_parameter(self, class_name, m_name, old_p_name, new_p_name):
         """
                 Renames an existing Parameter in a specified method.
 
@@ -384,7 +386,7 @@ class Parameters:
                     'Parameters']:
                     method_dict[m_name]['Parameters'].remove(old_p_name)
                     method_dict[m_name]['Parameters'].append(new_p_name)
-                    print(f"Parameters '{old_p_name}' has been changed to '{new_p_name}.'")
+                    print(f"Parameter '{old_p_name}' has been changed to '{new_p_name}.'")
                 else:
                     raise ValueError(f"Changed failed- parameter")
             else:

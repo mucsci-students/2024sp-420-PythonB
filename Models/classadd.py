@@ -8,38 +8,25 @@ from Models.errorHandler import ErrorHandler
 
 class UMLClass:
     def __init__(self, diagram):
-        # Danish: create an empty dictionary
-        # self.classes = {}
-        # self.relationships = relationships
-
         # create object from diagram class
         self.diagram = diagram
         self.classes = self.diagram.classes
         self.relationships = UMLRelationship(self)
+        
     # Danish: I'm writing this function to add a class name
+    @ErrorHandler.handle_error
     def add_class(self, name):
         # Danish: If the class name doesn't exist it will print the "class name added successfully"
-        """if name in self.classes:
-            print(f"{name} already exist")
-            return name
-            # Danish: If the class name doesn't exist it will print the "class name added successfully"
-        if name not in self.classes:
-            if len(name) == 0:
-                print("invalid name")
-                return name
-            else:
-                self.classes[name] = {}
-                print(f"{name} added successfully")
-                return name
-        """
+
         if self.diagram.name_checker(name):
             if name in self.classes:
                 raise ValueError("Class already exists.")
             elif name not in self.classes:
-                self.classes[name] = {'Fields': [], 'Methods': []}
+                self.classes[name] = {'Fields': [], 'Methods': {}}
                 print(f"Class '{name}' added successfully.")
 
     # Danish: I'm writing this function to delete a class name
+    @ErrorHandler.handle_error
     def delete_class(self, name):
         # Danish: if class is exist then it'll delete and display "class name deleted successfully
         if name in self.classes:
@@ -54,7 +41,8 @@ class UMLClass:
             # print(f"{name} not exist, so we can not delete the class")
             # return name
 
-    # Danish: I'm writing this function to rename a clas
+    # Danish: I'm writing this function to rename a class
+    @ErrorHandler.handle_error
     def rename_class(self, name, newname):
         # Danish: If the class do not exist, it will display "Class name does not exist."
         if name not in self.classes:
