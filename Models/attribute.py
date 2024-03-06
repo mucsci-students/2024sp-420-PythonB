@@ -1,6 +1,4 @@
-from Models.errorHandler import ErrorHandler
 from Models.diagram import Diagram
-from Models.classadd import UMLClass
 
 
 class Fields:
@@ -143,7 +141,6 @@ class Methods:
                 None
         """
         self.diagram_class = diagram_class
-        self.parameters = Parameters(self)
 
     def add_method(self, class_name, method_name):
         """
@@ -164,12 +161,12 @@ class Methods:
                 None
         """
 
-        if class_name not in self.diagram_class.classes.keys():
+        if class_name not in self.diagram_class.classes:
             raise ValueError(f"Class '{class_name}' does not exist.")
 
         methods = self.diagram_class.classes[class_name]['Methods']
         for method in methods:
-            if method_name in method:
+            if method_name == method:
                 raise ValueError(f"Method '{method_name}' already exists in class '{class_name}'.")
 
         methods.update({method_name: {'Parameters': []}})
@@ -193,20 +190,16 @@ class Methods:
             Returns:
                 None
         """
-
-        if class_name not in self.diagram_class.classes.keys():
+        methods = self.diagram_class.classes[class_name]['Methods']
+        if class_name not in self.diagram_class.classes:
             raise ValueError(f"Class '{class_name}' does not exist.")
 
-        remove = False
-        methods = self.diagram_class.classes[class_name]['Methods']
-        for method in methods:
-            if method_name in method:
-                methods.remove(method)
-                print(f"Method '{method_name}' removed from class '{class_name}' successfully.")
-                remove = True
-                break
-        if not remove:
+        elif method_name not in methods:
             raise ValueError(f"Method '{method_name}' not found in class '{class_name}'.")
+
+        else:
+            del methods[method_name]
+            print(f"Method '{method_name}' removed from class '{class_name}' successfully.")
 
     def rename_method(self, class_name, old_name, new_name):
         """
@@ -228,20 +221,16 @@ class Methods:
             Returns:
                 None
         """
-
-        if class_name not in self.diagram_class.classes.keys():
+        methods = self.diagram_class.classes[class_name]['Methods']
+        if class_name not in self.diagram_class.classes:
             raise ValueError(f"Class '{class_name}' does not exist.")
 
-        renamed = False
-        methods = self.diagram_class.classes[class_name]['Methods']
-        for method in methods:
-            if old_name in method:
-                method[new_name] = method.pop(old_name)
-                print(f"Method '{old_name}' in class '{class_name}' renamed to '{new_name}' successfully.")
-                renamed = True
-                break
-        if not renamed:
+        elif old_name not in methods:
             raise ValueError(f"Method '{old_name}' not found in class '{class_name}'.")
+
+        else:
+            methods[new_name] = methods.pop(old_name)
+            print(f"Method '{old_name}' in class '{class_name}' renamed to '{new_name}' successfully.")
 
 
 class Parameters:
