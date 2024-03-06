@@ -228,6 +228,9 @@ class Methods:
         elif old_name not in methods:
             raise ValueError(f"Method '{old_name}' not found in class '{class_name}'.")
 
+        elif new_name in methods:
+            raise ValueError(f"Method '{new_name}' already exists in class '{class_name}'.")
+
         else:
             methods[new_name] = methods.pop(old_name)
             print(f"Method '{old_name}' in class '{class_name}' renamed to '{new_name}' successfully.")
