@@ -4,47 +4,9 @@
 import keyword
 
 class Diagram:
-    # used_attribute_names = list()
     def __init__(self):
         self.classes = {}
-        
-    #Jill: A list of surface level commands    
-    def command_help(self):
-        return ("\nCommands:\n"
-                "help                                                       Displays this menu\n"
-                "help class                                                 Displays commands related to classes\n"
-                "help attribute                                             Displays commands related to attributes\n"
-                "help relationship                                          Displays commands related to relationships\n"
-                "save <file_name>                                           Saves your UML diagram as a JSON file\n"
-                "load <file_name>                                           Loads a UML diagram from a JSON file\n"
-                "exit                                                       Exits the program\n")   
-          
-    #Jill: Commands for classes      
-    def class_help(self):
-        return ("\nClass Commands:\n"
-                "help class                                                 Displays this menu\n"
-                "add class <class_name>                                     Adds a class named <class_name>\n"
-                "delete class <class_name>                                  Deletes class named <class_name> and all of its attributes/relationships\n"
-                "rename class <current_name> <new_name>                     Renames class <current_name> to <new_name>\n"
-                "list class <class_name>                                    Lists all attributes/relationships pertaining to <class_name>\n"
-                "list classes                                               Lists all classes in current UML\n")
-    
-    #Jill: Commands for attributes
-    def attribute_help(self):
-        return ("\nAttribute Commands:\n"
-                "help attribute                                             Displays this menu\n"
-                "add attribute <class_name> <attribute_name>                Adds attribute named <attribute_name>\n"               
-                "delete attribute <class_name> <attribute_name>             Deletes attribute named <attribute_name>\n"
-                "rename attribute <class_name> <current_name> <new_name>    Renames attribute <current_name> to <new_name>\n")
-        
-    #Jill: Commands for relationships
-    def relationship_help(self):
-        return ("\nRelationship Commands:\n"
-                "help relationships                                         Displays this menu\n"
-                "add relationship <src_class> <des_class> <relation_type>   Adds a relationship between <src_class> and <des_class> of <relation_type>: (Aggregation, Composition, Generalization, Inheritance)\n"
-                "delete relationship <src_class> <des_class>                Deletes the relationship between <src_class> <des_class>\n"
-                "list relationships                                         Lists all relationships\n"
-                "list relationships <class_name>                             Lists all relationships to <class_name>\n")
+
 
     # Katie Dowlin: Method to check if a name of a class, field, method, or parameter is valid.
     # Returns True if the name is valid, returns False if the name is invalid.
