@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import messagebox
-import Controllers.controller as controller
+
 
 class UMLDiagramEditor(tk.Tk):
     def __init__(self):
