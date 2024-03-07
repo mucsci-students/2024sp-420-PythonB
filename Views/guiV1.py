@@ -1,8 +1,7 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import messagebox
-
-import Controllers.guicontroller
+import Controllers.controller as controller
 
 class UMLDiagramEditor(tk.Tk):
     def __init__(self):
@@ -466,7 +465,25 @@ class UMLDiagramEditor(tk.Tk):
         Returns:
             None
         """
-        messagebox.showinfo("Action", "Help Classes")
+        help_window = tk.Toplevel(self)
+        help_window.title("Help - Class Commands")
+        help_window.geometry("400x300")
+
+        text = tk.Text(help_window, wrap="word")
+        text.insert("end", "help class                                                     Displays this menu\n"
+                           "add class <class_name>                                         Adds a class named <class_name>\n"
+                           "delete class <class_name>                                      Deletes class named <class_name> and all of its attributes/relationships\n"
+                           "rename class <current_name> <new_name>                         Renames class <current_name> to <new_name>\n"
+                           "list class <class_name>                                        Lists all attributes/relationships pertaining to <class_name>\n"
+                           "list classes                                                   Lists all classes in current UML\n")
+        text.config(state="disabled")  # Make it read-only
+        text.pack(expand=True, fill="both")
+
+        # Add a scrollbar
+        scrollbar = tk.Scrollbar(help_window, command=text.yview)
+        scrollbar.pack(side="right", fill="y")
+        text.config(yscrollcommand=scrollbar.set)
+
 
     def helpRelationships(self):
         """
