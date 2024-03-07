@@ -15,7 +15,7 @@ def setup():
 
 def test_add_method(setup):
     setup.add_method("CSCI", "Take_420")
-    assert "Take_420" in setup.diagram_class.classes["CSCI"]["Methods"][0]
+    assert "Take_420" in setup.diagram_class.classes["CSCI"]["Methods"]
 
     with pytest.raises(ValueError):
         setup.add_method("InvalidClass", "Take_420")
@@ -39,7 +39,7 @@ def test_delete_method(setup):
 def test_rename_method(setup):
     setup.add_method("CSCI", "Take_420")
     setup.rename_method("CSCI", "Take_420", "Take_421")
-    assert "Take_421" in setup.diagram_class.classes["CSCI"]["Methods"][0]
+    assert "Take_421" in setup.diagram_class.classes["CSCI"]["Methods"]
 
 
 def test_rename_nonexistent_method(setup):
