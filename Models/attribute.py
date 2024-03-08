@@ -307,19 +307,19 @@ class Parameters:
                """
         if class_name not in self.method_class.diagram_class.classes:
             raise ValueError(f"Class '{class_name}' does not exist")
-        for method_dict in self.method_class.diagram_class.classes[class_name]['Methods']:
-            if m_name in method_dict:
-                if p_name in method_dict[m_name]['Parameters']:
-                    method_dict[m_name]['Parameters'].remove(p_name)
-                    print(f"Parameter '{p_name}' removed successfully.")
-
-                else:
-                    raise ValueError(f"Parameter '{p_name}'does not exist")
-
+        methods = self.method_class.diagram_class.classes[class_name]['Methods']
+        if m_name in methods:
+            method = methods[m_name]
+            if p_name in method['Parameters']:
+                method['Parameters'].remove(p_name)
+                print(f"Parameter '{p_name}' removed successfully.")
             else:
-                raise ValueError(f"Method '{m_name}' does not exist")
+                raise ValueError(f"Parameter '{p_name}'does not exist")
 
-    def delete_all_parameter(self, class_name, m_name):
+        else:
+            raise ValueError(f"Method '{m_name}' does not exist")
+
+    def delete_all_parameters(self, class_name, m_name):
         """
                Deletes an existing Parameter from a specified method.
 
@@ -372,14 +372,14 @@ class Parameters:
                 """
         if class_name not in self.method_class.diagram_class.classes:
             raise ValueError(f"Class '{class_name}' does not exist")
-        for method_dict in self.method_class.diagram_class.classes[class_name]['Methods']:
-            if m_name in method_dict:
-                if old_p_name in method_dict[m_name]['Parameters'] and new_p_name not in method_dict[m_name][
-                    'Parameters']:
-                    method_dict[m_name]['Parameters'].remove(old_p_name)
-                    method_dict[m_name]['Parameters'].append(new_p_name)
-                    print(f"Parameter '{old_p_name}' has been changed to '{new_p_name}.'")
-                else:
-                    raise ValueError(f"Changed failed- parameter")
+        methods = self.method_class.diagram_class.classes[class_name]['Methods']
+        if m_name in methods:
+            method = methods[m_name]
+            if old_p_name in method['Parameters'] and new_p_name not in method['Parameters']:
+                method['Parameters'].remove(old_p_name)
+                method['Parameters'].append(new_p_name)
+                print(f"Parameter '{old_p_name}' has been changed to '{new_p_name}.'")
             else:
-                raise ValueError(f"Changed failed- method '{m_name}' doesn't exist.")
+                raise ValueError(f"Changed failed- parameter")
+        else:
+            raise ValueError(f"Changed failed- method '{m_name}' doesn't exist.")

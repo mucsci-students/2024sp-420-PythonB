@@ -430,9 +430,4 @@ fields = Models.attribute.Fields(classes)
 methods = Models.attribute.Methods(classes)
 parameters = Models.attribute.Parameters(methods)
 saveload = SaveLoad()
-diagram_cli = UMLController(diagram, classes, fields, methods, parameters, saveload)
-# Create an instance of the CLI class
-cli_view = CLI(diagram_cli)
-# Call the prompt method to start interacting with the CLI
-cli_view.prompt()
 

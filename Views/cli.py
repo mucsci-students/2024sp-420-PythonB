@@ -84,7 +84,7 @@ class CLI:
                 self.commands[command](tokens)
             #Exits
             elif command == "exit":
-                    return False  # Signal to exit CL
+                return False  # Signal to exit CL
             else:
                 print("Command not recognized.")
         return True  # Continue running CLI
