@@ -5,7 +5,25 @@ import json
 class SaveLoad:
 
     def save(self, data, file_name):
+        """
+            Save data to a .json file in a folder 'saves_folder'
+            :param data : The data to be saved into the .json file.
+            :param file_name: The name of the file the user would like to save.
 
+            Preconditions:
+            'file_name' must be a valid file name.
+
+            Post-Conditions:
+            If saves_folder did not exist, it is created.
+            a .json file named 'file_name' will be within saves_folder
+
+            Raises:
+            File Overwrite
+            Invalid file name
+
+
+
+        """
         save_folder = 'save_folder'
 
         if not os.path.exists(save_folder):
@@ -41,7 +59,21 @@ class SaveLoad:
                 # Patrick: test_data will be replaced with proper diagram data once Diagram is complete
 
     def load(self, file_name):
+        """
+        Load a .json file from 'saves_folder' to be viewed/edited.
 
+        :param file_name: The name of the file to be loaded.
+        :return data: the loaded data from the desired .json file.
+
+        Pre-conditions:
+        'file_name' must be a valid file name
+        'file_name' must exist in saves_folder
+
+        Post-Conditions:
+        'file_name' is loaded and the current data is printed.
+        data is returned.
+
+        """
         save_folder = 'save_folder'
         # Patrick : Makes method aware of the save folder
         
