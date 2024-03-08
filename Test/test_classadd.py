@@ -75,7 +75,7 @@ def test_list_class():
     test_class = UMLClass(test_diagram)
     test_field = Fields(test_diagram)
     test_method = Methods(test_diagram)
-    test_parameter = test_method.parameters
+    test_parameter = Parameters(test_method)
     test_class.add_class('CSCI420')
     test_field.add_field('CSCI420', 'Katie')
     test_field.add_field('CSCI420', 'Danish')
@@ -83,14 +83,14 @@ def test_list_class():
     test_field.add_field('CSCI420', 'Patrick')
     test_field.add_field('CSCI420', 'Zhang')
     test_method.add_method('CSCI420', 'Project')
-    test_parameter.add_parameters('CSCI420', 'Project', 'due_date')
+    test_parameter.add_parameter('CSCI420', 'Project', 'due_date')
     expected = {'CSCI420': {'Fields': ['Katie', 'Danish', 'Jillian', 'Patrick', 'Zhang'],
-                            'Methods': [{'Project': {'Parameters': ['due_date']}}]}}
+                            'Methods': {'Project': {'Parameters': ['due_date']}}}}
     assert test_class.list_class() == expected
 
 def test_list_class_no_methods_fields_params():
     test_diagram = Diagram()
     test_class = UMLClass(test_diagram)
     test_class.add_class('CSCI420')
-    expected = {'CSCI420': {'Fields': [], 'Methods': []}}
+    expected = {'CSCI420': {'Fields': [], 'Methods': {}}}
     assert test_class.list_class() == expected

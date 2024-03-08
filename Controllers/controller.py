@@ -129,7 +129,7 @@ class UMLController:
                     self.methods.add_method(class_name, attribute_name)
             else:
                 raise ValueError("Missing arguments.")
-        elif type == "parameter":
+        elif type == "parameter" or type == "param":
             if len(tokens) >= 5:
                 class_name = tokens[2] 
                 method_name = tokens[3] 
@@ -189,7 +189,7 @@ class UMLController:
                     self.methods.rename_method(classname,methodname,newname)
             else:
                 raise ValueError ("Missing arguments.")
-        elif type == "parameter":
+        elif type == "parameter" or type == "param":
             if len(tokens) >= 6:
                     methodname = tokens[3]
                     parametername = tokens[4]
@@ -240,7 +240,7 @@ class UMLController:
                 self.methods.delete_method(classname, method_name)
             else:
                 raise ValueError ("Missing arguments.")
-        elif type == "parameter":
+        elif type == "parameter" or type == "param":
             if len(tokens) >= 5:
                 method_name = tokens[3]
                 parameter_name = tokens[4]
@@ -430,9 +430,5 @@ fields = Models.attribute.Fields(classes)
 methods = Models.attribute.Methods(classes)
 parameters = Models.attribute.Parameters(methods)
 saveload = SaveLoad()
-diagram_cli = UMLController(diagram, classes, fields, methods, parameters, saveload)
-# Create an instance of the CLI class
-cli_view = CLI(diagram_cli)
-# Call the prompt method to start interacting with the CLI
-cli_view.prompt()
+
 
