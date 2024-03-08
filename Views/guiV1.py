@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import messagebox
-
+import webbrowser
 
 class UMLDiagramEditor(tk.Tk):
     def __init__(self):
@@ -74,9 +74,8 @@ class UMLDiagramEditor(tk.Tk):
 
         # Help
         help_menu = Menu(menu_bar, tearoff=0)
-        help_menu.add_command(label="Classes", command=self.helpClasses)
-        help_menu.add_command(label="Relationships", command=self.helpRelationships)
-        help_menu.add_command(label="Attributes", command=self.helpAttributes)
+        help_menu.add_command(label="Read Me", command=self.help)
+        
         menu_bar.add_cascade(label="Help", menu=help_menu)
 
     def create_canvas(self):
@@ -189,9 +188,7 @@ class UMLDiagramEditor(tk.Tk):
 
     def help_options_menu(self):
         help_menu = Menu(self, tearoff=0)
-        help_menu.add_command(label="Classes", command=self.helpClasses)
-        help_menu.add_command(label="Relationships", command=self.helpRelationships)
-        help_menu.add_command(label="Attributes", command=self.helpAttributes)
+        help_menu.add_command(label="Read Me", command=self.help)
 
         try:
             # Display the menu at the current mouse position
@@ -455,7 +452,8 @@ class UMLDiagramEditor(tk.Tk):
         """
         messagebox.showinfo("Action", "Rename Param")
 
-    def helpClasses(self):
+    def help(self):
+        
         """
         Displays the classes help page
 
@@ -465,49 +463,9 @@ class UMLDiagramEditor(tk.Tk):
         Returns:
             None
         """
-        help_window = tk.Toplevel(self)
-        help_window.title("Help - Class Commands")
-        help_window.geometry("400x300")
-
-        text = tk.Text(help_window, wrap="word")
-        text.insert("end", "help class                                                     Displays this menu\n"
-                           "add class <class_name>                                         Adds a class named <class_name>\n"
-                           "delete class <class_name>                                      Deletes class named <class_name> and all of its attributes/relationships\n"
-                           "rename class <current_name> <new_name>                         Renames class <current_name> to <new_name>\n"
-                           "list class <class_name>                                        Lists all attributes/relationships pertaining to <class_name>\n"
-                           "list classes                                                   Lists all classes in current UML\n")
-        text.config(state="disabled")  # Make it read-only
-        text.pack(expand=True, fill="both")
-
-        # Add a scrollbar
-        scrollbar = tk.Scrollbar(help_window, command=text.yview)
-        scrollbar.pack(side="right", fill="y")
-        text.config(yscrollcommand=scrollbar.set)
-
-
-    def helpRelationships(self):
-        """
-        Displays the relationships help page
-
-        Parameters:
-            self -- The parent
-
-        Returns:
-            None
-        """
-        messagebox.showinfo("Action", "Help Relationships")
-
-    def helpAttributes(self):
-        """
-        Displays the attributes help page
-
-        Parameters:
-            self -- The parent
-
-        Returns:
-            None
-        """
-        messagebox.showinfo("Action", "Help Attributes")
+        url = "https://github.com/mucsci-students/2024sp-420-LambdaLegion?tab=readme-ov-file#readme"
+        new = 1
+        webbrowser.open(url, new = new )
 
 
 if __name__ == "__main__":
