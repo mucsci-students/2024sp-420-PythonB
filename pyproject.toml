@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "uml"
+version = "0.1.1"
+description = "A basic UML editor"
+authors = ["Zhang Chen", "Jillian Daggs", "Katie Downlin", "Patrick McCullough", "Danish Zubari"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2"
+
+[tool.poetry.scripts]
+build = "python uml.py"
+
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

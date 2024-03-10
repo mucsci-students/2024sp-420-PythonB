@@ -14,7 +14,6 @@ class UMLClass:
         self.relationships = UMLRelationship(self)
         
     # Danish: I'm writing this function to add a class name
-    @ErrorHandler.handle_error
     def add_class(self, name):
         # Danish: If the class name doesn't exist it will print the "class name added successfully"
 
@@ -26,7 +25,6 @@ class UMLClass:
                 print(f"Class '{name}' added successfully.")
 
     # Danish: I'm writing this function to delete a class name
-    @ErrorHandler.handle_error
     def delete_class(self, name):
         # Danish: if class is exist then it'll delete and display "class name deleted successfully
         if name in self.classes:
@@ -42,7 +40,6 @@ class UMLClass:
             # return name
 
     # Danish: I'm writing this function to rename a class
-    @ErrorHandler.handle_error
     def rename_class(self, name, newname):
         # Danish: If the class do not exist, it will display "Class name does not exist."
         if name not in self.classes:
@@ -64,65 +61,3 @@ class UMLClass:
     def list_class(self):
         return self.classes
 
-
-
-'''
-Zhang: testing
-dia = Diagram()
-some_class = UMLClass(dia)
-some_class.add_class('Csci')
-some_class.add_class('MU')
-some_relationship = some_class.relationships
-some_class.relationships.add_relationship(src='Csci', des='MU', type_rel='Composition')
-some_class.rename_class('Csci', 'CS')
-print(some_class.relationships.list_relationships())
-some_class.delete_class('CS')
-print(some_relationship.list_relationships())
-#some_relationship.delete_relationship('CS', 'MU')
-#print(some_relationship.list_relationships())
-'''
-# for my testing
-'''umlclass.add_class('Cla ss')
-umlclass.add_class('Student')
-umlclass.add_class('1hello')
-umlclass.add_class('Dani')
-umlclass.add_class('MID')
-umlclass.add_class('')
-umlclass.add_class('assert')
-umlclass.add_class('class')
-umlclass.add_class('Grades')
-umlclass.add_class('Student')
-umlclass.add_class('Student')
-
-umlclass.add_class(' ')
-print("all classes after adding ", umlclass.list_class())
-umlclass.rename_class('MID', 'Student1')
-umlclass.rename_class('Grades', 'Student1')
-umlclass.rename_class('Grades', 'class')
-umlclass.rename_class('Dani', 'Student1')
-print("all classes after rename ", umlclass.list_class())
-umlclass.delete_class('Student')
-print("all classes after delete ", umlclass.list_class())'''
-
-# umlclass = UMLClass()
-# umlclass.add_class('Cla ss')
-# umlclass.add_class('Student')
-# umlclass.add_class('1hello')
-# umlclass.add_class('Dani')
-# umlclass.add_class('MID')
-# umlclass.add_class('')
-# umlclass.add_class('assert')
-# umlclass.add_class('class')
-# umlclass.add_class('Grades')
-# umlclass.add_class('Student')
-# umlclass.add_class('Student')
-
-# umlclass.add_class(' ')
-# print("all classes after adding ", umlclass.list_class())
-# umlclass.rename_class('MID', 'Student1')
-# umlclass.rename_class('Grades', 'Student1')
-# umlclass.rename_class('Grades', 'class')
-# umlclass.rename_class('Dani', 'Student1')
-# print("all classes after rename ", umlclass.list_class())
-# umlclass.delete_class('Student')
-# print("all classes after delete ", umlclass.list_class())
