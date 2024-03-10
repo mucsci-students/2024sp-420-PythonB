@@ -1,17 +1,28 @@
+import json
 import tkinter as tk
+import webbrowser
+from Models.classadd import UMLClass as Classes
+from Models.attribute import Fields as Fields
+from Models.attribute import Methods as Methods
+from Models.attribute import Parameters as Parameters
 from tkinter import *
 from tkinter import messagebox
-import webbrowser
+from tkinter import simpledialog
+
+from Models.diagram import Diagram
+
 
 class UMLDiagramEditor(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("LambdaLegion UML Program (GUI Edition) V1.0")
         self.geometry("800x600")
-
         self.create_menu()
         self.create_sidebar()
-        self.create_canvas()
+        self.create_diagram_space()
+        self.class_boxes = []
+
+        
 
     def create_menu(self):
         """
@@ -46,8 +57,6 @@ class UMLDiagramEditor(tk.Tk):
         classes_menu.add_command(label="New", command=self.add_class)
         classes_menu.add_command(label="Delete", command=self.delete_class)
         classes_menu.add_command(label="Rename", command=self.rename_class)
-        classes_menu.add_command(label="List Attributes", command=self.list_attributes)
-        classes_menu.add_command(label="List Classes", command=self.list_classes)
         menu_bar.add_cascade(label="Classes", menu=classes_menu)
 
         # Relationships
@@ -59,17 +68,17 @@ class UMLDiagramEditor(tk.Tk):
 
         # Attributes
         attributes_menu = Menu(menu_bar, tearoff=0)
-        attributes_menu.add_command(label="New Field", command=self.add_field)
-        attributes_menu.add_command(label="Delete Field", command=self.delete_field)
-        attributes_menu.add_command(label="Rename Field", command=self.rename_field)
+        attributes_menu.add_command(label="New Field", command=self.add_attribute_to_class)
+        attributes_menu.add_command(label="Delete Field", command=self.add_attribute)
+        attributes_menu.add_command(label="Rename Field", command=self.add_attribute)
         attributes_menu.add_separator()
         attributes_menu.add_command(label="New Parameter", command=self.new_param)
         attributes_menu.add_command(label="Delete Parameter", command=self.delete_param)
         attributes_menu.add_command(label="Rename Parameter", command=self.rename_param)
         attributes_menu.add_separator()
-        attributes_menu.add_command(label="New Method", command=self.new_method)
-        attributes_menu.add_command(label="Delete Method", command=self.delete_method)
-        attributes_menu.add_command(label="Rename Method", command=self.rename_method)
+        attributes_menu.add_command(label="New Method", command=self.add_attribute_to_class)
+        attributes_menu.add_command(label="Delete Method", command=self.add_attribute)
+        attributes_menu.add_command(label="Rename Method", command=self.add_attribute)
         menu_bar.add_cascade(label="Attributes", menu=attributes_menu)
 
         # Help
@@ -79,11 +88,12 @@ class UMLDiagramEditor(tk.Tk):
         menu_bar.add_cascade(label="Help", menu=help_menu)
 
     def create_canvas(self):
-        self.canvas = tk.Canvas(self, width=600, height=400)
+        self.canvas = tk.Canvas(self, bg='LightBlue', width=600, height=400)
         self.canvas.pack(expand=True, fill=tk.BOTH)
 
+
     def create_sidebar(self):
-        self.sidebar = tk.Frame(self, width=200, bg='gray')
+        self.sidebar = tk.Frame(self, width=200, bg='lightgray')
         self.sidebar.pack(side=tk.LEFT, fill=tk.Y)
 
         self.btn_class = tk.Button(self.sidebar, text="File", command=self.file_options_menu)
@@ -105,9 +115,12 @@ class UMLDiagramEditor(tk.Tk):
         self.btn_class = tk.Button(self.sidebar, text="Help", command=self.help_options_menu)
         self.btn_class.pack(fill=tk.X, pady=(5, 5))
 
-
-
-        # Add more buttons for other categories as needed
+    def create_diagram_space(self):
+        
+        self.diagram_canvas = tk.Canvas(self, bg='white')
+        
+        # Pack the canvas to fill the remaining space after the sidebar
+        self.diagram_canvas.pack(side=tk.LEFT, padx=10, pady=10, fill=tk.BOTH, expand=True)
 
     def class_options_menu(self):
         # Create a menu that will appear at the current mouse position
@@ -116,7 +129,6 @@ class UMLDiagramEditor(tk.Tk):
         menu.add_command(label="Delete Class", command=self.delete_class)
         menu.add_command(label="Rename Class", command=self.rename_class)
         menu.add_separator()
-        menu.add_command(label="List Classes", command=self.list_classes)
 
         try:
             # Display the menu at the current mouse position
@@ -127,17 +139,17 @@ class UMLDiagramEditor(tk.Tk):
 
     def attributes_options_menu(self):
         menu = Menu(self, tearoff=0)
-        menu.add_command(label="New Field", command=self.add_field)
-        menu.add_command(label="Delete Field", command=self.delete_field)
-        menu.add_command(label="Rename Field", command=self.rename_field)
+        menu.add_command(label="New Field", command=self.add_attribute_to_class)
+        menu.add_command(label="Delete Field", command=self.delete_attribute)
+        menu.add_command(label="Rename Field", command=self.rename_attribute)
         menu.add_separator()
         menu.add_command(label="New Parameter", command=self.new_param)
         menu.add_command(label="Delete Parameter", command=self.delete_param)
         menu.add_command(label="Rename Parameter", command=self.rename_param)
         menu.add_separator()
-        menu.add_command(label="New Method", command=self.new_method)
-        menu.add_command(label="Delete Method", command=self.delete_method)
-        menu.add_command(label="Rename Method", command=self.rename_method)
+        menu.add_command(label="New Method", command=self.add_attribute_to_class)
+        menu.add_command(label="Delete Method", command=self.delete_attribute)
+        menu.add_command(label="Rename Method", command=self.rename_attribute)
 
         try:
             # Display the menu at the current mouse position
@@ -151,7 +163,6 @@ class UMLDiagramEditor(tk.Tk):
         menu = Menu(self, tearoff=0)
         menu.add_command(label="Add", command=self.add_relationship)
         menu.add_command(label="Delete", command=self.delete_relationship)
-        menu.add_command(label="List", command=self.list_relationship)
 
         try:
             # Display the menu at the current mouse position
@@ -221,7 +232,6 @@ class UMLDiagramEditor(tk.Tk):
             theFile -- The opened file
 
         """
-        messagebox.showinfo("Action", "Open an existing file")
 
     def save_file(self):
         """
@@ -257,22 +267,92 @@ class UMLDiagramEditor(tk.Tk):
         Returns:
             successBool -- True if the add class was successful, False otherwise
         """
-        messagebox.showinfo("Action", "Add a new class")
+        class_name = simpledialog.askstring("Input", "Enter a Class Name:", parent=self)
+        if not class_name:
+            print("No name added!")
 
+        fields = []
+        methods = []
+        
+        next_x, next_y = self.get_next_position()
+        
+        self.class_boxes.append({'class_name': class_name, 'fields': fields, 'methods': methods, 'x': next_x, 'y': next_y})
+
+        self.create_class_box(self.diagram_canvas, class_name, fields, methods, next_x,next_y)
+
+        # Classes.add_class(class_name)
+
+    def get_next_position(self):
+        # For simplicity, let's just arrange them in a horizontal line for now
+        spacing = 10  # Spacing between class boxes
+        box_width = 150  # Assume a fixed width for now
+        x, y = 50, 50  # Starting position for the first class box
+
+        if self.class_boxes:
+            # Get the position of the last class box
+            last_box = self.class_boxes[-1]
+            x, y = last_box['x'], last_box['y']
+
+            # Move to the next position to the right
+            x += box_width + spacing
+
+        return x, y
+
+    def create_class_box(self, canvas, class_name, fields, methods, x, y):
+        box_width = 150
+        text_spacing = 20
+        box_height = text_spacing * (2 + len(fields) + len(methods))
+
+        canvas.create_rectangle(x, y, x + box_width, y + box_height, fill='lightgray', outline='black')
+
+        canvas.create_text(x+box_width / 2, y + text_spacing, text=class_name, font = ('TkDefaultFont', 10, 'bold'))
+
+        current_y = y + text_spacing * 2
+        for field in fields:
+            canvas.create_text(x+10,current_y, text=field, anchor="w")
+            current_y += text_spacing
+
+        for method in methods:
+            canvas.create_text(x+10, current_y, text=method, anchor="w")
+            current_y += text_spacing
+        
     def delete_class(self):
         """
-              Deletes a class
+        Deletes a class
 
-              Parameters:
-                  self -- The parent
-                  className -- The name of the class to be created
+        Parameters:
+            self -- The parent
+            className -- The name of the class to be created
 
-              Returns:
-                  successBool -- True if the Delete class was successful, False otherwise
-              """
-        messagebox.showinfo("Action", "Delete Class")
+        Returns:
+            successBool -- True if the Delete class was successful, False otherwise
+        """
+        class_name = simpledialog.askstring("Delete Class", "Enter a class to delete:", parent=self)
+        if class_name is None:
+            return
+
+        class_found = False
+        for i, class_box in enumerate(self.class_boxes):
+            if class_box['class_name'] == class_name:
+                del self.class_boxes[i]
+                class_found = True
+                break  # Correctly placed to break out of the loop when a class is found and deleted
+
+        self.redraw_canvas()  # Call redraw_canvas outside the loop to refresh the canvas once after any deletion
+
+        if not class_found:
+            messagebox.showinfo("Delete Class", "Class not found!")
+        messagebox.showinfo("Delete Class", f"'{class_name}' has been removed.")
+
+    def redraw_canvas(self):
+        self.diagram_canvas.delete("all")  # Clears the canvas
+
+    # Re-draw each class box
+        for class_box in self.class_boxes:
+            self.create_class_box(self.diagram_canvas, class_box['class_name'], class_box.get('fields', []), class_box.get('methods', []), class_box['x'], class_box['y'])
 
     def rename_class(self):
+
         """
               Renames a class
 
@@ -284,21 +364,27 @@ class UMLDiagramEditor(tk.Tk):
               Returns:
                   successBool -- True if the rename class was successful, False otherwise
               """
-        messagebox.showinfo("Action", "Rename Class")
+        old_name = simpledialog.askstring("Rename Class", "Enter the name of the class you would like to rename:", parent = self)
+        if not old_name:
+            messagebox.showinfo("Rename Class","No class name provided.")
+            return
+        
+        new_name = simpledialog.askstring("Rename Class", "Enter a new class name:")
+        if not new_name:
+            messagebox.showinfo("Rename Class", "No new class name provided.")
+            return
+        
+        for class_box in self.class_boxes:
+            if class_box['class_name'] == old_name:
+                class_box['class_name'] = new_name
+                self.redraw_canvas()
+                messagebox.showinfo("Rename Class",f"'{old_name}' has been renamed to '{new_name}'.")
+                return
+            
+        messagebox.showinfo("Rename Class", f"'{old_name}' not found." )
 
-    def list_classes(self):
-        """
-        Lists all classes
 
-        Parameters:
-            self -- The parent
 
-        Returns:
-            none
-        """
-        messagebox.showinfo("Action", "List Classes")
-
-    def list_attributes(self):
         """
         List all attributes of a given class
 
@@ -310,20 +396,36 @@ class UMLDiagramEditor(tk.Tk):
         """
         messagebox.showinfo("Action", "List Attributes")
 
-    def add_relationship(self):
-        """
-        Adds a relationship between two classes
+    def add_attribute_to_class(self):
+        class_name = simpledialog.askstring("Add Attribute", "Enter the name of the class to add an attribute to:", parent=self)
+        if not class_name:
+            return
 
-        Parameters:
-            self -- The parent
+        AddAttributeDialog(self, title="Add Attribute", class_name=class_name)
 
-        Returns:
-            None
-        """
-        # Placeholder for adding a relationship
-        messagebox.showinfo("Action", "Add a new relationship")
+    def add_attribute(self, class_name, attribute_name, attribute_type):
+        if not attribute_name or not class_name or attribute_type not in ['field', 'method']:
+            messagebox.showinfo("Error", "Invalid input provided.")
+            return
+
+    # Find the class box with the given class_name
+        for class_box in self.class_boxes:
+            if class_box['class_name'] == class_name:
+            # Depending on the attribute_type, append the attribute_name to the appropriate list
+                if attribute_type == 'field':
+                    class_box.setdefault('fields', []).append(attribute_name)
+                else:  # attribute_type == 'method'
+                    class_box.setdefault('methods', []).append(attribute_name)
+
+                self.redraw_canvas()  # Refresh the canvas to show the updated class box
+                messagebox.showinfo("Success", f"{attribute_type.capitalize()} '{attribute_name}' added to class '{class_name}'.")
+                return
+
+    # If the class wasn't found, show an error message
+        messagebox.showinfo("Error", f"Class '{class_name}' not found.")
 
     def delete_relationship(self):
+
         """
         Deletes a relationship between two classes
         Parameters:
@@ -333,6 +435,17 @@ class UMLDiagramEditor(tk.Tk):
              None
         """
         messagebox.showinfo("Action", "Delete Relationship")
+
+    def add_relationship(self):
+        """
+        Lists all relationships of a class
+        Parameters:
+            self -- the parent
+
+        Returns:
+            none
+        """
+        messagebox.showinfo("Action", "List Relationships")
 
     def list_relationship(self):
         """
@@ -345,30 +458,46 @@ class UMLDiagramEditor(tk.Tk):
         """
         messagebox.showinfo("Action", "List Relationships")
 
-    def add_field(self):
-        """
-        Adds a field to a class
-        Parameters:
-            self -- The parent
+    def delete_attribute(self):
+    # Ask for the class name from which to delete an attribute
+        class_name = simpledialog.askstring("Delete Attribute", "Enter the name of the class:", parent=self)
+        if not class_name:
+            messagebox.showinfo("Delete Attribute", "Class name not provided.")
+            return
 
-        Returns:
-            successBool -- True if the add field was successful, False otherwise
-        """
-        messagebox.showinfo("Action", "Add Field")
+        # Ask for the attribute type (field or method)
+        attribute_type = simpledialog.askstring("Delete Attribute", "Enter the attribute type (field/method):", parent=self).lower()
+        if attribute_type not in ['field', 'method']:
+            messagebox.showinfo("Delete Attribute", "Invalid attribute type. Please enter 'field' or 'method'.")
+            return
 
-    def delete_field(self):
-        """
-        Deletes a field from a class
+        # Ask for the attribute name to delete
+        attribute_name = simpledialog.askstring("Delete Attribute", "Enter the name of the attribute to delete:", parent=self)
+        if not attribute_name:
+            messagebox.showinfo("Delete Attribute", "Attribute name not provided.")
+            return
 
-        Parameters:
-            self -- the parent
+        # Search for the class and attribute to delete
+        for class_box in self.class_boxes:
+            if class_box['class_name'] == class_name:
+                if attribute_type == 'field' and 'fields' in class_box:
+                    if attribute_name in class_box['fields']:
+                        class_box['fields'].remove(attribute_name)
+                        messagebox.showinfo("Delete Attribute", f"Field '{attribute_name}' deleted from class '{class_name}'.")
+                    else:
+                        messagebox.showinfo("Delete Attribute", f"Field '{attribute_name}' not found in class '{class_name}'.")
+                elif attribute_type == 'method' and 'methods' in class_box:
+                    if attribute_name in class_box['methods']:
+                        class_box['methods'].remove(attribute_name)
+                        messagebox.showinfo("Delete Attribute", f"Method '{attribute_name}' deleted from class '{class_name}'.")
+                    else:
+                        messagebox.showinfo("Delete Attribute", f"Method '{attribute_name}' not found in class '{class_name}'.")
+                self.redraw_canvas()
+                return
 
-        Returns:
-             None
-        """
-        messagebox.showinfo("Action", "Delete Field")
+        messagebox.showinfo("Delete Attribute", f"Class '{class_name}' not found.")
 
-    def rename_field(self):
+    def rename_attribute(self):
         """
         Renames a field in a class
 
@@ -416,42 +545,6 @@ class UMLDiagramEditor(tk.Tk):
         """
         messagebox.showinfo("Action", "Rename Param")
 
-    def new_method(self):
-        """
-        Adds a method to a class.
-
-        Parameters:
-            self -- The parent
-
-        Returns:
-            None
-        """
-        messagebox.showinfo("Action", "New Method")
-
-    def delete_method(self):
-        """
-        Deletes a method from a class
-
-        Parameters:
-            self -- The parent
-
-        Returns:
-            None
-        """
-        messagebox.showinfo("Action", "Delete Method")
-
-    def rename_method(self):
-        """
-        Renames a parameter from a class.
-
-        Parameters:
-            self -- The parent
-
-        Returns:
-            None
-        """
-        messagebox.showinfo("Action", "Rename Param")
-
     def help(self):
         
         """
@@ -467,7 +560,29 @@ class UMLDiagramEditor(tk.Tk):
         new = 1
         webbrowser.open(url, new = new )
 
+class AddAttributeDialog(simpledialog.Dialog):
 
+    def __init__(self, parent, title=None, class_name=""):
+        self.class_name = class_name
+        super().__init__(parent, title=title)
+
+    def body(self, master):
+        tk.Label(master, text="Attribute Name:").grid(row=0)
+        self.entry_attribute_name = tk.Entry(master)
+        self.entry_attribute_name.grid(row=0, column=1)
+
+        self.attribute_type = tk.StringVar(value="field")
+        tk.Radiobutton(master, text="Field", variable=self.attribute_type, value="field").grid(row=1, column=0)
+        tk.Radiobutton(master, text="Method", variable=self.attribute_type, value="method").grid(row=1, column=1)
+
+        return self.entry_attribute_name
+
+    def apply(self):
+        attribute_name = self.entry_attribute_name.get()
+        attribute_type = self.attribute_type.get()
+        # Now, we can call the main method to add the attribute with all required information
+        self.parent.add_attribute(self.class_name, attribute_name, attribute_type)
+   
 if __name__ == "__main__":
     app = UMLDiagramEditor()
     app.mainloop()
