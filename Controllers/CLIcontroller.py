@@ -3,7 +3,6 @@
 #Last Updated: 3/4/24
 import os
 import json
-from Views.cli import CLI
 from Models.diagram import Diagram
 from Models.classadd import UMLClass
 import Models.attribute
@@ -12,7 +11,7 @@ from Models.errorHandler import ErrorHandler
 
 
 #Jill: initializes types of commands
-class UMLController:
+class CLIController:
     def __init__(self, diagram, classes, fields, methods, parameters, save_load):
         self.classes = classes
         self.relationship = classes.relationships
@@ -21,6 +20,9 @@ class UMLController:
         self.parameters = parameters
         self.diagram = diagram
         self.save_load = save_load
+    
+    def output(self, str):
+        print(str)
 
     @ErrorHandler.handle_error
     def class_breakdown(self, name):
@@ -100,7 +102,7 @@ class UMLController:
             if len(tokens) >= 5:
                 dest = tokens[3]
                 r_type = tokens[4]
-                self.relationship.add_relationship(class_name,dest,r_type)
+                self.output( self.relationship.add_relationship(class_name,dest,r_type))
             else:
                 raise ValueError("Missing arguments.")
         elif type == "class": 
@@ -108,7 +110,8 @@ class UMLController:
                 if self.diagram.name_checker(class_name):
                     #checks for capitalization
                     if class_name[0].isupper():
-                        self.classes.add_class(class_name)
+                        
+                        self.output(self.classes.add_class(class_name))
                     else:
                         raise ValueError("Class names must start with capital letters.")
             else:
@@ -118,7 +121,7 @@ class UMLController:
                 class_name = tokens[2] 
                 attribute_name = tokens[3]
                 if self.diagram.name_checker(attribute_name):
-                    self.fields.add_field(class_name, attribute_name)
+                    self.output(self.fields.add_field(class_name, attribute_name))
             else:
                 raise ValueError("Missing arguments.")
         elif type == "method":
@@ -126,7 +129,7 @@ class UMLController:
                 class_name = tokens[2] 
                 attribute_name = tokens[3]
                 if self.diagram.name_checker(attribute_name):
-                    self.methods.add_method(class_name, attribute_name)
+                    self.output(self.methods.add_method(class_name, attribute_name))
             else:
                 raise ValueError("Missing arguments.")
         elif type == "parameter" or type == "param":
@@ -135,7 +138,7 @@ class UMLController:
                 method_name = tokens[3] 
                 attribute_name = tokens[4]
                 if self.diagram.name_checker(attribute_name):
-                    self.parameters.add_parameter(class_name, method_name, attribute_name)
+                    self.output(self.parameters.add_parameter(class_name, method_name, attribute_name))
             else:
                     raise ValueError("Missing arguments.")                                                              
 
@@ -168,7 +171,7 @@ class UMLController:
                 newname = tokens[3]
                 if self.diagram.name_checker(newname):
                     if newname[0].isupper():                        
-                        self.classes.rename_class(classname,newname)
+                        self.output(self.classes.rename_class(classname,newname))
                     else:
                         raise ValueError("Class names must start with capital letters.")
             else:
@@ -178,7 +181,7 @@ class UMLController:
                 fieldname = tokens[3]
                 newname = tokens[4]
                 if self.diagram.name_checker(newname):
-                    self.fields.rename_field(classname,fieldname,newname)
+                    self.output(self.fields.rename_field(classname,fieldname,newname))
             else:
                 raise ValueError ("Missing arguments.")
         elif type == "method":
@@ -186,7 +189,7 @@ class UMLController:
                 methodname = tokens[3]
                 newname = tokens[4]
                 if self.diagram.name_checker(newname):
-                    self.methods.rename_method(classname,methodname,newname)
+                    self.output(self.methods.rename_method(classname,methodname,newname))
             else:
                 raise ValueError ("Missing arguments.")
         elif type == "parameter" or type == "param":
@@ -195,7 +198,7 @@ class UMLController:
                     parametername = tokens[4]
                     newname = tokens[5]
                     if self.diagram.name_checker(newname):
-                        self.parameters.rename_parameter(classname,methodname,parametername, newname)
+                        self.output(self.parameters.rename_parameter(classname,methodname,parametername, newname))
             else:
                 raise ValueError ("Missing arguments.")
             
@@ -225,33 +228,33 @@ class UMLController:
         classname = tokens[2]
         if type == "class":
             if len(tokens) >= 3:
-                self.classes.delete_class(classname)
+                self.output(self.classes.delete_class(classname))
             else:
                 raise ValueError ("Missing arguments.")
         elif type == "field":
             if len(tokens) >= 4:    
                 field_name = tokens[3]
-                self.fields.delete_field(classname, field_name)
+                self.output(self.fields.delete_field(classname, field_name))
             else:
                 raise ValueError ("Missing arguments.")
         elif type == "method":
             if len(tokens) >= 4:
                 method_name = tokens[3]
-                self.methods.delete_method(classname, method_name)
+                self.output(self.methods.delete_method(classname, method_name))
             else:
                 raise ValueError ("Missing arguments.")
         elif type == "parameter" or type == "param":
             if len(tokens) >= 5:
                 method_name = tokens[3]
                 parameter_name = tokens[4]
-                self.parameters.delete_parameter(classname, method_name, parameter_name)  
+                self.output(self.parameters.delete_parameter(classname, method_name, parameter_name))  
             else:
                 raise ValueError("Missing arguments.")
         elif type == "relationship":
             if len(tokens) >= 4:
                     classname = tokens[2]
                     dest = tokens[3]
-                    self.relationship.delete_relationship(classname,dest)
+                    self.output(self.relationship.delete_relationship(classname,dest))
             else:
                 raise ValueError ("Missing arguments.")
 

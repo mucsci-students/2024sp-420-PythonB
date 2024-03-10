@@ -77,7 +77,7 @@ class UMLRelationship:
             else:
                 # Zhang: Append to the new relationship to the list.
                 self.relationships.append([src, des, type_rel])
-                print("Relationship added.")
+                return("Relationship added.")
 
     def delete_relationship(self, src, des):
         """
@@ -116,7 +116,7 @@ class UMLRelationship:
         if not removed:
             raise ValueError(f"No relationship from '{src}' to '{des}' exists.")
         else:
-            print("Relationship deleted!")
+            return("Relationship deleted!")
 
     # Zhang: When a class is deleted, remove all its relationships
     def removed_class(self, removed_class):
@@ -144,7 +144,7 @@ class UMLRelationship:
                 self.relationships.remove(rel)
                 removed = True
         if removed:
-            print("Relationship removed.")
+            return("Relationship removed.")
 
     def renamed_class(self, old_name, new_name):
         """
@@ -175,7 +175,7 @@ class UMLRelationship:
                 rel[1] = new_name
                 renamed = True
         if renamed:
-            print("Relationship renamed.")
+            return("Relationship renamed.")
 
     def update_types(self, src, des, new_type):
         """
@@ -209,7 +209,7 @@ class UMLRelationship:
             if not valid_src_des:
                 raise ValueError(f"{src} and {des} do not currently have relationships.")
             else:
-                print(f"The relationship type from {src} to {des} have been updated.")
+                return(f"The relationship type from {src} to {des} have been updated.")
 
     def list_relationship_types(self):
         """
