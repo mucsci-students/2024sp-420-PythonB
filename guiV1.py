@@ -1,12 +1,13 @@
+from Models.attribute import Fields, Methods, Parameters
+from Models.classadd import UMLClass
+from Models.diagram import Diagram
+from Models.errorHandler import ErrorHandler
+from Models.relationship import UMLRelationship
+from Models.saveload import SaveLoad
 import json
 import tkinter as tk
 from tkinter import filedialog
 import webbrowser
-from Models.classadd import UMLClass as Classes
-from Models.attribute import Fields as Fields
-from Models.attribute import Methods as Methods
-from Models.attribute import Parameters as Parameters
-from Models.saveload import SaveLoad
 from tkinter import *
 from tkinter import messagebox
 from tkinter import simpledialog
@@ -15,7 +16,7 @@ from Models.diagram import Diagram
 
 
 class UMLDiagramEditor(tk.Tk):
-    def __init__(self, save_load):
+    def __init__(self):
         super().__init__()
         self.title("LambdaLegion UML Program (GUI Edition) V1.0")
         self.geometry("800x600")
@@ -25,7 +26,16 @@ class UMLDiagramEditor(tk.Tk):
         self.class_boxes = []
         self.relationships = []
         self.update_relationship_tracker()
-        self.save_load = save_load
+        
+        diagram = Diagram()
+        classes = UMLClass(diagram)
+        errorHandler = ErrorHandler()
+        fields = Fields(classes)
+        methods = Methods(classes)
+        parameters = Parameters(methods)
+        relationship = UMLRelationship(classes)
+        saveload = SaveLoad()
+
 
 
     def create_menu(self):
@@ -241,16 +251,12 @@ class UMLDiagramEditor(tk.Tk):
         """
         # Ask the user to select a file
 
-        filepath = filedialog.askopenfilename(
-            title="Open diagram file",
-            filetypes=(("JSON files", "*.json"), ("All Files","*.*"))
-        )
+        filename = simpledialog.askstring("Open a file", "Enter an existing filename:")
 
-        if not filepath:
+        if not filename:
             return
         
-        with open(filepath, 'r+') as file:
-            data = json.load(file)
+        data = SaveLoad.load(self,filename)
         
         # Clear current state (optional, depends on your requirements)
         self.class_boxes.clear()
@@ -291,12 +297,9 @@ class UMLDiagramEditor(tk.Tk):
             theFile -- The saved file
         """
         
-        filepath = filedialog.asksaveasfilename(
-            defaultextension="json",
-            filetypes=[("JSON files", "*.json"), ("All files", "*.*")],
-        )
+        filename = simpledialog.askstring("Save File", "Enter a valid filename:")
         
-        if not filepath:
+        if not filename:
             return  # User cancelled, exit the method
 
         # Prepare the data for serialization
@@ -306,21 +309,10 @@ class UMLDiagramEditor(tk.Tk):
         }
 
         # Serialize data to JSON and write it to the file
-        with open(filepath, 'w') as file:
-            json.dump(data, file, indent=4)
+        SaveLoad.save(self, data, filename)
 
         # Optionally, show a message to the user
-        messagebox.showinfo("Save Diagram", f"Diagram saved successfully to {filepath}.")
-
-        """
-        Undoes the previous action.
-        Parameters:
-            None
-
-        Returns:
-            successBool -- True if the undo was successful, False otherwise
-        """
-        messagebox.showinfo("Action", "Undo the last action")
+        messagebox.showinfo("Save Diagram", f"Diagram saved successfully to {filename}.")
 
     def add_class(self):
         """
@@ -909,9 +901,6 @@ class DeleteRelationshipDialog(simpledialog.Dialog):
         selected_relationship_str = self.relationship_var.get()
         self.result = next((r for r in self.relationships if f"{r['source']} - {r['type']} - {r['destination']}" == selected_relationship_str), None)
 
-
-
-
 if __name__ == "__main__":
-    app = UMLDiagramEditor(SaveLoad)
+    app = UMLDiagramEditor()
     app.mainloop()
