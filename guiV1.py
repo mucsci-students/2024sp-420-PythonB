@@ -526,7 +526,7 @@ class UMLDiagramEditor(tk.Tk):
                     relationship['destination'] = new_name
 
             UMLClass.rename_class(self, old_name, new_name)
-            
+
             self.update_relationship_tracker()
             self.redraw_canvas()
             messagebox.showinfo("Rename Class", f"'{old_name}' has been renamed to '{new_name}'")   
@@ -545,14 +545,19 @@ class UMLDiagramEditor(tk.Tk):
         # Ask for parameters if the attribute is a method
         parameters = []
         if attribute_type == 'method':
+            Methods.add_method(self, class_name, attribute_name)
             param_input = simpledialog.askstring("Method Parameters", "Enter parameters (comma-separated, optional):", parent=self)
             if param_input:  # If the user provided parameters
                 parameters = [param.strip() for param in param_input.split(',')]
+                for i in parameters:
+                    Parameters.add_parameter(self, class_name, attribute_name, parameters[i])
+
 
         # Find the class box with the given class_name
         for class_box in self.class_boxes:
             if class_box['class_name'] == class_name:
                 if attribute_type == 'field':
+                    Fields.add_field(class_name, attribute_name)
                     class_box.setdefault('fields', []).append(attribute_name)
                 else:  # attribute_type == 'method'
                     # Append a dictionary for the method with its parameters
