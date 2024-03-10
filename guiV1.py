@@ -1,10 +1,12 @@
 import json
 import tkinter as tk
+from tkinter import filedialog
 import webbrowser
 from Models.classadd import UMLClass as Classes
 from Models.attribute import Fields as Fields
 from Models.attribute import Methods as Methods
 from Models.attribute import Parameters as Parameters
+from Models.saveload import SaveLoad
 from tkinter import *
 from tkinter import messagebox
 from tkinter import simpledialog
@@ -13,7 +15,7 @@ from Models.diagram import Diagram
 
 
 class UMLDiagramEditor(tk.Tk):
-    def __init__(self):
+    def __init__(self, save_load):
         super().__init__()
         self.title("LambdaLegion UML Program (GUI Edition) V1.0")
         self.geometry("800x600")
@@ -23,6 +25,7 @@ class UMLDiagramEditor(tk.Tk):
         self.class_boxes = []
         self.relationships = []
         self.update_relationship_tracker()
+        self.save_load = save_load
 
 
     def create_menu(self):
@@ -50,7 +53,6 @@ class UMLDiagramEditor(tk.Tk):
 
         # Edit
         edit_menu = Menu(menu_bar, tearoff=0)
-        edit_menu.add_command(label="Undo", command=self.undo_action)
         menu_bar.add_cascade(label="Edit", menu=edit_menu)
 
         # Classes
@@ -193,7 +195,6 @@ class UMLDiagramEditor(tk.Tk):
 
     def edit_options_menu(self):
         edit_menu = Menu(self, tearoff=0)
-        edit_menu.add_command(label="Undo", command=self.undo_action)
 
         try:
             # Display the menu at the current mouse position
@@ -238,6 +239,46 @@ class UMLDiagramEditor(tk.Tk):
             theFile -- The opened file
 
         """
+        # Ask the user to select a file
+
+        filepath = filedialog.askopenfilename(
+            title="Open diagram file",
+            filetypes=(("JSON files", "*.json"), ("All Files","*.*"))
+        )
+
+        if not filepath:
+            return
+        
+        with open(filepath, 'r+') as file:
+            data = json.load(file)
+        
+        # Clear current state (optional, depends on your requirements)
+        self.class_boxes.clear()
+        self.relationships.clear()
+        
+        # Load classes
+        for class_data in data['classes']:
+            for class_info in class_data:
+                next_x, next_y = self.get_next_position()  # Calculate next position
+                self.class_boxes.append({
+                    'class_name': class_info['name'],
+                    'fields': class_info['fields'],
+                    'methods': class_info['methods'],
+                    'x': next_x,
+                    'y': next_y
+                })
+
+        # Load relationships
+        for rel in data['relationships']:
+            self.relationships.append({
+                'source': rel['source'],
+                'destination': rel['destination'],
+                'type': rel['type']
+            })
+        
+        # Refresh GUI to reflect the loaded diagram
+        self.update_relationship_tracker()
+        self.redraw_canvas()
 
     def save_file(self):
         """
@@ -249,9 +290,28 @@ class UMLDiagramEditor(tk.Tk):
         Returns:
             theFile -- The saved file
         """
-        messagebox.showinfo("Action", "Save the current file")
+        
+        filepath = filedialog.asksaveasfilename(
+            defaultextension="json",
+            filetypes=[("JSON files", "*.json"), ("All files", "*.*")],
+        )
+        
+        if not filepath:
+            return  # User cancelled, exit the method
 
-    def undo_action(self):
+        # Prepare the data for serialization
+        data = {
+            "classes": [[{"name": box['class_name'], "fields": box['fields'], "methods": box['methods']} for box in self.class_boxes]],
+            "relationships": self.relationships
+        }
+
+        # Serialize data to JSON and write it to the file
+        with open(filepath, 'w') as file:
+            json.dump(data, file, indent=4)
+
+        # Optionally, show a message to the user
+        messagebox.showinfo("Save Diagram", f"Diagram saved successfully to {filepath}.")
+
         """
         Undoes the previous action.
         Parameters:
@@ -405,36 +465,31 @@ class UMLDiagramEditor(tk.Tk):
               Returns:
                   successBool -- True if the rename class was successful, False otherwise
               """
-        old_name = simpledialog.askstring("Rename Class", "Enter the name of the class you would like to rename:", parent = self)
-        if not old_name:
-            messagebox.showinfo("Rename Class","No class name provided.")
-            return
-        
-        new_name = simpledialog.askstring("Rename Class", "Enter a new class name:")
-        if not new_name:
-            messagebox.showinfo("Rename Class", "No new class name provided.")
-            return
-        
-        class_found = False
-        for class_box in self.class_boxes:
-            if class_box['class_name'] == old_name:
-                class_box['class_name'] = new_name
-                class_found = True
-                break
-        
-        if class_found:
+        dialog = RenameClassDialog(self,"Rename Class")
+        if dialog.result:
+            old_name, new_name = dialog.result
+
+            class_found = False
+
+            for class_box in self.class_boxes:
+                if class_box['class_name'] == old_name:
+                    class_box['class_name'] = new_name
+                    class_found = True
+                    break
+
+            if not class_found:
+                messagebox.showinfo("Rename Class",f"'{old_name} not found.")
+
             for relationship in self.relationships:
                 if relationship['source'] == old_name:
                     relationship['source'] = new_name
-                elif relationship ['desination'] == old_name:
+                elif relationship['destination'] == old_name:
                     relationship['destination'] = new_name
 
             self.update_relationship_tracker()
             self.redraw_canvas()
-
-        else: 
-            messagebox.showinfo("Rename Class", f"'{old_name}' not found." )
-
+            messagebox.showinfo("Rename Class", f"'{old_name}' has been renamed to '{new_name}'")   
+    
     def add_attribute_to_class(self):
     
         AddAttributeDialog(self, title="Add Attribute")
@@ -667,6 +722,24 @@ class UMLDiagramEditor(tk.Tk):
         new = 1
         webbrowser.open(url, new = new )
 
+class RenameClassDialog(simpledialog.Dialog):
+    def __init__(self, parent, title=None):
+        super().__init__(parent, title=title)
+
+    def body(self, master):
+        tk.Label(master, text="Old Class Name:").grid(row=0)
+        self.class_name_entry = tk.Entry(master)
+        self.class_name_entry.grid(row=0, column=1)
+
+        tk.Label(master, text="New Class Name:").grid(row=1)
+        self.new_name_entry = tk.Entry(master)
+        self.new_name_entry.grid(row=1, column=1)
+
+        return self.class_name_entry  # Set focus on the first entry widget
+
+    def apply(self):
+        self.result = (self.class_name_entry.get(), self.new_name_entry.get())
+
 class AddAttributeDialog(simpledialog.Dialog):
 
     def __init__(self, parent, title=None):
@@ -838,6 +911,7 @@ class DeleteRelationshipDialog(simpledialog.Dialog):
 
 
 
+
 if __name__ == "__main__":
-    app = UMLDiagramEditor()
+    app = UMLDiagramEditor(SaveLoad)
     app.mainloop()
