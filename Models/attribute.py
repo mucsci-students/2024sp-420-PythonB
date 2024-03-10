@@ -44,7 +44,7 @@ class Fields:
             # Katie Dowlin: Check if the field name is already used.
             if field_name not in self.diagram_class.classes[class_name]["Fields"]:
                 self.diagram_class.classes[class_name]["Fields"].append(field_name)
-                print(f"Field '{field_name}' added successfully.")
+                return(f"Field '{field_name}' added successfully.")
             else:
                 raise ValueError(f"Add failed- field '{field_name}' already exists.")
         # Katie Dowlin: If the class you want to add the field to doesn't exist.
@@ -113,7 +113,7 @@ class Fields:
                 else:
                     self.diagram_class.classes[class_name]["Fields"].remove(old_name)
                     self.diagram_class.classes[class_name]["Fields"].append(new_name)
-                    print(f"Field '{old_name}' has been renamed to '{new_name}'.")
+                    return(f"Field '{old_name}' has been renamed to '{new_name}'.")
             # Katie Dowlin: If the old name does not exist.
             else:
                 raise ValueError(f"Rename failed- field '{old_name}' doesn't exist.")
@@ -170,7 +170,7 @@ class Methods:
                 raise ValueError(f"Method '{method_name}' already exists in class '{class_name}'.")
 
         methods.update({method_name: {'Parameters': []}})
-        print(f"Method '{method_name}' added to class '{class_name}' successfully.")
+        return(f"Method '{method_name}' added to class '{class_name}' successfully.")
 
     def delete_method(self, class_name, method_name):
         """
@@ -199,7 +199,7 @@ class Methods:
 
         else:
             del methods[method_name]
-            print(f"Method '{method_name}' removed from class '{class_name}' successfully.")
+            return(f"Method '{method_name}' removed from class '{class_name}' successfully.")
 
     def rename_method(self, class_name, old_name, new_name):
         """
@@ -233,7 +233,7 @@ class Methods:
 
         else:
             methods[new_name] = methods.pop(old_name)
-            print(f"Method '{old_name}' in class '{class_name}' renamed to '{new_name}' successfully.")
+            return(f"Method '{old_name}' in class '{class_name}' renamed to '{new_name}' successfully.")
 
 
 class Parameters:
@@ -280,7 +280,7 @@ class Parameters:
             method = methods[m_name]
             if p_name not in method['Parameters']:
                 method['Parameters'].append(p_name)
-                print(f"Parameter '{p_name}' added to method '{m_name}' in class '{class_name}'.")
+                return(f"Parameter '{p_name}' added to method '{m_name}' in class '{class_name}'.")
             else:
                 raise ValueError(f"Parameter '{p_name}' already exists in method '{m_name}'.")
         else:
@@ -312,7 +312,7 @@ class Parameters:
             method = methods[m_name]
             if p_name in method['Parameters']:
                 method['Parameters'].remove(p_name)
-                print(f"Parameter '{p_name}' removed successfully.")
+                return(f"Parameter '{p_name}' removed successfully.")
             else:
                 raise ValueError(f"Parameter '{p_name}'does not exist")
 
@@ -343,7 +343,7 @@ class Parameters:
         for method_dict in self.method_class.diagram_class.classes[class_name]['Methods']:
             if m_name in method_dict:
                 method_dict[m_name]['Parameters'].clear()
-                print(f"All parameters removed successfully.")
+                return(f"All parameters removed successfully.")
 
 
             else:
@@ -378,7 +378,7 @@ class Parameters:
             if old_p_name in method['Parameters'] and new_p_name not in method['Parameters']:
                 method['Parameters'].remove(old_p_name)
                 method['Parameters'].append(new_p_name)
-                print(f"Parameter '{old_p_name}' has been changed to '{new_p_name}.'")
+                return(f"Parameter '{old_p_name}' has been changed to '{new_p_name}.'")
             else:
                 raise ValueError(f"Changed failed- parameter")
         else:

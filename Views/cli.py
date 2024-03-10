@@ -1,4 +1,6 @@
+
 class CLI:
+    
     def __init__(self, controller):
         self.controller = controller
         self.commands = {
@@ -70,6 +72,7 @@ class CLI:
                 print(self.attribute_help())
             elif type == "relationship" or type == "relationships":
                 print(self.relationship_help())
+            
         
     def list (self,tokens):
         print(self.controller.list(tokens))

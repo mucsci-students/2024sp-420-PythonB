@@ -11,9 +11,6 @@ python = "^3.12"
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
 
-[tool.poetry.scripts]
-build = "python uml.py"
-
 
 
 [build-system]

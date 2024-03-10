@@ -15,14 +15,14 @@ class UMLClass:
         
     # Danish: I'm writing this function to add a class name
     def add_class(self, name):
-        # Danish: If the class name doesn't exist it will print the "class name added successfully"
 
         if self.diagram.name_checker(name):
             if name in self.classes:
                 raise ValueError("Class already exists.")
             elif name not in self.classes:
                 self.classes[name] = {'Fields': [], 'Methods': {}}
-                print(f"Class '{name}' added successfully.")
+                return (f"Class '{name}' added successfully.")
+                
 
     # Danish: I'm writing this function to delete a class name
     def delete_class(self, name):
@@ -31,13 +31,12 @@ class UMLClass:
             del self.classes[name]
             # Zhang: make a function call to the relationship class
             self.relationships.removed_class(name)
-            print(f"Class '{name}' deleted successfully.")
+            return(f"Class '{name}' deleted successfully.")
             # return name
         # Danish: if class is not exist then it'll  display "class name not exist
         elif name not in self.classes:
             raise ValueError(f"Unable to delete! Class '{name}' does not exist.")
-            # print(f"{name} not exist, so we can not delete the class")
-            # return name
+     
 
     # Danish: I'm writing this function to rename a class
     def rename_class(self, name, newname):
@@ -51,7 +50,7 @@ class UMLClass:
             # return None
         self.relationships.renamed_class(name, newname)
         self.classes[newname] = self.classes.pop(name)
-        print(f"Class '{name}' renamed to '{newname}' successfully.")
+        return(f"Class '{name}' renamed to '{newname}' successfully.")
         # return newname
 
     # print all the classes using list
