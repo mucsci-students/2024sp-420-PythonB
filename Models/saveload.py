@@ -22,8 +22,6 @@ class SaveLoad:
             File Overwrite
             Invalid file name
 
-
-
         """
         save_folder = 'save_folder'
 
