@@ -1,11 +1,24 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import messagebox
+import os
+import json
+from Models.diagram import Diagram
+from Models.classadd import UMLClass
+import Models.attribute
+from Models.saveload import SaveLoad
+
 
 # NOT INTEGRATED
 class GUIController:
-    def __init__(self, view):
-        self.view = view  # Reference to the view
+    def __init__(self,diagram, classes, fields, methods, parameters, save_load):
+        self.classes = classes
+        self.relationship = classes.relationships
+        self.fields = fields
+        self.methods = methods
+        self.parameters = parameters
+        self.diagram = diagram
+        self.save_load = save_load
 
     """
     pydoc comment goes here
@@ -24,18 +37,36 @@ class GUIController:
         # Placeholder for new file action
         messagebox.showinfo("Action", "Create a new file")
 
-    def open_file(self):
-        """
-        Loads a file.
+    def open_file(self, name):
+        
+        save_folder = 'save_folder'
+        
+        file_path = os.path.join(save_folder, name + ".json")
 
-        Parameters:
-            filename -- The name of the file to load
+        if not os.path.exists(file_path):
+            raise ValueError(f"File, '{file_path}' does not exist.")
+            # Protects against loading a file that does not exist. (2/15/24)
 
-        Returns:
-            theFile -- The opened file
-
-        """
+        else:
+            save_item = self.save_load.load(name)
+            for class_item in save_item["classes"]:
+                class_name = class_item["name"]
+                self.add_class(class_name)
+                for field in class_item["fields"]:
+                    self.add_attribute(class_name, field["name"], "field")
+                for method in class_item["methods"]:
+                    self.add_attribute(class_name, method["name"], "method")
+                    for param in method["params"]:
+                        self.add_param(class_name, method["name"], param["name"])
+        for relation in save_item["relationships"]:
+            src = relation["source"]
+            dest = relation["destination"]
+            type = relation["type"]
+            self.add_relationship(src, dest, type)
+            
         messagebox.showinfo("Action", "Open an existing file")
+
+        return save_item
 
     def save_file(self):
         """
@@ -49,18 +80,8 @@ class GUIController:
         """
         messagebox.showinfo("Action", "Save the current file")
 
-    def undo_action(self):
-        """
-        Undoes the previous action.
-        Parameters:
-            None
-
-        Returns:
-            successBool -- True if the undo was successful, False otherwise
-        """
-        messagebox.showinfo("Action", "Undo the last action")
-
-    def add_class(self):
+    def add_class(self, name):
+        
         """
         Adds a class
 
@@ -71,9 +92,11 @@ class GUIController:
         Returns:
             successBool -- True if the add class was successful, False otherwise
         """
-        messagebox.showinfo("Action", "Add a new class")
+        if self.diagram.name_checker(name):
+            if name[0].isupper():
+                self.classes.add_class(name)
 
-    def delete_class(self):
+    def delete_class(self, name):
         """
               Deletes a class
 
@@ -84,9 +107,9 @@ class GUIController:
               Returns:
                   successBool -- True if the Delete class was successful, False otherwise
               """
-        messagebox.showinfo("Action", "Delete Class")
+        self.classes.delete_class(name)
 
-    def rename_class(self):
+    def rename_class(self, old_name, new_name):
         """
               Renames a class
 
@@ -98,33 +121,11 @@ class GUIController:
               Returns:
                   successBool -- True if the rename class was successful, False otherwise
               """
-        messagebox.showinfo("Action", "Rename Class")
+        if self.diagram.name_checker(new_name):
+            if new_name[0].isupper():
+                 self.classes.rename_class(old_name, new_name)      
 
-    def list_classes(self):
-        """
-        Lists all classes
-
-        Parameters:
-            self -- The parent
-
-        Returns:
-            none
-        """
-        messagebox.showinfo("Action", "List Classes")
-
-    def list_attributes(self):
-        """
-        List all attributes of a given class
-
-        Parameters:
-            self -- the parent
-
-        Returns:
-            None
-        """
-        messagebox.showinfo("Action", "List Attributes")
-
-    def add_relationship(self):
+    def add_relationship(self, src, dst, rel_type):
         """
         Adds a relationship between two classes
 
@@ -134,10 +135,9 @@ class GUIController:
         Returns:
             None
         """
-        # Placeholder for adding a relationship
-        messagebox.showinfo("Action", "Add a new relationship")
+        self.relationship.add_relationship(src, dst, rel_type) 
 
-    def delete_relationship(self):
+    def delete_relationship(self, src, dst):
         """
         Deletes a relationship between two classes
         Parameters:
@@ -146,20 +146,9 @@ class GUIController:
         Returns:
              None
         """
-        messagebox.showinfo("Action", "Delete Relationship")
+        self.relationship.delete_relationship(src,dst)
 
-    def list_relationship(self):
-        """
-        Lists all relationships of a class
-        Parameters:
-            self -- the parent
-
-        Returns:
-            none
-        """
-        messagebox.showinfo("Action", "List Relationships")
-
-    def add_field(self):
+    def add_attribute(self, class_name, attribute_name, att_type):
         """
         Adds a field to a class
         Parameters:
@@ -168,9 +157,13 @@ class GUIController:
         Returns:
             successBool -- True if the add field was successful, False otherwise
         """
-        messagebox.showinfo("Action", "Add Field")
+        if self.diagram.name_checker(attribute_name):
+            if att_type == "field":
+                self.fields.add_field(class_name, attribute_name)
+            else:
+                self.methods.add_method(class_name, attribute_name)
 
-    def delete_field(self):
+    def delete_attribute(self, class_name, attribute_name, att_type):
         """
         Deletes a field from a class
 
@@ -180,9 +173,12 @@ class GUIController:
         Returns:
              None
         """
-        messagebox.showinfo("Action", "Delete Field")
-
-    def rename_field(self):
+        if att_type == "field":
+            self.fields.delete_field(class_name, attribute_name)
+        else:
+            self.methods.delete_method(class_name, attribute_name)
+    
+    def rename_attribute(self, class_name, attribute_name, new_name, att_type):
         """
         Renames a field in a class
 
@@ -192,9 +188,13 @@ class GUIController:
         Returns:
             None
         """
-        messagebox.showinfo("Action", "Rename Field")
-
-    def new_param(self):
+        if self.diagram.name_checker(attribute_name):
+            if att_type == "field":
+                self.fields.rename_field(class_name, attribute_name, new_name)
+            else:
+                self.methods.rename_method(class_name, attribute_name, new_name)
+            
+    def add_param(self, class_name, method_name, param_name):
         """
         Adds a new parameter to a class
 
@@ -204,9 +204,10 @@ class GUIController:
         Returns:
             None
         """
-        messagebox.showinfo("Action", " Add Parameter")
+        if self.diagram.name_checker(param_name):
+            self.parameters.add_parameter(class_name, method_name, param_name)
 
-    def delete_param(self):
+    def delete_param(self, class_name, method_name, param_name):
         """
         Deletes a parameter from a class
 
@@ -215,10 +216,10 @@ class GUIController:
 
         Returns:
             None
-        """
-        messagebox.showinfo("Action", "Delete Parameter")
+            """
+        self.parameters.delete_parameter(class_name, method_name, param_name)
 
-    def rename_param(self):
+    def rename_param(self, class_name, method_name, param_name, new_name):
         """
         Renames a parameter in a class
 
@@ -228,76 +229,12 @@ class GUIController:
         Returns:
             None
         """
-        messagebox.showinfo("Action", "Rename Param")
+        if self.diagram.name_checker(new_name):
+            self.parameters.rename_parameter(class_name, method_name, param_name, new_name)
+diagram = Diagram()
+classes = UMLClass(diagram)
+fields = Models.attribute.Fields(classes)
+methods = Models.attribute.Methods(classes)
+parameters = Models.attribute.Parameters(methods)
+saveload = SaveLoad()
 
-    def new_method(self):
-        """
-        Adds a method to a class.
-
-        Parameters:
-            self -- The parent
-
-        Returns:
-            None
-        """
-        messagebox.showinfo("Action", "New Method")
-
-    def delete_method(self):
-        """
-        Deletes a method from a class
-
-        Parameters:
-            self -- The parent
-
-        Returns:
-            None
-        """
-        messagebox.showinfo("Action", "Delete Method")
-
-    def rename_method(self):
-        """
-        Renames a parameter from a class.
-
-        Parameters:
-            self -- The parent
-
-        Returns:
-            None
-        """
-        messagebox.showinfo("Action", "Rename Param")
-
-    def helpClasses(self):
-        """
-        Displays the classes help page
-
-        Parameters:
-            self -- The parent
-
-        Returns:
-            None
-        """
-        messagebox.showinfo("Action", "Help Classes")
-
-    def helpRelationships(self):
-        """
-        Displays the relationships help page
-
-        Parameters:
-            self -- The parent
-
-        Returns:
-            None
-        """
-        messagebox.showinfo("Action", "Help Relationships")
-
-    def helpAttributes(self):
-        """
-        Displays the attributes help page
-
-        Parameters:
-            self -- The parent
-
-        Returns:
-            None
-        """
-        messagebox.showinfo("Action", "Help Attributes")
