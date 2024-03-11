@@ -240,85 +240,107 @@ class UMLDiagramEditor(tk.Tk):
         messagebox.showinfo("Action", "Create a new file")
 
     def open_file(self):
-        """
-        Loads a file.
+        file_name = simpledialog.askstring("Load a File","Enter a Valid Filename", parent = self)
+        data = self.controller.open_file(file_name)
 
-        Parameters:
-            filename -- The name of the file to load
-
-        Returns:
-            theFile -- The opened file
-
-        """
-        # Ask the user to select a file
-
-        filename = simpledialog.askstring("Open a file", "Enter an existing filename:")
-
-        if not filename:
-            return
-        
-        
-
-        data = self.controller.open_file(filename)
-        
-        # Clear current state (optional, depends on your requirements)
         self.class_boxes.clear()
         self.relationshipsList.clear()
 
-        # Load classes
+        # Assuming classes and relationships are directly stored under the top-level object
         for class_data in data['classes']:
-            for class_info in class_data:
-                next_x, next_y = self.get_next_position()  # Calculate next position
-                self.class_boxes.append({
-                    'class_name': class_info['name'],
-                    'fields': class_info['fields'],
-                    'methods': class_info['methods'],
-                    'x': next_x,
-                    'y': next_y
-                })
+            fields = [{'name': f['name'], 'type': f.get('type', 'Unknown')} for f in class_data.get('fields', [])]
+            methods = [{
+                'name': m['name'],
+                'return_type': m.get('return_type', 'void'),
+                'params': [{'name': p['name'], 'type': p.get('type', 'Unknown')} for p in m.get('params', [])]
+            } for m in class_data.get('methods', [])]
 
-        # Load relationships
-        for rel in data['relationships']:
-            self.relationshipsList.append({
-                'source': rel['source'],
-                'destination': rel['destination'],
-                'type': rel['type']
+            # Use your existing logic to calculate the next position
+            next_x, next_y = self.get_next_position()
+
+            # Append the class along with its fields and methods
+            self.class_boxes.append({
+                'class_name': class_data['name'],
+                'fields': fields,
+                'methods': methods,
+                'x': next_x,
+                'y': next_y
             })
-        
-        # Refresh GUI to reflect the loaded diagram
+
+    # Handling relationships
+        for relationship in data['relationships']:
+            self.relationshipsList.append({
+                'source': relationship['source'],
+                'destination': relationship['destination'],
+                'type': relationship['type']
+            })
+
+        # Refreshing GUI elements
         self.update_relationship_tracker()
         self.redraw_canvas()
+        messagebox.showinfo("Open Diagram", f"Diagram loaded successfully from {file_name}.")
+
 
     def save_file(self):
-        """
-        Saves a file.
-
-        Parameters:
-            filename -- The desired filename, or the name of the file to overwrite
-
-        Returns:
-            theFile -- The saved file
-        """
-        
-        filename = simpledialog.askstring("Save File", "Enter a valid filename:")
-        
+        # Open a dialog asking for the filename to save to
+        filename = filedialog.asksaveasfilename(defaultextension=".json",
+                                                filetypes=[("JSON files", "*.json"), ("All files", "*.*")])
         if not filename:
-            return  # User cancelled, exit the method
+            # User cancelled the save
+            return
 
-        # Prepare the data for serialization
+        # Prepare data according to the schema
         data = {
-            "classes": [[{"name": box['class_name'], "fields": box['fields'], "methods": box['methods']} for box in self.class_boxes]],
-            "relationships": self.relationshipsList
+            "classes": [],
+            "relationships": []
         }
 
-        # Serialize data to JSON and write it to the file
-        SaveLoad.save(self, data, filename)
+        # Add classes with fields and methods
+        for class_box in self.class_boxes:
+            class_data = {
+                "name": class_box["class_name"],
+                "fields": [],
+                "methods": []
+            }
 
-        # Optionally, show a message to the user
-        messagebox.showinfo("Save Diagram", f"Diagram saved successfully to {filename}.")
+            # Assume fields and methods are stored in class_box as lists of dictionaries
+            for field in class_box.get("fields", []):
+                class_data["fields"].append({
+                    "name": field["name"],
+                    "type": field.get("type", "Unknown")  # Default type if not specified
+                })
 
-        return filename
-   
+            for method in class_box.get("methods", []):
+                method_data = {
+                    "name": method["name"],
+                    "return_type": method.get("return_type", "void"),  # Default return type if not specified
+                    "params": []
+                }
+                for param in method.get("params", []):
+                    method_data["params"].append({
+                        "name": param["name"],
+                        "type": param.get("type", "Unknown")  # Default type if not specified
+                    })
+                class_data["methods"].append(method_data)
+
+            data["classes"].append(class_data)
+
+        # Add relationships
+        for rel in self.relationshipsList:
+            data["relationships"].append({
+                "source": rel["source"],
+                "destination": rel["destination"],
+                "type": rel["type"]
+            })
+
+        # Save data to file
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+
+        # Notify the user of success
+        messagebox.showinfo("Save File", "The diagram has been saved successfully.")
+
+    
     def add_class(self):
         """
         Adds a class
@@ -367,8 +389,18 @@ class UMLDiagramEditor(tk.Tk):
         indent_spacing = 10  # Indentation for sub-items like parameters
         bullet = "\u2022"  # Unicode character for a bullet point
 
+        # Adaptation for 'params' or 'parameters'
+        adapted_methods = []
+        for method in methods:
+            # Check if 'params' exists, otherwise default to an empty list
+            params = method.get('params', method.get('parameters', []))
+            adapted_methods.append({
+                'name': method['name'],
+                'params': params
+            })
+
         # Calculate box height dynamically based on contents
-        num_text_lines = 2 + len(fields) + sum(len(method['parameters']) + 1 for method in methods) + (2 if fields else 0) + (2 if methods else 0)
+        num_text_lines = 2 + len(fields) + sum(len(method['params']) + 1 for method in adapted_methods) + (2 if fields else 0) + (2 if adapted_methods else 0)
         box_height = text_spacing * num_text_lines
 
         canvas.create_rectangle(x, y, x + box_width, y + box_height, fill='lightgray', outline='black')
@@ -376,30 +408,24 @@ class UMLDiagramEditor(tk.Tk):
 
         current_y = y + text_spacing * 2
         if fields:
-            # Add "Fields:" label
             canvas.create_text(x + 10, current_y, text="Fields:", anchor="w", font=('TkDefaultFont', 10, 'underline'))
             current_y += text_spacing
+            for field in fields:
+                canvas.create_text(x + 10, current_y, text=f"{field['name']} : {field.get('type', 'Unknown')}", anchor="w")
+                current_y += text_spacing
 
-        for field in fields:
-            canvas.create_text(x + 10, current_y, text=field, anchor="w")
-            current_y += text_spacing
-
-        if methods:
-            # Add some space before "Methods:" label if there are fields
-            if fields:
-                current_y += text_spacing / 2
-
-            # Add "Methods:" label
+        if adapted_methods:
+            current_y += text_spacing / 2  # Additional space before Methods if there are fields
             canvas.create_text(x + 10, current_y, text="Methods:", anchor="w", font=('TkDefaultFont', 10, 'underline'))
             current_y += text_spacing
 
-        for method in methods:
-            canvas.create_text(x + 10, current_y, text=method['name'], anchor="w")
-            current_y += text_spacing
-            for param in method['parameters']:
-                # Indent and bullet each parameter
-                canvas.create_text(x + 10 + indent_spacing, current_y, text=f"{bullet} {param}", anchor="w")
+            for method in adapted_methods:
+                canvas.create_text(x + 10, current_y, text=f"{method['name']}()", anchor="w")
                 current_y += text_spacing
+                for param in method['params']:
+                    canvas.create_text(x + 10 + indent_spacing, current_y, text=f"{bullet} {param['name']} : {param.get('type', 'Unknown')}", anchor="w")
+                    current_y += text_spacing
+
      
     def delete_class(self):
         """
