@@ -1,3 +1,4 @@
+
 import tkinter as tk
 from tkinter import *
 from tkinter import messagebox
@@ -11,15 +12,14 @@ from Models.saveload import SaveLoad
 
 # NOT INTEGRATED
 class GUIController:
-    def __init__(self):
-        self.diagram = Diagram()
-        self.classes = UMLClass(self.diagram)
-        self.relationship = self.classes.relationships
-        self.fields = Models.attribute.Fields(self.classes)
-        self.methods = Models.attribute.Methods(self.classes)
-        self.parameters = Models.attribute.Parameters(self.methods)
-        self.save_load = SaveLoad()
-
+    def __init__(self,diagram, classes, fields, methods, parameters, save_load):
+        self.classes = classes
+        self.relationship = classes.relationships
+        self.fields = fields
+        self.methods = methods
+        self.parameters = parameters
+        self.diagram = diagram
+        self.save_load = save_load
 
     """
     pydoc comment goes here
@@ -232,5 +232,9 @@ class GUIController:
         """
         if self.diagram.name_checker(new_name):
             self.parameters.rename_parameter(class_name, method_name, param_name, new_name)
-
-
+diagram = Diagram()
+classes = UMLClass(diagram)
+fields = Models.attribute.Fields(classes)
+methods = Models.attribute.Methods(classes)
+parameters = Models.attribute.Parameters(methods)
+saveload = SaveLoad()
