@@ -43,36 +43,35 @@ class CLIController:
         '''
         all_classes = self.classes.list_classes()
         class_list = []
-        #Jill: checks if 'name' is a class
+
         if name in all_classes: 
-            #Jill: uses 'name' as a key to access attributes
             fields = self.classes.classes[name]["Fields"]
             methods = self.classes.classes[name]["Methods"]
             all_methods = []
-            
-            #loops over all methods, collecting params and adding them to a dict from methods to params
+
             for method in methods:
                 params = methods[method]["Parameters"]
-                param_list= []
-                
+                param_list = []
+
                 for param in params:
                     param_list.append({"name": param})
-                    
+
                 all_methods.append({
                     "name": method,  
                     "params": param_list
                 })
+
             class_item = {
                 "name": name,
                 "fields": [{"name": field} for field in fields], 
                 "methods": all_methods
             }
-            
+
             class_list.append(class_item)
-            
+
             return class_list
         else:
-           raise ValueError(f"Class, '{name}' does not exist.")
+            raise ValueError(f"Class, '{name}' does not exist.")
        
     @ErrorHandler.handle_error
     def add (self, tokens):
@@ -351,12 +350,13 @@ class CLIController:
             name = tokens[1]
             all_classes = self.classes.list_classes()
             all_relationships = self.classes.relationships.list_relationships()
-            classes_item = []
+            classes_list = []  # List to store class dictionaries
             formatted_relationships = []
-        # Collect information about all classes
+
+            # Collect information about all classes
             for item in all_classes:
                 class_info = self.class_breakdown(item)
-                classes_item.append(class_info)
+                classes_list.extend(class_info)  # Extend the list with class dictionaries
 
             # Format relationships
             for relationship in all_relationships:
@@ -367,14 +367,13 @@ class CLIController:
                 })
 
             # Create the uml_item dictionary with all classes and relationships
-            uml_item = {"classes": classes_item, "relationships": formatted_relationships}
-            
+            uml_item = {"classes": classes_list, "relationships": formatted_relationships}
             self.save_load.save(uml_item, name)
 
- 
         elif len(tokens) <= 1:
             raise ValueError("No filename provided.")
-            # Protects against attempting to save a file without a filename. (2/15/24)
+
+
 
     @ErrorHandler.handle_error
     def load(self, tokens):
@@ -408,11 +407,11 @@ class CLIController:
             else:
                 save_item = self.save_load.load(name)
                 for class_item in save_item["classes"]:
-                    class_name = class_item[0]["name"]
+                    class_name = class_item["name"] 
                     self.add(["add","class", class_name])
-                    for field in class_item[0]["fields"]:
+                    for field in class_item["fields"]:
                         self.add(["add","field", class_name, field["name"]])
-                    for method in class_item[0]["methods"]:
+                    for method in class_item["methods"]:
                         self.add(["add", "method", class_name, method["name"]])
                         for param in method["params"]:
                             self.add(["add","parameter", class_name, method["name"], param["name"]])

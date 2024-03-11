@@ -1,5 +1,6 @@
 import os
 import json
+from jsonschema import validate
 
 
 class SaveLoad:
@@ -37,27 +38,25 @@ class SaveLoad:
 
         name_exists = os.path.exists(file_path)
 
-        return("Filename : " + file_name)
         if name_exists:
             overwrite = input(f"The file '{file_name}' already exists. Do you want to overwrite it? Y/N ").lower()
 
             if overwrite == 'y':
-                return(f"Overwriting '{file_name}'...")
-        else:
-            return(f"Saving '{file_name}'")
+                print(f"Overwriting '{file_name}'...")
 
         with open(file_path, 'w') as f:
             # Ensure json.dump() uses the indent parameter for nicely formatted JSON
             json.dump(data, f, indent=2)
 
         if name_exists and overwrite != 'y':
-            return(f"Aborting save...")
+            print(f"Aborting save...")
         else:
-            return(f"Saving '{file_name}'")
+            print(f"Saving '{file_name}'")
             with open(file_path, 'w') as f:
                 json.dump(data, f, indent=2)
-                # Patrick: test_data will be replaced with proper diagram data once Diagram is complete
-
+            
+                
+           
     def load(self, file_name):
         """
         Load a .json file from 'saves_folder' to be viewed/edited.
@@ -82,16 +81,27 @@ class SaveLoad:
         file_path = os.path.join(save_folder, file_name)
         file_exists = os.path.exists(file_path)
         if file_exists:
-            # Patrick: If file exists, open the file
-            with open(file_path, 'r+') as file:
-                # Read the content
-                data = json.load(file)
+            schema_path = os.path.join(save_folder, "umlSchema.json")
+            schema_exists= os.path.exists(schema_path)
+            if schema_exists:
+                with open(schema_path, 'r') as schema_file:
+                    schema = json.load(schema_file)
+                # Patrick: If file exists, open the file
+                    with open(file_path, 'r+') as file:
+                        # Read the content
+                        data = json.load(file)
+                        try:
+                            # Validate data against schema
+                            validate(instance=data, schema=schema)
+                            return data
+                        except Exception as e:
+                            raise ValueError("JSON data is not valid:", e)
 
-                return data
+                
         else:
             # Patrick: If file does not exist, alert user
             raise ValueError ("File does not exist!")
-            return None
+
 
 
 
