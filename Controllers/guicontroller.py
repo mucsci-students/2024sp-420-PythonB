@@ -12,6 +12,7 @@ from Models.saveload import SaveLoad
 
 # NOT INTEGRATED
 class GUIController:
+
     def __init__(self,diagram, classes, fields, methods, parameters, save_load):
         self.classes = classes
         self.relationship = classes.relationships
@@ -20,6 +21,7 @@ class GUIController:
         self.parameters = parameters
         self.diagram = diagram
         self.save_load = save_load
+
 
     """
     pydoc comment goes here
@@ -50,6 +52,7 @@ class GUIController:
 
         else:
             save_item = self.save_load.load(name)
+
             for class_item in save_item["classes"]:
                 class_name = class_item["name"]
                 self.add_class(class_name)
@@ -64,8 +67,10 @@ class GUIController:
             dest = relation["destination"]
             type = relation["type"]
             self.add_relationship(src, dest, type)
-            
-        messagebox.showinfo("Action", "Open an existing file")
+
+
+        return save_item
+
 
         return save_item
 
@@ -238,3 +243,4 @@ fields = Models.attribute.Fields(classes)
 methods = Models.attribute.Methods(classes)
 parameters = Models.attribute.Parameters(methods)
 saveload = SaveLoad()
+

@@ -4,7 +4,7 @@ from Models.diagram import Diagram
 from Models.classadd import UMLClass
 import Models.attribute
 from Models.saveload import SaveLoad
-from Views.guiV1 import UMLDiagramEditor
+from guiV1 import UMLDiagramEditor
 import tkinter as tk
 from Controllers.guicontroller import GUIController
 
@@ -35,7 +35,6 @@ def main():
     else:
         app = UMLDiagramEditor(controller=GUIcontroller)
         app.mainloop()
-        
 
 if __name__ == "__main__":
     main()
