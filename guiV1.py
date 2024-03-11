@@ -4,7 +4,6 @@ from Models.diagram import Diagram
 from Models.errorHandler import ErrorHandler
 from Models.relationship import UMLRelationship
 from Models.saveload import SaveLoad
-from Controllers.guicontroller import GUIController
 import json
 import tkinter as tk
 from tkinter import filedialog
@@ -17,7 +16,7 @@ from Models.diagram import Diagram
 
 
 class UMLDiagramEditor(tk.Tk):
-    def __init__(self):
+    def __init__(self, controller):
         super().__init__()
         self.title("LambdaLegion UML Program (GUI Edition) V1.0")
         self.geometry("800x600")
@@ -37,7 +36,7 @@ class UMLDiagramEditor(tk.Tk):
         self.relationships = UMLRelationship(self.classes)
         self.saveload = SaveLoad()
         self.diagram_class = Diagram()
-        self.controller = GUIController()
+        self.controller = controller
 
     def create_menu(self):
         """
@@ -266,7 +265,7 @@ class UMLDiagramEditor(tk.Tk):
         self.relationshipsList.clear()
 
         # Load classes
-        for class_data in data['classes']:
+        for class_data in data.get('classes', []):
             for class_info in class_data:
                 next_x, next_y = self.get_next_position()  # Calculate next position
                 self.class_boxes.append({
