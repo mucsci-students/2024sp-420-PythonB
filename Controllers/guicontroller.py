@@ -1,3 +1,4 @@
+
 import tkinter as tk
 from tkinter import *
 from tkinter import messagebox
@@ -11,14 +12,15 @@ from Models.saveload import SaveLoad
 
 # NOT INTEGRATED
 class GUIController:
-    def __init__(self, diagram, classes, fields, methods, parameters, save_load):
-        self.diagram = Diagram()
-        self.classes = UMLClass(self.diagram)
-        self.relationship = self.classes.relationships
-        self.fields = Models.attribute.Fields(self.classes)
-        self.methods = Models.attribute.Methods(self.classes)
-        self.parameters = Models.attribute.Parameters(self.methods)
-        self.save_load = SaveLoad()
+
+    def __init__(self,diagram, classes, fields, methods, parameters, save_load):
+        self.classes = classes
+        self.relationship = classes.relationships
+        self.fields = fields
+        self.methods = methods
+        self.parameters = parameters
+        self.diagram = diagram
+        self.save_load = save_load
 
 
     """
@@ -50,7 +52,8 @@ class GUIController:
 
         else:
             save_item = self.save_load.load(name)
-            for class_item in save_item.get('classes', []):
+
+            for class_item in save_item["classes"]:
                 class_name = class_item["name"]
                 self.add_class(class_name)
                 for field in class_item["fields"]:
@@ -64,7 +67,9 @@ class GUIController:
             dest = relation["destination"]
             type = relation["type"]
             self.add_relationship(src, dest, type)
-            
+
+
+        return save_item
 
 
         return save_item

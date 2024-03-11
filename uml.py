@@ -9,6 +9,7 @@ import tkinter as tk
 from Controllers.guicontroller import GUIController
 
 
+
 def main():
     # Create instances of the required classes
     diagram = Diagram()
@@ -17,6 +18,7 @@ def main():
     methods = Models.attribute.Methods(classes)
     parameters = Models.attribute.Parameters(methods)
     saveload = SaveLoad()
+    
 
     GUIcontroller = GUIController(diagram, classes, fields, methods, parameters, saveload)
     # Create an instance of the controller
