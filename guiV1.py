@@ -4,6 +4,7 @@ from Models.diagram import Diagram
 from Models.errorHandler import ErrorHandler
 from Models.relationship import UMLRelationship
 from Models.saveload import SaveLoad
+from Controllers.guicontroller import GUIController
 import json
 import tkinter as tk
 from tkinter import filedialog
@@ -35,6 +36,7 @@ class UMLDiagramEditor(tk.Tk):
         self.parameters = Parameters(self.methods)
         self.relationships = UMLRelationship(self.classes)
         self.saveload = SaveLoad()
+        self.diagram_class = Diagram()
 
     def create_menu(self):
         """
@@ -272,34 +274,8 @@ class UMLDiagramEditor(tk.Tk):
         self.update_relationship_tracker()
         self.redraw_canvas()
 
-    def add_class_from_data(self, class_name, fields, methods):
-        """
-        Adds a class to the diagram using GUI methods.
+        return filename
 
-        Parameters:
-            class_name -- The name of the class
-            fields -- List of fields in the class
-            methods -- List of methods in the class
-        """
-        # Add the class using GUI method
-        next_x, next_y = self.get_next_position()
-        self.add_class(class_name)
-        for fields in data['fields']:
-            self.add_attribute()
-    def add_relationship_from_data(self, source, destination, rel_type):
-        """
-        Adds a relationship to the diagram using GUI methods.
-
-        Parameters:
-            source -- The source class of the relationship
-            destination -- The destination class of the relationship
-            rel_type -- The type of the relationship
-        """
-        # Add the relationship using GUI method
-        self.relationshipsList.append({"source": source, "destination": destination, "type": rel_type})
-        # No need to call a specific method here since relationships will be drawn in `self.redraw_canvas()`
-
-    @ErrorHandler.handle_error_gui
     def save_file(self):
         """
         Saves a file.
@@ -328,7 +304,8 @@ class UMLDiagramEditor(tk.Tk):
         # Optionally, show a message to the user
         messagebox.showinfo("Save Diagram", f"Diagram saved successfully to {filename}.")
 
-    @ErrorHandler.handle_error_gui
+        return filename
+   
     def add_class(self):
         """
         Adds a class
@@ -341,42 +318,22 @@ class UMLDiagramEditor(tk.Tk):
             successBool -- True if the add class was successful, False otherwise
         """
         class_name = simpledialog.askstring("Input", "Enter a Class Name:", parent=self)
-        if not class_name:
-            messagebox.showinfo("Error", "A class name is required.", parent = self)
-            return
         
-        if self.is_class_name_duplicate(class_name):
-            messagebox.showinfo("Error", "Class name already exists.", parent=self)
-            return 
-        
-        #Name Checker???
-
-        UMLClass.add_class(self, class_name)
-                
         fields = []
         methods = []
-                
+
+        GUIController.add_class(class_name)     
+
         next_x, next_y = self.get_next_position()
                 
         self.class_boxes.append({'class_name': class_name, 'fields': fields, 'methods': methods, 'x': next_x, 'y': next_y})
 
         self.create_class_box(self.diagram_canvas, class_name, fields, methods, next_x,next_y)
-        
-    def is_class_name_duplicate(self, class_name):
-        """
-        Check if the given class name already exists.
 
-        Parameters:
-            self -- The parent
-            class_name -- The name of the class to check
+        return class_name
+    
+    
 
-        Returns:
-            True if duplicate, False otherwise
-        """
-        # Assuming self.class_boxes is a list of dictionaries where each dictionary represents a class
-        return any(box['class_name'] == class_name for box in self.class_boxes)
-
-    @ErrorHandler.handle_error_gui
     def get_next_position(self):
         # For simplicity, let's just arrange them in a horizontal line for now
         spacing = 10  # Spacing between class boxes
@@ -393,7 +350,6 @@ class UMLDiagramEditor(tk.Tk):
 
         return x, y
 
-    @ErrorHandler.handle_error_gui
     def create_class_box(self, canvas, class_name, fields, methods, x, y):
         box_width = 150
         text_spacing = 20
@@ -449,6 +405,8 @@ class UMLDiagramEditor(tk.Tk):
         if class_name is None:
             return
         
+        GUIController.delete_class(class_name)
+
         class_found = False
         for i, class_box in enumerate(self.class_boxes):
             if class_box['class_name'] == class_name:
@@ -457,7 +415,6 @@ class UMLDiagramEditor(tk.Tk):
                 break  # Correctly placed to break out of the loop when a class is found and deleted
             
         if class_found:
-            UMLClass.delete_class(self, class_name)
             self.relationshipsList[:] = [rel for rel in self.relationshipsList if rel['source'] != class_name and rel['destination']!= class_name]
         self.redraw_canvas()  # Call redraw_canvas outside the loop to refresh the canvas once after any deletion
         self.update_relationship_tracker()
@@ -470,7 +427,8 @@ class UMLDiagramEditor(tk.Tk):
         
         messagebox.showinfo("Delete Class", f"'{class_name}' has been removed.")
 
-    @ErrorHandler.handle_error_gui
+        return class_name
+ 
     def redraw_canvas(self):
         self.diagram_canvas.delete("all")  # Clears the canvas
         # Draw relationships
@@ -490,7 +448,6 @@ class UMLDiagramEditor(tk.Tk):
         for class_box in self.class_boxes:
             self.create_class_box(self.diagram_canvas, class_box['class_name'], class_box.get('fields', []), class_box.get('methods', []), class_box['x'], class_box['y'])
 
-    @ErrorHandler.handle_error_gui
     def rename_class(self):
 
         """
@@ -508,56 +465,47 @@ class UMLDiagramEditor(tk.Tk):
         if dialog.result:
             old_name, new_name = dialog.result
 
-            class_found = False
+            GUIController.rename_class(old_name,new_name)
 
             for class_box in self.class_boxes:
                 if class_box['class_name'] == old_name:
                     class_box['class_name'] = new_name
-                    class_found = True
                     break
-
-            if not class_found:
-                messagebox.showinfo("Rename Class",f"'{old_name} not found.")
-
+            #TODO
             for relationship in self.relationshipsList:
                 if relationship['source'] == old_name:
                     relationship['source'] = new_name
                 elif relationship['destination'] == old_name:
                     relationship['destination'] = new_name
 
-            UMLClass.rename_class(self, old_name, new_name)
-
             self.update_relationship_tracker()
             self.redraw_canvas()
             messagebox.showinfo("Rename Class", f"'{old_name}' has been renamed to '{new_name}'")   
-    
-    @ErrorHandler.handle_error_gui
+
     def add_attribute_to_class(self):
     
         AddAttributeDialog(self, title="Add Attribute")
-
-    @ErrorHandler.handle_error_gui
+    
     def add_attribute(self, class_name, attribute_name, attribute_type):
         if not attribute_name or not class_name or attribute_type not in ['field', 'method']:
             messagebox.showinfo("Error", "Invalid input provided.")
             return
 
+        GUIController.add_attribute(class_name, attribute_name, attribute_type)
+
         # Ask for parameters if the attribute is a method
-        parameters = []
+       # parameters = []
         if attribute_type == 'method':
             Methods.add_method(self, class_name, attribute_name)
-            param_input = simpledialog.askstring("Method Parameters", "Enter parameters (comma-separated, optional):", parent=self)
-            if param_input:  # If the user provided parameters
-                parameters = [param.strip() for param in param_input.split(',')]
-                for i in parameters:
-                    Parameters.add_parameter(self, class_name, attribute_name, parameters[i])
-
+            #param_input = simpledialog.askstring("Method Parameters", "Enter parameters (comma-separated, optional):", parent=self)
+            #if param_input:  # If the user provided parameters
+            parameters = 'parameter'
+                
 
         # Find the class box with the given class_name
         for class_box in self.class_boxes:
             if class_box['class_name'] == class_name:
                 if attribute_type == 'field':
-                    Fields.add_field(class_name, attribute_name)
                     class_box.setdefault('fields', []).append(attribute_name)
                 else:  # attribute_type == 'method'
                     # Append a dictionary for the method with its parameters
@@ -566,17 +514,12 @@ class UMLDiagramEditor(tk.Tk):
                 self.redraw_canvas()  # Refresh the canvas to show the updated class box
                 success_message = f"Field '{attribute_name}' added to class '{class_name}'." if attribute_type == 'field' else f"Method '{attribute_name}' added with parameters {parameters} to class '{class_name}'."
                 messagebox.showinfo("Success", success_message)
-                return
 
         # If the class wasn't found, show an error message
         messagebox.showinfo("Error", f"Class '{class_name}' not found.")
 
-    @ErrorHandler.handle_error_gui
     def delete_relationship(self):
-        if not self.relationshipsList:
-            messagebox.showinfo("Delete Relationship", "No relationships to delete.")
-            return
-
+        
         dialog = DeleteRelationshipDialog(self, "Delete Relationship", self.relationships)
         if dialog.result:
             self.relationshipsList.remove(dialog.result)
@@ -584,7 +527,6 @@ class UMLDiagramEditor(tk.Tk):
             self.redraw_canvas()
             messagebox.showinfo("Success", "Relationship deleted successfully.")
 
-    @ErrorHandler.handle_error_gui
     def add_relationship(self):
         """
         Lists all relationships of a class
@@ -596,10 +538,10 @@ class UMLDiagramEditor(tk.Tk):
         """
         dialog = AddRelationshipDialog(self, "Add Relationship")
         if dialog.result:
+            
             source_class, destination_class, relationship_type = dialog.result
-            if not source_class or not destination_class:
-                messagebox.showinfo("Error", "Both source and destination class names are required!")
-                return
+
+            GUIController.add_relationship(source_class, destination_class, relationship_type)
             
             # Add the relationship
             self.relationshipsList.append({
@@ -612,12 +554,12 @@ class UMLDiagramEditor(tk.Tk):
 
             self.redraw_canvas()
 
-    @ErrorHandler.handle_error_gui
     def delete_attribute(self):
     # Ask for the class name from which to delete an attribute
         dialog_result = DeleteAttributeDialog(self, title="Delete Attribute").result
         if dialog_result:
             class_name, attribute_name, attribute_type = dialog_result
+            GUIController.delete_attribute(class_name, attribute_name, attribute_type)
             # Find the class
             for class_box in self.class_boxes:
                 if class_box['class_name'] == class_name:
@@ -635,19 +577,18 @@ class UMLDiagramEditor(tk.Tk):
                     return
             messagebox.showinfo("Error", f"Class '{class_name}' not found.")
 
-    @ErrorHandler.handle_error_gui
+            return [class_name, attribute_name, attribute_type]
+
     def rename_attribute(self):
         class_name = simpledialog.askstring("Rename Attribute", "Enter the name of the class:", parent=self)
-        if not class_name:
-            return
+        
 
         attribute_name = simpledialog.askstring("Rename Attribute", "Enter the name of the attribute to rename:", parent=self)
-        if not attribute_name:
-            return
+        
 
         new_name = simpledialog.askstring("Rename Attribute", "Enter the new name for the attribute:", parent=self)
-        if not new_name:
-            return
+        
+        GUIController.rename_attribute(class_name,attribute_name,new_name)
 
         for class_box in self.class_boxes:
             if class_box['class_name'] == class_name:
@@ -667,7 +608,8 @@ class UMLDiagramEditor(tk.Tk):
                     return
         messagebox.showinfo("Error", "Attribute not found.")
 
-    @ErrorHandler.handle_error_gui
+        return [class_name, attribute_name, new_name]
+
     def new_param(self):
         """
         Adds a new parameter to a class
@@ -681,6 +623,8 @@ class UMLDiagramEditor(tk.Tk):
         dialog_result = AddParameterDialog(self, title="Add Parameter").result
         if dialog_result:
             class_name, method_name, param_name = dialog_result
+            GUIController.new_param(class_name,method_name,param_name)
+
             if not class_name or not method_name or not param_name:
                 messagebox.showinfo("Error","All fields are required.")
                 return
@@ -705,15 +649,15 @@ class UMLDiagramEditor(tk.Tk):
             
             self.redraw_canvas()
             messagebox.showinfo("Success", f"Parameter '{param_name}' added to '{class_name}")
-
-    @ErrorHandler.handle_error_gui
+            return [class_name, method_name, param_name]
+    
     def delete_param(self):
         dialog_result = DeleteParameterDialog(self, "Delete Parameter").result
         if dialog_result:
             class_name, method_name, param_name = dialog_result
-            if not class_name or not method_name or not param_name:
-                messagebox.showinfo("Error", "All fields are required.")
-                return
+
+            GUIController.delete_param(class_name, method_name, param_name)
+
 
             found_class = False
             for class_box in self.class_boxes:
@@ -736,8 +680,8 @@ class UMLDiagramEditor(tk.Tk):
                         return
             if not found_class:
                 messagebox.showinfo("Error", f"Class '{class_name}' not found.")
-
-    @ErrorHandler.handle_error_gui
+            return [class_name, method_name, param_name]
+    
     def rename_param(self):
         """
         Renames a parameter in a class
@@ -751,6 +695,9 @@ class UMLDiagramEditor(tk.Tk):
         dialog_result = RenameParameterDialog(self, title="Rename Parameter").result
         if dialog_result:
             class_name, method_name, old_param_name, new_param_name = dialog_result
+
+            GUIController.rename_param(class_name, method_name , old_param_name, new_param_name)
+
             for class_box in self.class_boxes:
                 if class_box['class_name'] == class_name:
                     for method in class_box.get('methods', []):
@@ -762,7 +709,8 @@ class UMLDiagramEditor(tk.Tk):
                             return
             messagebox.showinfo("Error", "Parameter not found.")
 
-    @ErrorHandler.handle_error_gui
+            return [class_name, method_name, old_param_name, new_param_name]
+    
     def help(self):
         
         """
@@ -891,8 +839,11 @@ class DeleteParameterDialog(simpledialog.Dialog):
         return self.class_name_entry  # Set focus on the first entry widget
 
     def apply(self):
-        self.result = (self.class_name_entry.get(), self.method_name_entry.get(), self.param_name_entry.get())
-
+        class_name = self.class_name_entry.get()
+        method_name = self.method_name_entry.get()
+        param_name = self.param_name_entry.get()
+        self.result = (class_name, method_name, param_name)
+  
 class RenameParameterDialog(simpledialog.Dialog):
     def __init__(self, parent, title=None):
         super().__init__(parent, title=title)
@@ -918,7 +869,7 @@ class RenameParameterDialog(simpledialog.Dialog):
 
     def apply(self):
         self.result = (self.class_name_entry.get(), self.method_name_entry.get(), self.param_name_entry.get(), self.new_param_name_entry.get())
-
+        
 class AddRelationshipDialog(simpledialog.Dialog):
     def __init__(self, parent, title=None):
         super().__init__(parent, title=title)
@@ -964,6 +915,7 @@ class DeleteRelationshipDialog(simpledialog.Dialog):
     def apply(self):
         selected_relationship_str = self.relationship_var.get()
         self.result = next((r for r in self.relationships if f"{r['source']} - {r['type']} - {r['destination']}" == selected_relationship_str), None)
+        GUIController.delete_relationship()
 
 if __name__ == "__main__":
     app = UMLDiagramEditor()
