@@ -4,6 +4,10 @@ from Models.diagram import Diagram
 from Models.classadd import UMLClass
 import Models.attribute
 from Models.saveload import SaveLoad
+from Views.guiV1 import UMLDiagramEditor
+import tkinter as tk
+from Controllers.guicontroller import GUIController
+
 
 def main():
     # Create instances of the required classes
@@ -14,6 +18,7 @@ def main():
     parameters = Models.attribute.Parameters(methods)
     saveload = SaveLoad()
 
+    GUIcontroller = GUIController(diagram, classes, fields, methods, parameters, saveload)
     # Create an instance of the controller
     CLIcontroller = CLIController(diagram, classes, fields, methods, parameters, saveload)
     
