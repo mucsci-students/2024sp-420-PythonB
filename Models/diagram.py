@@ -1,6 +1,3 @@
-# Jill Daggs, Katie Dowlin
-# Danish Zubari, Patrick McCullough
-#35 PM.
 import keyword
 
 class Diagram:

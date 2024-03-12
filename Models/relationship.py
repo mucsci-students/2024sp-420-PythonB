@@ -1,6 +1,3 @@
-# Zhang
-# Danish
-# Feb 22, 2024
 from Models.errorHandler import ErrorHandler
 
 

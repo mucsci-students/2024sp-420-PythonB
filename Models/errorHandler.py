@@ -1,6 +1,3 @@
-#
-# from Models.errorHandler import ErrorHandler
-# with @ErrorHandler.handle_error sitting right on top of each method
 class ErrorHandler:
     @staticmethod
     def handle_error(func):

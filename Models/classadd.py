@@ -1,6 +1,3 @@
-# Danish
-# Zhang
-# updated_version Feb 25, 2024
 from Models.diagram import Diagram
 from Models.relationship import UMLRelationship
 from Models.errorHandler import ErrorHandler

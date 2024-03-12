@@ -1,5 +1,3 @@
-# Zhang
-# Feb 22,2024
 from Models.diagram import Diagram
 from Models.relationship import UMLRelationship
 from Models.classadd import UMLClass
