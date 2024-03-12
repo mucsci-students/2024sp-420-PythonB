@@ -1,8 +1,4 @@
-import os, platform, venv, sys, subprocess
-import platform
-import venv
-import sys
-from pip._internal import main as pip_main
+import os, venv 
 
 def main():
     '''Performs three things:
