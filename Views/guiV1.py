@@ -375,7 +375,7 @@ class UMLDiagramEditor(tk.Tk):
 
         current_y = y + text_spacing * 2
         if fields:
-            # Add "Fields:" label
+            #" label
             canvas.create_text(x + 10, current_y, text="Fields:", anchor="w", font=('TkDefaultFont', 10, 'underline'))
             current_y += text_spacing
 
@@ -384,11 +384,11 @@ class UMLDiagramEditor(tk.Tk):
             current_y += text_spacing
 
         if methods:
-            # Add some space before "Methods:" label if there are fields
+            #" label if there are fields
             if fields:
                 current_y += text_spacing / 2
 
-            # Add "Methods:" label
+            #" label
             canvas.create_text(x + 10, current_y, text="Methods:", anchor="w", font=('TkDefaultFont', 10, 'underline'))
             current_y += text_spacing
 

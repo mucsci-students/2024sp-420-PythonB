@@ -1,6 +1,6 @@
-#Primary: Jillian Daggs
-#Secondary: Patrick McCullough
-#Last Updated: 3/4/24
+# Jillian Daggs
+# Patrick McCullough
+# 3/4/24
 import os
 import json
 from Models.diagram import Diagram
@@ -10,7 +10,7 @@ from Models.saveload import SaveLoad
 from Models.errorHandler import ErrorHandler
 
 
-#Jill: initializes types of commands
+# initializes types of commands
 class CLIController:
     def __init__(self, diagram, classes, fields, methods, parameters, save_load):
         self.classes = classes

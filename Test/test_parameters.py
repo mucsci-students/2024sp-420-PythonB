@@ -1,4 +1,4 @@
-#Primary: Danish
+# Danish
 from Models.classadd import UMLClass
 from Models.attribute import Methods, Parameters
 from Models.diagram import Diagram

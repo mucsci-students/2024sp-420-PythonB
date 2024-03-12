@@ -78,7 +78,7 @@ class CLI:
         print(self.controller.list(tokens))
         
         
-    #Jill: checks commands against given list of commands, also handles exit
+    # checks commands against given list of commands, also handles exit
     def execute_command(self, user_input):
         tokens = user_input.split()
         if tokens:
@@ -93,7 +93,7 @@ class CLI:
         return True  # Continue running CLI
 
         
-    #Jill: what the user interacts with
+    # what the user interacts with
     def prompt(self):
         while True:
             user_input = input("Enter command or type 'help' for a list of commands: ").strip()

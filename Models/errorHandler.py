@@ -1,4 +1,4 @@
-# Zhang: in your file, include:
+#
 # from Models.errorHandler import ErrorHandler
 # with @ErrorHandler.handle_error sitting right on top of each method
 class ErrorHandler:

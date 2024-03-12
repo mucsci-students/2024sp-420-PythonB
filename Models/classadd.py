@@ -1,5 +1,5 @@
-# Primary: Danish
-# secondary : Zhang
+# Danish
+# Zhang
 # updated_version Feb 25, 2024
 from Models.diagram import Diagram
 from Models.relationship import UMLRelationship
@@ -13,7 +13,7 @@ class UMLClass:
         self.classes = self.diagram.classes
         self.relationships = UMLRelationship(self)
         
-    # Danish: I'm writing this function to add a class name
+    # I'm writing this function to add a class name
     def add_class(self, name):
 
         if self.diagram.name_checker(name):
@@ -24,27 +24,27 @@ class UMLClass:
                 return (f"Class '{name}' added successfully.")
                 
 
-    # Danish: I'm writing this function to delete a class name
+    # I'm writing this function to delete a class name
     def delete_class(self, name):
-        # Danish: if class is exist then it'll delete and display "class name deleted successfully
+        # if class is exist then it'll delete and display "class name deleted successfully
         if name in self.classes:
             del self.classes[name]
-            # Zhang: make a function call to the relationship class
+            # make a function call to the relationship class
             self.relationships.removed_class(name)
             return(f"Class '{name}' deleted successfully.")
             # return name
-        # Danish: if class is not exist then it'll  display "class name not exist
+        # if class is not exist then it'll  display "class name not exist
         elif name not in self.classes:
             raise ValueError(f"Unable to delete! Class '{name}' does not exist.")
      
 
-    # Danish: I'm writing this function to rename a class
+    # I'm writing this function to rename a class
     def rename_class(self, name, newname):
-        # Danish: If the class do not exist, it will display "Class name does not exist."
+        # If the class do not exist, it will display "Class name does not exist."
         if name not in self.classes:
             raise ValueError(f"Unable to rename! Class '{name}' does not exist.")
             # return None
-        # Danish: If the newName already exists, or it's a reserved word, then it will display an error.
+        # If the newName already exists, or it's a reserved word, then it will display an error.
         elif not self.diagram.name_checker(newname) or newname in self.classes:
             raise ValueError(f"Unable to rename to '{newname}'.")
             # return None

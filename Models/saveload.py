@@ -27,8 +27,8 @@ class SaveLoad:
 
         if not os.path.exists(save_folder):
             os.makedirs(save_folder)
-            # Patrick: Checks if the save_folder already exists
-            # Patrick: If not, the os will create the folder at the projects root.
+            # Checks if the save_folder already exists
+            # If not, the os will create the folder at the projects root.
 
         file_name = str(file_name + ".json")
 
@@ -72,7 +72,7 @@ class SaveLoad:
 
         """
         save_folder = 'save_folder'
-        # Patrick : Makes method aware of the save folder
+        # Makes method aware of the save folder
         
         file_name = str(file_name + ".json")
 
@@ -84,7 +84,7 @@ class SaveLoad:
             if schema_exists:
                 with open(schema_path, 'r') as schema_file:
                     schema = json.load(schema_file)
-                # Patrick: If file exists, open the file
+                # If file exists, open the file
                     with open(file_path, 'r+') as file:
                         # Read the content
                         data = json.load(file)
@@ -97,7 +97,7 @@ class SaveLoad:
 
                 
         else:
-            # Patrick: If file does not exist, alert user
+            # If file does not exist, alert user
             raise ValueError ("File does not exist!")
 
 
