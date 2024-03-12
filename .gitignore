@@ -1,3 +1,6 @@
 save_folder
 __pycache__
 dist
+
+#virtual environment directory name
+venv
