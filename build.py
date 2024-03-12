@@ -1,5 +1,8 @@
-import os
+import os, platform, venv, sys, subprocess
 import platform
+import venv
+import sys
+from pip._internal import main as pip_main
 
 def main():
     '''Performs three things:
@@ -7,46 +10,23 @@ def main():
         2) enters the venv in the current directory if it is not active
         3) builds the project inside the current directory in the venv
     '''
-    #the alias to python is os dependent
-    alias = get_prefix()
-
     if not os.getenv("VIRTUAL_ENV"):
-        setup_venv(alias)
-
-    if os.getenv("VIRTUAL_ENV"):
+        setup_venv()
+    else:
         os.system("pip install .")
+        
 
-
-def setup_venv(alias:str):
+def setup_venv():
     '''Sets up and enters a virtual environment in the current directory'''
-
     hasVenv = input("You are not in a venv; [c]reate or activate one now: ").strip().lower()
-    name = input("Enter the name of the virtual environment: ").strip()    
 
     if hasVenv[0:] == 'c':
-        os.system(alias + " -m venv " + name)
-
-    if alias == "py":
-        os.system("powershell.exe Set-ExecutionPolicy Bypass -Scope Process")
-        os.system("powershell.exe source " + name + "\\Scripts\\Activate.ps1")
+        name = input("Enter the name of the virtual environment: ").strip()    
+        venv.create(name, with_pip=True)
     else:
-        os.system("source " + name + "/bin/activate")
+        print("To activate a venv on UNIX, use 'source venv/bin/activate'")
+        print("To activate a venv on Windows, use 'source venv/Scripts/Activate.ps1'")
 
 
-
-def get_prefix() -> str:
-    '''chooses the alias to python based on the operating system.
-        NOTE: Assumes all os's that don't self-identify as Windows or Linux are Mac
-    '''
-    os = platform.system()
-
-    if os == "Windows":
-        prefix = "py"
-    elif os == "Linux":
-        prefix = "python"
-    else:
-        prefix = "python3"
-
-    return prefix
-
-main()
+if __name__ == '__main__':
+    main()
