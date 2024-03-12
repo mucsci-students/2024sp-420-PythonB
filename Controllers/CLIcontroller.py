@@ -1,6 +1,3 @@
-# Jillian Daggs
-# Patrick McCullough
-# 3/4/24
 import os
 import json
 from Models.diagram import Diagram
