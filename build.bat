@@ -15,4 +15,3 @@ pip install "$PWD"
 clear
 python3 uml.py
 clear
-deactivate
