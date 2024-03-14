@@ -39,15 +39,15 @@ class Fields:
                 Returns:
                     None
         """
-        # Katie Dowlin: Check if the class you want to add the field to exists.
+        # Check if the class you want to add the field to exists.
         if class_name in self.diagram_class.classes.keys():
-            # Katie Dowlin: Check if the field name is already used.
+            # Check if the field name is already used.
             if field_name not in self.diagram_class.classes[class_name]["Fields"]:
                 self.diagram_class.classes[class_name]["Fields"].append(field_name)
                 return(f"Field '{field_name}' added successfully.")
             else:
                 raise ValueError(f"Add failed- field '{field_name}' already exists.")
-        # Katie Dowlin: If the class you want to add the field to doesn't exist.
+        # If the class you want to add the field to doesn't exist.
         else:
             raise ValueError(f"Add failed- class '{class_name}' doesn't exist.")
 
@@ -69,16 +69,16 @@ class Fields:
                 Returns:
                     None
         """
-        # Katie Dowlin: Check if class exists.
+        # Check if class exists.
         if class_name in self.diagram_class.classes.keys():
-            # Katie Dowlin: Check if a field with that name exists in that class.
+            # Check if a field with that name exists in that class.
             if field_name in self.diagram_class.classes[class_name]["Fields"]:
                 self.diagram_class.classes[class_name]["Fields"].remove(field_name)
                 print(f"Field '{field_name}' deleted successfully.")
-            # Katie Dowlin: If there is no field with that name in that class.
+            # If there is no field with that name in that class.
             else:
                 raise ValueError(f"Delete failed- field '{field_name}' doesn't exist.")
-        # Katie Dowlin: If the class doesn't exist.
+        # If the class doesn't exist.
         else:
             raise ValueError(f"Delete failed- class '{class_name}' doesn't exist.")
 
@@ -103,21 +103,21 @@ class Fields:
                    Returns:
                        None
         """
-        # Katie Dowlin: Check if class exists.
+        # Check if class exists.
         if class_name in self.diagram_class.classes.keys():
-            # Katie Dowlin: Check if old name is a field in that class.
+            # Check if old name is a field in that class.
             if old_name in self.diagram_class.classes[class_name]["Fields"]:
-                # Katie Dowlin: Check if new name is a field in that class.
+                # Check if new name is a field in that class.
                 if new_name in self.diagram_class.classes[class_name]["Fields"]:
                     raise ValueError(f"Rename failed- field '{new_name}' already exists.")
                 else:
                     self.diagram_class.classes[class_name]["Fields"].remove(old_name)
                     self.diagram_class.classes[class_name]["Fields"].append(new_name)
                     return(f"Field '{old_name}' has been renamed to '{new_name}'.")
-            # Katie Dowlin: If the old name does not exist.
+            # If the old name does not exist.
             else:
                 raise ValueError(f"Rename failed- field '{old_name}' doesn't exist.")
-        # Katie Dowlin: If the class doesn't exist.
+        # If the class doesn't exist.
         else:
             raise ValueError(f"Rename failed- class '{class_name}' doesn't exist.")
 

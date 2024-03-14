@@ -1,13 +1,10 @@
-# Primary: Zhang
-# secondary : Danish
-# Feb 22, 2024
 from Models.errorHandler import ErrorHandler
 
 
 class UMLRelationship:
 
-    # Zhang: Interacting with UMLClass
-    # Zhang: Note that the data structure of relationship is a list of lists:
+    # Interacting with UMLClass
+    #
     def __init__(self, classes):
         """
         Initializes the UMLRelationship instance.
@@ -50,24 +47,24 @@ class UMLRelationship:
             None
         """
 
-        # Zhang: Check the existent of the source class.
+        # Check the existent of the source class.
         if src not in self.uml_class.classes:
             raise ValueError(f"Source class, '{src}' does not exist.")
 
-        # Zhang: Check the existent of the destination class.
+        # Check the existent of the destination class.
         elif des not in self.uml_class.classes:
             raise ValueError(f"Destination class, '{des}' does not exist.")
 
-        # Zhang: Check the validation of the relationship types.
+        # Check the validation of the relationship types.
         elif type_rel not in self.relationship_types:
             raise ValueError(f"Relationship type, '{type_rel}' is not valid.")
 
-        # Zhang: Relationship can't be created by the same class.
+        # Relationship can't be created by the same class.
         elif src == des:
             raise ValueError(f"The source class, '{src}', cannot be the same as the destination class.")
 
         else:
-            # Zhang: Check the existent of the relationship.
+            # Check the existent of the relationship.
             found = False
             for rel in self.relationships:
                 if rel[0] == src and rel[1] == des:
@@ -75,7 +72,7 @@ class UMLRelationship:
             if found:
                 raise ValueError(f"Relationship from '{src}' to '{des}' already exists.")
             else:
-                # Zhang: Append to the new relationship to the list.
+                # Append to the new relationship to the list.
                 self.relationships.append([src, des, type_rel])
                 return("Relationship added.")
 
@@ -97,28 +94,28 @@ class UMLRelationship:
             None
         """
 
-        # Zhang: Check the existent of the source class.
+        # Check the existent of the source class.
         if src not in self.uml_class.classes:
             raise ValueError(f"Source class- '{src}' does not exist.")
 
-        # Zhang: Check the existent of the destination.
+        # Check the existent of the destination.
         elif des not in self.uml_class.classes:
             raise ValueError(f"Destination class- '{des}' does not exist.")
 
         removed = False
-        # Zhang: For each relationship tuple in the list, if relationship exist, remove it.
+        # For each relationship tuple in the list, if relationship exist, remove it.
         for rel in self.relationships[:]:
             if rel[0] == src and rel[1] == des:
                 self.relationships.remove(rel)
                 removed = True
 
-        # Zhang: Show error message if relationship exists.
+        # Show error message if relationship exists.
         if not removed:
             raise ValueError(f"No relationship from '{src}' to '{des}' exists.")
         else:
             return("Relationship deleted!")
 
-    # Zhang: When a class is deleted, remove all its relationships
+    # When a class is deleted, remove all its relationships
     def removed_class(self, removed_class):
         """
         Removes all relationships involving a specified class when it's removed.
@@ -138,7 +135,7 @@ class UMLRelationship:
 
         removed = False
 
-        # Zhang: Remove the relationship for each removed source or destination class.
+        # Remove the relationship for each removed source or destination class.
         for rel in self.relationships[:]:
             if rel[0] == removed_class or rel[1] == removed_class:
                 self.relationships.remove(rel)
@@ -166,7 +163,7 @@ class UMLRelationship:
 
         renamed = False
 
-        # Zhang: Update each renamed source or destination class in the relationship list.
+        # Update each renamed source or destination class in the relationship list.
         for rel in self.relationships[:]:
             if rel[0] == old_name:
                 rel[0] = new_name
@@ -226,7 +223,7 @@ class UMLRelationship:
         """
         return self.relationship_types
 
-    # Jill: prints list of lists of relationships
+    # prints list of lists of relationships
     def list_relationships(self):
         """
         Returns a list of all current relationships.
