@@ -2,7 +2,7 @@ from Models.UML_Method import UML_Method
 from Models.UML_Param import UML_Param as param
 
 def test_ctor():
-    t = UML_Method("Shaggy")
+    t = UML_Method("Shaggy", "void")
     u = UML_Method("Matt", "int")
     v = UML_Method("Velma","void", "test1", "test2", "test3")
 
