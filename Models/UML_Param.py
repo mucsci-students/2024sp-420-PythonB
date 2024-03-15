@@ -18,7 +18,7 @@ class UML_Param(UML_Named_Object):
 
     def __hash__(self) -> int:
         '''Hashes this value by hashing all its fields'''
-        return hash(self._name) * 13
+        return hash(self._name) 
     
     def __eq__(self, o):
         '''Equality operator override for UML_Param'''

@@ -84,7 +84,9 @@ class UML_Method (UML_Named_Object):
 #===================================== Operators =====================================#
     
     def __hash__(self):
-        return hash(self._name) * 7 + hash(self._ret) * 23
+        return hash(self._name)  \
+            + hash(self._ret)    \
+            + hash(self._params)
     
     def __eq__ (self, o) -> bool:
         if self is o: 
@@ -93,16 +95,9 @@ class UML_Method (UML_Named_Object):
         if not isinstance(o, UML_Method):
             return False
         
-        if self._name != o._name: 
-            return False
-        
-        if self._ret != o._ret: 
-            return False
-        
-        if self._params != o._params: 
-            return False
-        
-        return True
+        return self._name == o._name \
+            and self._ret == o._ret  \
+            and self._params == o._params
     
     def __str__ (self) -> str:
         '''Strings a method in the following form: 
