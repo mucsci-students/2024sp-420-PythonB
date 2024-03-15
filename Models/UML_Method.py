@@ -3,7 +3,7 @@ from Models.UML_Param import UML_Param
 
 class UML_Method (UML_Named_Object):
 
-    def __init__ (self, name:str, ret:str = "void", *params:str):
+    def __init__ (self, name:str, ret:str, *params:str):
         super().__init__(name)
         self._ret:str = ret
         self._params:list[UML_Param] = []
@@ -69,6 +69,7 @@ class UML_Method (UML_Named_Object):
         self._params = list(set(self._params))
         
 #===================================== Helpers =====================================#
+        
     def __find_param (self, p_name) -> UML_Param | None:
         ''' Private helper. Finds a method with name p_name
             Returns None if the param doesn't exist in this method
@@ -78,7 +79,7 @@ class UML_Method (UML_Named_Object):
     
 #===================================== Operators =====================================#
     
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self._name)  \
             + hash(self._ret)    \
             + hash(self._params)
