@@ -1,12 +1,13 @@
-from UML_Named_Object import UML_Named_Object
-from UML_Param import UML_Param
+from Models.UML_Named_Object import UML_Named_Object
+from Models.UML_Param import UML_Param
 
 class UML_Method (UML_Named_Object):
 
-    def __init__ (self, name:str, ret:str = "void"):
-        self._name:str = name
+    def __init__ (self, name:str, ret:str = "void", *params:str):
+        super().__init__(name)
         self._ret:str = ret
         self._params:list[UML_Param] = []
+        self.append_params(*params)
 
 #===================================== Accessors =====================================#
     def get_name (self) -> str:
@@ -24,7 +25,7 @@ class UML_Method (UML_Named_Object):
         for p in self._params: 
             if p.get_name() == p_name: 
                 return p
-        raise ValueError ("No param with name %s exists", p_name)
+        raise ValueError ("No param with name %s exists" % p_name)
     
     def get_params (self) -> list[UML_Param]:
         '''Accessor for the full list of this method's params'''
@@ -45,7 +46,7 @@ class UML_Method (UML_Named_Object):
        
        p = self.__find_param(p_name)
        if p != None: 
-        raise ValueError ("Param with name %s already exists", p_name)
+        raise ValueError ("Param with name %s already exists" % p_name)
        self._params.append(UML_Param(p_name))
 
     def delete_param (self, p_name:str) -> None:
@@ -55,13 +56,13 @@ class UML_Method (UML_Named_Object):
 
         p = self.__find_param(p_name)
         if p == None:
-            raise ValueError ("No param named %s exists", p_name)
+            raise ValueError ("No param named %s exists" % p_name)
         self._params.remove(p)
     
     def change_params (self, *p_names) -> None:
         ''' Replaces the current parameter list with a new list of params '''
         self._params.clear()
-        self.append_params(p_names)
+        self.append_params(*p_names)
     
     def append_params (self, *p_names) -> None:
         ''' Appends the supplied params to the param list '''
@@ -79,13 +80,24 @@ class UML_Method (UML_Named_Object):
             if p.get_name() == p_name:
                 return p
         return None
-
+    
+    def __param_str(self) -> str:
+        '''Strings all this methods params (split was being weird)
+        '''
+        if len(self._params) == 0:
+            return ''
+        
+        out = ' (' + str(self._params[0])
+        for p in self._params[1:]:
+            out += ', '
+            out += str(p)
+        return out + ')'
 #===================================== Operators =====================================#
     def __eq__ (self, o) -> bool:
         if self is o: 
             return True
         
-        if not isinstance(o, self):
+        if not isinstance(o, UML_Method):
             return False
         
         if self._name != o._name: 
@@ -102,6 +114,7 @@ class UML_Method (UML_Named_Object):
     def __str__ (self) -> str:
         '''Strings a method in the following form: 
             ret
-            name (param1, param2,..., paramN)'''
-        return self._ret + '\n' + self._name + " (" + ", ".join(str(p) for p in self._params) + ") " 
+            name (param1, param2,..., paramN)
+        '''
         
+        return self._ret + '\n' + self._name + ' (' + ', '.join(str(p) for p in self._params) + ')'
