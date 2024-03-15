@@ -9,17 +9,18 @@ def test_ctor():
     assert isinstance(p, param)
     assert not isinstance(p, Exception)
 
-p = param("Named")
-q = param("")
-r = param("Same")
-s = param("Same")
-
 def test_get_name():
+    p = param("Named")
+    q = param("")
+
     assert p.get_name() == "Named"
     assert q.get_name() == ""
     assert q.get_name() != "Zoinks!"
 
 def test_set_name():
+    p = param("Named")
+    q = param("")
+
     p.set_name("Bazinga!")
     q.set_name("Geronimo!")
 
@@ -29,12 +30,18 @@ def test_set_name():
     assert q.get_name() != ""
 
 def test_eq():
+    r = param("Same")
+    s = param("Same")
+    p = param("Different")
+
     assert r == s
     assert r != p
 
 def test_str():
+    p = param("Bazinga!")
+    r = param("Same")
+
     assert str(r) == "Same"
-    #this was updated in test_set_name
     assert str(p) == "Bazinga!"
     assert str(p) != "Named"
 
