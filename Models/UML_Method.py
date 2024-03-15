@@ -44,8 +44,7 @@ class UML_Method (UML_Named_Object):
        ''' Adds a param to this methods param list if it doesn't already exist
         Raises: ValueError if p_name already exists. '''
        
-       p = self.__find_param(p_name)
-       if p != None: 
+       if self.__find_param(p_name) is not None: 
         raise ValueError ("Param with name %s already exists" % p_name)
        self._params.append(UML_Param(p_name))
 
@@ -66,8 +65,7 @@ class UML_Method (UML_Named_Object):
     
     def append_params (self, *p_names) -> None:
         ''' Appends the supplied params to the param list '''
-        for p_name in p_names: 
-            self._params.append(UML_Param(p_name))
+        self._params.extend([UML_Param(p_name) for p_name in p_names])
         self._params = list(set(self._params))
         
 #===================================== Helpers =====================================#
@@ -76,10 +74,7 @@ class UML_Method (UML_Named_Object):
             Returns None if the param doesn't exist in this method
         '''
 
-        for p in self._params:
-            if p.get_name() == p_name:
-                return p
-        return None
+        return next((p for p in self._params if p.get_name() == p_name), None)
     
 #===================================== Operators =====================================#
     
