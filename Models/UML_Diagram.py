@@ -33,13 +33,19 @@ class UML_Diagram:
         item = next((v for v in self._classes if v.get_name() == c_name), None)
         if item is not None: 
             raise ValueError("Class %s already exists" % c_name)
-        self._classes.append(item)
+        self._classes.append(UML_Class(c_name))
 
-    def add_relation(self, r_src:str, r_dst:str):
-        item = next((r for r in self._relations if r.get_src_name() == r_src and r.get_dst_name() == r_dst), None)
+    def add_relation(self, r_src:str, r_dst:str, r_type:str):
+        #make sure that r_src -> r_dst and r_dst -> r_src are not relationships already
+        item = next((r for r in self._relations if 
+                     (r.get_src_name() == r_src and r.get_dst_name() == r_dst) 
+                     or (r.get_src_name() == r_dst and r.get_dst_name() == r_src)), None)
         if item is not None: 
-            raise ValueError("Relation between %s and %s does not exist." % r_src, r_dst)
-        self._relations.append(item)
+            raise ValueError("Relation between %s and %s already exists." % r_src, r_dst)
+        if r_type.lower() not in rel_types: 
+            raise ValueError("Relation type %s is invalid" % r_type)
+        
+        self._relations.append(UML_Relation(self.get_class(r_src), self.get_class(r_dst), r_type))
     
     def delete_class(self, c_name:str):
         self._classes.remove(self.get_class(c_name))
