@@ -20,6 +20,12 @@ class UML_Relation:
     def get_type(self) -> str:
         return self._type
     
+    def get_src_name(self) -> str: 
+        return self._src.get_name()
+    
+    def get_dst_name(self) -> str: 
+        return self._dst.get_name()
+    
     #===================================== Mutators =====================================#   
 
     def set_src(self, new_src:UML_Class) -> None:

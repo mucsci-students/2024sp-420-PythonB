@@ -41,9 +41,21 @@ class UML_Class(UML_Named_Object):
         self.__error(new_field_name, "field")
         self._fields.append(UML_Field(new_field_name, new_field_type))
 
-    def add_method(self, new_method_name:str, new_method_ret:str, *new_method_params):
+    def add_method(self, new_method_name:str, new_method_ret:str, *new_method_params) -> None:
         self.__error(new_method_name, "method")
         self._methods.append(UML_Method(new_method_name, new_method_ret, *new_method_params))
+
+    def delete_field(self, f_name:str) -> None:
+        item = self.__find_name(f_name, "field")
+        if item is None: 
+            raise ValueError("Field %s does not exist" % f_name) 
+        self._fields.remove(item)
+
+    def delete_method(self, m_name:str) -> None:
+        item = self.__find_name(m_name, "method")
+        if item is None: 
+            raise ValueError("Method %s does not exist" % m_name)
+        self._fields.remove(item)
 
 #===================================== Helpers =====================================#
 
