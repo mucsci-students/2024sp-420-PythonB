@@ -3,4 +3,4 @@ __pycache__
 dist
 
 #virtual environment directory name
-venv
+.venv
