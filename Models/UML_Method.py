@@ -6,7 +6,7 @@ class UML_Method (UML_Named_Object):
     def __init__ (self, name:str, ret:str = "void", *params:str):
         super().__init__(name)
         self._ret:str = ret
-        self._params:list[UML_Param] = []
+        self._params:list[UML_Param] = self
         self.append_params(*params)
 
 #===================================== Accessors =====================================#
@@ -81,17 +81,6 @@ class UML_Method (UML_Named_Object):
                 return p
         return None
     
-    def __param_str(self) -> str:
-        '''Strings all this methods params (split was being weird)
-        '''
-        if len(self._params) == 0:
-            return ''
-        
-        out = ' (' + str(self._params[0])
-        for p in self._params[1:]:
-            out += ', '
-            out += str(p)
-        return out + ')'
 #===================================== Operators =====================================#
     def __eq__ (self, o) -> bool:
         if self is o: 
