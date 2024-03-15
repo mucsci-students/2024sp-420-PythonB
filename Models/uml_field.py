@@ -22,7 +22,7 @@ class UML_Field (UML_Named_Object):
 
     def set_type (self, new_name:str) -> None:
         '''Mutator for this field's return type'''
-        self._ret = new_name
+        self._type = new_name
 
 #===================================== Operators =====================================#
         def __eq__ (self, o) -> bool:
@@ -42,7 +42,7 @@ class UML_Field (UML_Named_Object):
         
         def __str__ (self) -> str:
             '''Strings a field in the following form:
-                ret
+                type
                 name'''
-            return self._type + '\n' + self._type
+            return self._type + '\n' + self._name
             
