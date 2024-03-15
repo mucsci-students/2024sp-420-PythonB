@@ -1,5 +1,5 @@
-from Models.UML_Method import UML_Method
-from Models.UML_Param import UML_Param as param
+from Models.uml_method import UML_Method
+from Models.uml_param import UML_Param as param
 
 def test_ctor():
     t = UML_Method("Shaggy")
