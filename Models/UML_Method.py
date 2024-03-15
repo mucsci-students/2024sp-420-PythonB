@@ -82,6 +82,10 @@ class UML_Method (UML_Named_Object):
         return None
     
 #===================================== Operators =====================================#
+    
+    def __hash__(self):
+        return hash(self._name) * 7 + hash(self._ret) * 23
+    
     def __eq__ (self, o) -> bool:
         if self is o: 
             return True
