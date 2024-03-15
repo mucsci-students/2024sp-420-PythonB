@@ -6,7 +6,7 @@ class UML_Method (UML_Named_Object):
     def __init__ (self, name:str, ret:str = "void", *params:str):
         super().__init__(name)
         self._ret:str = ret
-        self._params:list[UML_Param] = self
+        self._params:list[UML_Param] = []
         self.append_params(*params)
 
 #===================================== Accessors =====================================#
