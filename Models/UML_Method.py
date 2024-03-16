@@ -1,5 +1,5 @@
-from Models.UML_Named_Object import UML_Named_Object
-from Models.UML_Param import UML_Param
+from Models.uml_named_object import UML_Named_Object
+from Models.uml_param import UML_Param
 
 class UML_Method (UML_Named_Object):
 
