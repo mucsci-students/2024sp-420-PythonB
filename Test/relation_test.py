@@ -1,6 +1,6 @@
-from Models.UML_Relation import UML_Relation
-from Models.UML_Diagram import rel_types
-from Models.UML_Class import UML_Class
+from Models.uml_relation import UML_Relation
+from Models.uml_diagram import rel_types
+from Models.uml_class import UML_Class
 
 def test_ctor_relation():
     src = UML_Class("source")
@@ -84,8 +84,48 @@ def test_set_src():
     assert rel1.get_src() != 'Minecraft'
     assert rel1.get_src() != src_name
 
+def test_set_dst():
+    src_name = "Pied Piper"
+    dest_name = "Hawaii"
+    src = UML_Class(src_name)
+    dest = UML_Class(dest_name)
+    type1 = "generalization"
+    rel1 = UML_Relation(src, dest, type1)
 
+    new_dst_name = "Stan"
+    rel1.set_dst(new_dst_name)
 
-    
+    assert rel1.get_dst() == new_dst_name
+    assert rel1.get_dst() != 'Minecraft'
+    assert rel1.get_dst() != dest_name
 
-#"aggregation", "composition", "generalization", "inheritance"
+def test_set_type():
+    src_name = "Pied Piper"
+    dest_name = "Hawaii"
+    src = UML_Class(src_name)
+    dest = UML_Class(dest_name)
+    type1 = "generalization"
+    rel1 = UML_Relation(src, dest, type1)
+
+    new_type = "inheritance"
+    rel1.set_type(new_type)
+
+    assert rel1.get_type() == new_type
+    assert rel1.get_type() != 'Minecraft'
+    assert rel1.get_type() != type1
+
+def test_eq():
+    rel1 = UML_Relation(UML_Class("name1"), UML_Class("name2"), "inheritance")
+    rel2 = UML_Relation(UML_Class("name1"), UML_Class("name2"), "inheritance")
+    diff_rel = UML_Relation(UML_Class("name1"), UML_Class("name2"), "inheritance")
+
+    assert rel1 == rel1
+    assert rel1 == rel2
+    assert rel1 != diff_rel
+    assert rel1 != "Hello"
+
+def test_str():
+    rel1 = UML_Relation(UML_Class("name1"), UML_Class("name2"), "inheritance")
+
+    assert str(rel1) == "name1 <--- inheritance ---> name2"
+    assert str(rel1) != "Bullock"

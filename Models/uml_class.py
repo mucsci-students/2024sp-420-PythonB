@@ -62,7 +62,7 @@ class UML_Class(UML_Named_Object):
     def __error(self, value:str, loc:str) -> None:
         '''Iterate through a list and error if value already exists in list'''
         if self.__find_name(value, loc) is not None:
-            raise ValueError("%s %s already exists" % loc, value) 
+            raise ValueError("%s already exists" % value) 
     
     def __find_name(self, name:str, loc:list) -> UML_Field | UML_Method | None:
         return next((v for v in loc if v.get_name() == name), None)
