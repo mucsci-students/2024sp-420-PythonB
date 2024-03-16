@@ -1,6 +1,6 @@
-from Models.uml_relation import UML_Relation
-from Models.uml_diagram import rel_types
-from Models.uml_class import UML_Class
+from Models.UML_Relation import UML_Relation
+from Models.UML_Diagram import rel_types
+from Models.UML_Class import UML_Class
 
 def test_ctor_relation():
     src = UML_Class("source")

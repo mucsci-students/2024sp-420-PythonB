@@ -1,5 +1,5 @@
-from uml_class import UML_Class
-from uml_diagram import rel_types
+from UML_Class import UML_Class
+from UML_Diagram import rel_types
 
 class UML_Relation: 
 

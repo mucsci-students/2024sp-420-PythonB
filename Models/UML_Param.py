@@ -1,4 +1,4 @@
-from Models.uml_named_object import UML_Named_Object
+from Models.UML_Named_Object import UML_Named_Object
 
 
 class UML_Param(UML_Named_Object):
