@@ -1,4 +1,4 @@
-from Models.UML_Named_Object import UML_Named_Object
+from Models.uml_named_object import UML_Named_Object
 
 class UML_Field (UML_Named_Object):
     
