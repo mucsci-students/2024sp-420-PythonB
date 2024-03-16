@@ -1,4 +1,4 @@
-from Models.UML_Param import UML_Param as param
+from Models.uml_param import UML_Param as param
 
 
 

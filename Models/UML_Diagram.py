@@ -1,5 +1,5 @@
-from UML_Class import UML_Class
-from UML_Relation import UML_Relation
+from uml_class import UML_Class
+from uml_relation import UML_Relation
 
 rel_types = ["aggregation", "composition", "generalization", "inheritance"]
 

@@ -1,6 +1,6 @@
-from UML_Named_Object import UML_Named_Object
-from UML_Method import UML_Method
-from UML_Field import UML_Field
+from uml_named_object import UML_Named_Object
+from uml_method import UML_Method
+from uml_field import UML_Field
 
 class UML_Class(UML_Named_Object): 
 
