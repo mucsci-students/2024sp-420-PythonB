@@ -49,17 +49,10 @@ class UML_Method (UML_Named_Object):
        self._params.append(UML_Param(p_name))
 
     def delete_param (self, p_name:str) -> None:
-        ''' Deletes a param if it exists
-            Raises: ValueError if p_name is not a parameter of this method
-        '''
-
-        p = self.__find_param(p_name)
-        if p == None:
-            raise ValueError ("No param named %s exists" % p_name)
-        self._params.remove(p)
+        self._params.remove(self.get_param(p_name))
     
     def change_params (self, *p_names) -> None:
-        ''' Replaces the current parameter list with a new list of params '''
+        ''' Replaces the current parameter list with a new list of params ''' 
         self._params.clear()
         self.append_params(*p_names)
     
