@@ -48,16 +48,24 @@ class UML_Relation:
 
     #===================================== Operators =====================================#
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         #exclude type from this hash because it can be only one of four values
         return hash(self._src) \
         + hash(self._dst)
     
-    def __eq__(self, o):
+    def __eq__(self, o) -> bool:
+        if self is o: 
+            return True
+        
+        if not isinstance(o, UML_Relation):
+            return False
         #exclude type from equality check b/c two classes have at most one relation
-        return self._src == o._src \
-        and self._dst == o._dst
+        return self._src == o._src and self._dst == o._dst
     
-    def __str__(self):
+    def __str__(self) -> str:
+        '''Strings a relation in the following form: 
+        
+            Relation of type between src and dst
+        '''
         return "Realtion of %s between %s and %s" \
             % self._type, self._src.get_name(), self._dst.get_name()

@@ -11,7 +11,7 @@ def test_ctor_relation():
     assert rel1._src == src
     assert rel1._src != dest
     assert rel1._dst == dest
-    assert rel1._dest != src
+    assert rel1._dst != src
     assert rel1._type == type1
     assert rel1._type != "composition"
 
@@ -21,7 +21,7 @@ def test_get_src():
     type1 = "aggregation"
     rel1 = UML_Relation(src, dest, type1)
 
-    get_src = rel1.get_source()
+    get_src = rel1.get_src()
     assert get_src == rel1._src
     assert get_src != rel1._dst
 
@@ -32,7 +32,7 @@ def test_get_dst():
     rel1 = UML_Relation(src, dest, type1)
 
     get_dst = rel1.get_dst()
-    assert get_dst == rel1._dest
+    assert get_dst == rel1._dst
     assert get_dst != rel1._src
 
 def test_get_type():
@@ -78,7 +78,14 @@ def test_set_src():
     rel1 = UML_Relation(src, dest, type1)
 
     new_src_name = "Hooli"
-    # NOT COMPLETE
+    rel1.set_src(new_src_name)
+
+    assert rel1.get_src() == new_src_name
+    assert rel1.get_src() != 'Minecraft'
+    assert rel1.get_src() != src_name
+
+
+
     
 
 #"aggregation", "composition", "generalization", "inheritance"

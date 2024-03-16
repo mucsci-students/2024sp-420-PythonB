@@ -90,6 +90,7 @@ class UML_Method (UML_Named_Object):
     
     def __str__ (self) -> str:
         '''Strings a method in the following form: 
+        
             ret
             name (param1, param2,..., paramN)
         '''

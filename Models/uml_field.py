@@ -46,9 +46,7 @@ class UML_Field (UML_Named_Object):
     
     def __str__(self) -> str:
         '''Strings a field in the following form:
-            type
-            name
+            type name
         '''
-        result = self._type + '\n' + self._name
+        result = self._type + ' ' + self._name
         return result
-            
