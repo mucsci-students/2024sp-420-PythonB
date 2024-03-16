@@ -1,5 +1,6 @@
-from UML_Class import UML_Class
-from UML_Relation import UML_Relation
+from uml_class import UML_Class
+from uml_relation import UML_Relation
+import re
 
 rel_types = ["aggregation", "composition", "generalization", "inheritance"]
 
@@ -90,6 +91,18 @@ class UML_Diagram:
         '''
         return 'Classes:' + '\n\t'.join(str(c) for c in self._classes) + '\n' \
                 + 'Relationships:' + '\n\t'.join(str(r) for r in self._relations)
-        
+
+
+def __check_args (*args:str):
+    '''Makes sure every string in *args is valid'''
+    regex = re.compile('^[a-zA-Z][a-zA-Z0-9_]*$')
+    for arg in [*args]: 
+        if not regex.match(arg):
+            raise ValueError("%s is not a valid name, please try again." % arg)
+    
+
+
+
+
 
     
