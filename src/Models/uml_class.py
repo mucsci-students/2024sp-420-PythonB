@@ -5,7 +5,7 @@ from Models.uml_field import UML_Field
 class UML_Class(UML_Named_Object): 
 
     def __init__(self, name:str):
-        super.__init__(name)
+        super().__init__(name)
         self._fields = []
         self._methods = []
 

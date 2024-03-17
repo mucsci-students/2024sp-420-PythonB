@@ -18,37 +18,26 @@ def test_add_field():
     cl = UML_Class("class")
     cl.add_field("field1", "x")
 
-    fld1 = UML_Field("field1", "x")
-    fld2 = UML_Field("field2", "x")
-    fld3 = UML_Field("field1", "y")
-
-    assert fld1 in cl._fields
-    assert fld2 not in cl._fields
-    assert fld3 not in cl._fields
+    assert str(UML_Field("field1", "x")) == str(cl._fields[0])
+    assert str(UML_Field("field2", "x")) != str(cl._fields[0])
 
 def test_add_method():
     cl = UML_Class("class")
     cl.add_method("mthd", "int", "p1", "p2")
 
-    mthd1 = UML_Method("mthd", "int", "p1", "p2")
-    mthd2 = UML_Method("mthd", "int")
-    mthd3 = UML_Method("not", "void")
-
-    assert mthd1 in cl._methods
-    assert mthd2 not in cl._methods
-    assert mthd3 not in cl._methods
+    assert str(UML_Method("mthd", "int", "p1", "p2")) == str(cl._methods[0])
+    assert str(UML_Method("mthd", "int")) != str(cl._methods[0])
 
 def test_delete_field():
     cl = UML_Class("class")
     cl.add_field("field1", "x")
     cl.add_field("field2", "y")
 
-    f1 = UML_Field("field1", "x")
-    f2 = UML_Field("field2", "y")
+    assert str(UML_Field("field1", "x")) == str(cl._fields[0])
+    assert str(UML_Field("field2", "y")) == str(cl._fields[1])
     cl.delete_field("field1")
-
-    assert f1 not in cl._methods
-    assert f2 in cl._fields
+    assert str(UML_Field("field1", "x")) != str(cl._fields[0])
+    assert str(UML_Field("field2", "y")) == str(cl._fields[0])
 
 def test_delete_method():
     cl = UML_Class("class")
@@ -88,18 +77,12 @@ def test_get_fields():
     cl.add_field("field2", "y")
 
     flds = cl.get_fields()
-    f1 = UML_Field("field1", "x")
-    f2 = UML_Field("field2", "y")
-    f3 = UML_Field("field3")
-    f4 = UML_Field("field1")
 
-    
     assert len(flds) == 2
-    assert f1 in flds
-    assert f2 in flds
-    assert "hi" not in flds
-    assert f3 not in flds
-    assert f4 not in flds
+    assert str(UML_Field("field1", "x")) == str(flds[0])
+    assert str(UML_Field("field2", "y")) == str(flds[1])
+    assert str(UML_Field("field1", "x")) != str(flds[1])
+    assert str(UML_Field("field2", "y")) != str(flds[0])
 
 def test_get_methods():
     cl = UML_Class("class")
