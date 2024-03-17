@@ -116,7 +116,7 @@ def test_set_type():
 def test_eq():
     rel1 = UML_Relation(UML_Class("name1"), UML_Class("name2"), "inheritance")
     rel2 = UML_Relation(UML_Class("name1"), UML_Class("name2"), "inheritance")
-    diff_rel = UML_Relation(UML_Class("name1"), UML_Class("name2"), "inheritance")
+    diff_rel = UML_Relation(UML_Class("name3"), UML_Class("name2"), "inheritance")
 
     assert rel1 == rel1
     assert rel1 == rel2

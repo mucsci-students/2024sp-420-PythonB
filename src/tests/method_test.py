@@ -15,9 +15,11 @@ def test_ctor():
     assert u._ret == "int"
     assert u._ret != "void"
 
-    assert param("test1") in v._params
-    assert param("test2") in v._params
-    assert param("test5") not in v._params
+    p_names = ["test1", "test2", "test3"]
+
+    assert v._params[0].get_name() in p_names
+    assert v._params[1].get_name() in p_names
+    assert v._params[2].get_name() in p_names
     assert  param("") not in v._params
 
 #===================================== Accessors =====================================#
@@ -91,7 +93,8 @@ def test_add_param():
     a = UML_Method("Test", "int", "p1", "p2")
     a.add_param("p3cO")
 
-    assert param("p3cO") in a.get_params()
+    assert a.get_param("p3cO")
+    assert len(a.get_params()) == 3
 
 def test_delete_param():
     a = UML_Method("Test", "int", "p1", "p2")
@@ -114,10 +117,10 @@ def test_append_params():
     a.append_params("Gorillaz", "De La Soul")
 
     assert len(a.get_params()) == 4
-    assert param("p1") in a.get_params()
-    assert param("p2") in a.get_params()
-    assert param("De La Soul") in a.get_params()
-    assert param("Gorillaz") in a.get_params()
+    assert a.get_param("p1")
+    assert a.get_param("p2")
+    assert a.get_param("Gorillaz")
+    assert a.get_param("De La Soul")
 
 #===================================== Operators =====================================#
 

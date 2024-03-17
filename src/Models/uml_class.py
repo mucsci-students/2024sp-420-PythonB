@@ -5,9 +5,9 @@ from Models.uml_field import UML_Field
 class UML_Class(UML_Named_Object): 
 
     def __init__(self, name:str):
-        super.__init__(name)
-        self._fields = []
-        self._methods = []
+        super().__init__(name)
+        self._fields:list[UML_Field] = []
+        self._methods:list[UML_Method] = []
 
 #===================================== Accessors =====================================#
     
@@ -15,13 +15,13 @@ class UML_Class(UML_Named_Object):
         return self._name
     
     def get_field(self, f_name:str) -> UML_Field:
-        item = self.__find_name(f_name, "field")
+        item = self.__find_name(f_name, self._fields)
         if item is None: 
             raise ValueError("Field %s does not exist" % f_name) 
         return item
  
     def get_method(self, m_name:str) -> UML_Method:
-        item = self.__find_name(m_name, "method")
+        item = self.__find_name(m_name, self._methods)
         if item is None: 
             raise ValueError("Method %s does not exist" % m_name)
         return item
@@ -59,7 +59,7 @@ class UML_Class(UML_Named_Object):
 
 #===================================== Helpers =====================================#
 
-    def __error(self, value:str, loc:str) -> None:
+    def __error(self, value:str, loc:list) -> None:
         '''Iterate through a list and error if value already exists in list'''
         if self.__find_name(value, loc) is not None:
             raise ValueError("%s already exists" % value) 

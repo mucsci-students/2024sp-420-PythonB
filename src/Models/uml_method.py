@@ -59,6 +59,7 @@ class UML_Method (UML_Named_Object):
     def append_params (self, *p_names) -> None:
         ''' Appends the supplied params to the param list '''
         self._params.extend([UML_Param(p_name) for p_name in p_names])
+        #TODO: Make this preserve order
         self._params = list(set(self._params))
         
 #===================================== Helpers =====================================#
