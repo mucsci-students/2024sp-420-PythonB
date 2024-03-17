@@ -1,8 +1,8 @@
-from Models.uml_method import UML_Method
-from Models.uml_param import UML_Param as param
+from ..Models.uml_method import UML_Method
+from ..Models.uml_param import UML_Param as param
 
 def test_ctor():
-    t = UML_Method("Shaggy")
+    t = UML_Method("Shaggy", "void")
     u = UML_Method("Matt", "int")
     v = UML_Method("Velma","void", "test1", "test2", "test3")
 
@@ -15,10 +15,9 @@ def test_ctor():
     assert u._ret == "int"
     assert u._ret != "void"
 
-    assert param("test1") in v._params
-    assert param("test2") in v._params
-    assert param("test5") not in v._params
-    assert  param("") not in v._params
+    assert str(param("test1")) == str(v._params[0])
+    assert str(param("test2")) == str(v._params[1])
+    assert str(param("test3")) == str(v._params[2])
 
 #===================================== Accessors =====================================#
 
@@ -91,13 +90,15 @@ def test_add_param():
     a = UML_Method("Test", "int", "p1", "p2")
     a.add_param("p3cO")
 
-    assert param("p3cO") in a.get_params()
+    assert a.get_param("p3cO")
+    assert len(a.get_params()) == 3
 
 def test_delete_param():
     a = UML_Method("Test", "int", "p1", "p2")
     a.delete_param("p1")
 
-    assert param("p1") not in a.get_params()
+    assert str(param("p1")) != str(a._params[0])
+    assert str(param("p2")) == str(a._params[0])
 
 def test_change_params():
     a = UML_Method("Test", "int", "p1", "p2")
@@ -114,10 +115,13 @@ def test_append_params():
     a.append_params("Gorillaz", "De La Soul")
 
     assert len(a.get_params()) == 4
-    assert param("p1") in a.get_params()
-    assert param("p2") in a.get_params()
-    assert param("De La Soul") in a.get_params()
-    assert param("Gorillaz") in a.get_params()
+    assert a.get_param("p1")
+    assert a.get_param("p2")
+    assert a.get_param("Gorillaz")
+    assert a.get_param("De La Soul")
+
+    a.append_params("Gorillaz", "De La Soul")
+    assert len(a.get_params()) == 4
 
 #===================================== Operators =====================================#
 
@@ -136,6 +140,6 @@ def test_eq():
 
 def test_str():
     c = UML_Method("Same", "Same", "Same", "Same", "Samey")
-
+    #there should only be two params because duplicates are removed on construction
     assert len(str(c)) == len("Same\nSame (Samey, Same)")
     assert str(c) != "Tim forgot to test string in UML_Field"

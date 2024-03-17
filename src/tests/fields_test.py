@@ -1,4 +1,5 @@
-from Models.uml_field import UML_Field
+from ..Models.uml_field import UML_Field
+
 
 def test_ctor_field():
     fld1 = UML_Field("field1", "int")
@@ -96,7 +97,7 @@ def test_eq_field():
 
 def test_str_field():
     fld1 = UML_Field("field1", "int")
-    result1 = "int\nfield1"
+    result1 = "int field1"
     test1 = str(fld1)
     print(test1)
     assert test1 == result1

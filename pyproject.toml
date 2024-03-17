@@ -4,6 +4,9 @@ version = "0.1.1"
 description = "A basic UML editor"
 authors = ["Zhang Chen", "Jillian Daggs", "Katie Downlin", "Patrick McCullough", "Danish Zubari"]
 readme = "README.md"
+packages = [
+    { include = "src" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -17,3 +20,4 @@ pytest = "^6.2"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
