@@ -11,7 +11,7 @@ class UML_Diagram:
         self._relations:list[UML_Relation] = []
 
 #===================================== Accessors =====================================#
-    def get_class(self, c_name:str) -> UML_Relation:
+    def get_class(self, c_name:str) -> UML_Class:
         item = next((c for c in self._classes if c.get_name() == c_name), None)
         if item is None: 
             raise ValueError("Class %s does not exist" % c_name)
