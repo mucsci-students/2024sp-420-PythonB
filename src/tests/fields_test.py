@@ -1,4 +1,4 @@
-from Models.uml_field import UML_Field
+from ..Models.uml_field import UML_Field
 
 
 def test_ctor_field():

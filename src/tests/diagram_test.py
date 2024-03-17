@@ -1,6 +1,6 @@
-from Models.uml_diagram import UML_Diagram
-from Models.uml_class import UML_Class
-from Models.uml_relation import UML_Relation
+from ..Models.uml_diagram import UML_Diagram
+from ..Models.uml_class import UML_Class
+from ..Models.uml_relation import UML_Relation
 
 def test_ctor_dia():
     dia = UML_Diagram()

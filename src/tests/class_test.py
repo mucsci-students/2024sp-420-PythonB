@@ -1,6 +1,6 @@
-from Models.uml_class import UML_Class
-from Models.uml_field import UML_Field
-from Models.uml_method import UML_Method
+from ..Models.uml_class import UML_Class
+from ..Models.uml_field import UML_Field
+from ..Models.uml_method import UML_Method
 
 def test_ctor():
     cl = UML_Class("class")

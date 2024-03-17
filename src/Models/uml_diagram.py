@@ -1,8 +1,8 @@
-from uml_class import UML_Class
-from uml_relation import UML_Relation
+from Models.uml_class import UML_Class
+from Models.uml_relation import UML_Relation, rel_types
 import re
 
-rel_types = ["aggregation", "composition", "generalization", "inheritance"]
+
 
 class UML_Diagram: 
     
