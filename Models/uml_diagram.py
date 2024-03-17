@@ -26,10 +26,10 @@ class UML_Diagram:
             raise ValueError("Relation between %s and %s does not exist." % r_src, r_dst)
         return item
         
-    def get_classes(self) -> list[UML_Class]:
+    def get_all_classes(self) -> list[UML_Class]:
         return self._classes
     
-    def get_relations(self) -> list[UML_Relation]:
+    def get_all_relations(self) -> list[UML_Relation]:
         return self._relations
 
 #===================================== Mutators =====================================#
@@ -64,12 +64,13 @@ class UML_Diagram:
     def delete_relation(self, r_src:str, r_dst:str) -> None:
         self._relations.remove(self.get_relation(r_src, r_dst))
     
-    def delete_relations(self, c_name:str) -> None:
+    def delete_relations_containing(self, c_name:str) -> None:
         '''Remove all relations that have c_name from self._relations'''
         self._relations = list(filter(lambda rel: rel.get_src_name() != c_name and rel.get_dst_name() != c_name, self._relations))
 
 #===================================== Operators =====================================#
-            
+
+    #TODO: Remove this function if we make diagram Singleton            
     def __eq__(self, o):
         if self is o: 
             return True
