@@ -41,13 +41,16 @@ def test_delete_field():
 
 def test_delete_method():
     cl = UML_Class("class")
-    cl.add_method("mthd", "int", "p1", "p2")
+    cl.add_method("Kwanzaa", "int", "p1", "p2")
     cl.add_method("mth3", "void")
 
-    m1 = UML_Method("mthd", "int", "p1", "p2")
+    m1 = UML_Method("Kwanzaa", "int", "p1", "p2")
     m2 = UML_Method("mth3", "void")
 
-    cl.delete_method("mthd")
+    assert next((m for m in cl._methods if str(m) == str(m1)), False)
+    assert next((m for m in cl._methods if str(m) == str(m2)), False)
+
+    cl.delete_method("Kwanzaa")
 
     assert next((m for m in cl._methods if str(m) == str(m1)), True)
     assert next((m for m in cl._methods if str(m) == str(m2)), False)
@@ -116,7 +119,6 @@ def test_str():
     fld = UML_Field("field", "type")
     mthd = UML_Method("method", "ret", "p1")
 
-    class_str = c1.get_name() + '\n\tFields:' + '\n\t\t%s' % str(fld) + '\n\tMethods:' + '\n\t\t%s' % str(mthd)
-
+    class_str = c1.get_name() + ':\n   Fields:' + '\n      %s' % str(c1.get_field("field")) + '\n   Methods:' + '\n      %s' % str(c1.get_method("method"))
     assert str(c1) == class_str
     assert str(c1) != "Roger"

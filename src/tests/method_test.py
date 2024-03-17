@@ -14,10 +14,10 @@ def test_ctor():
     assert u._name == "Matt" 
     assert u._ret == "int"
     assert u._ret != "void"
-    #TODO: Uncomment these when the params are added deterministically
-    # assert str(param("test1")) == str(v._params[0])
-    # assert str(param("test2")) == str(v._params[1])
-    # assert str(param("test3")) == str(v._params[2])
+
+    assert str(param("test1")) == str(v._params[0])
+    assert str(param("test2")) == str(v._params[1])
+    assert str(param("test3")) == str(v._params[2])
 
 #===================================== Accessors =====================================#
 
@@ -120,6 +120,9 @@ def test_append_params():
     assert a.get_param("Gorillaz")
     assert a.get_param("De La Soul")
 
+    a.append_params("Gorillaz", "De La Soul")
+    assert len(a.get_params()) == 4
+
 #===================================== Operators =====================================#
 
 def test_eq():
@@ -137,6 +140,6 @@ def test_eq():
 
 def test_str():
     c = UML_Method("Same", "Same", "Same", "Same", "Samey")
-
+    #there should only be two params because duplicates are removed on construction
     assert len(str(c)) == len("Same\nSame (Samey, Same)")
     assert str(c) != "Tim forgot to test string in UML_Field"

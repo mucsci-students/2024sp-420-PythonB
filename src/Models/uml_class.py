@@ -55,7 +55,7 @@ class UML_Class(UML_Named_Object):
         item = self.__find_name(m_name, self._methods)
         if item is None: 
             raise ValueError("Method %s does not exist" % m_name)
-        self._fields.remove(item)
+        self._methods.remove(item)
 
 #===================================== Helpers =====================================#
 
@@ -66,6 +66,13 @@ class UML_Class(UML_Named_Object):
     
     def __find_name(self, name:str, loc:list) -> UML_Field | UML_Method | None:
         return next((v for v in loc if v.get_name() == name), None)
+    
+    def __str_list(self, l:list) -> str:
+        '''Custom list format used in to_string'''
+        out = ""
+        for f in l: 
+            out += '\n      ' + str(f)
+        return out
     
 #===================================== Operators =====================================#
     
@@ -96,5 +103,5 @@ class UML_Class(UML_Named_Object):
                 method1
                 method2
         '''
-        return '%s:' % self._name + '\n\tFields:' + '\n\t\t'.join(str(f) for f in self._fields) \
-                + '\n\tMethods:' + '\n\t\t'.join(str(m) for m in self._methods)
+        return '%s:' % self._name + '\n   Fields:' + self.__str_list(self._fields) \
+                + '\n   Methods:' + self.__str_list(self._methods)

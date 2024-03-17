@@ -1,6 +1,6 @@
 from Models.uml_named_object import UML_Named_Object
 from Models.uml_param import UML_Param
-
+from collections import OrderedDict
 class UML_Method (UML_Named_Object):
 
     def __init__ (self, name:str, ret:str, *params:str):
@@ -59,9 +59,7 @@ class UML_Method (UML_Named_Object):
     def append_params (self, *p_names) -> None:
         ''' Appends the supplied params to the param list '''
         self._params.extend([UML_Param(p_name) for p_name in p_names])
-        #TODO: Make this preserve order
-        self._params = list(set(self._params))
-        
+        self._params = list(OrderedDict.fromkeys(self._params))
 #===================================== Helpers =====================================#
         
     def __find_param (self, p_name) -> UML_Param | None:
@@ -92,8 +90,7 @@ class UML_Method (UML_Named_Object):
     def __str__ (self) -> str:
         '''Strings a method in the following form: 
         
-            ret
-            name (param1, param2,..., paramN)
+            ret name (param1, param2,..., paramN)
         '''
         
-        return self._ret + '\n' + self._name + ' (' + ', '.join(str(p) for p in self._params) + ')'
+        return self._ret + ' ' + self._name + ' (' + ', '.join(str(p) for p in self._params) + ')'
