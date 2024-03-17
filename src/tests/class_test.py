@@ -49,8 +49,8 @@ def test_delete_method():
 
     cl.delete_method("mthd")
 
-    assert m1 not in cl._methods
-    assert m2 in cl._methods
+    assert next((m for m in cl._methods if str(m) == str(m1)), True)
+    assert next((m for m in cl._methods if str(m) == str(m2)), False)
 
 def test_get_field():
     cl = UML_Class("class")

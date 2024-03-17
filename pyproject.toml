@@ -5,8 +5,7 @@ description = "A basic UML editor"
 authors = ["Zhang Chen", "Jillian Daggs", "Katie Downlin", "Patrick McCullough", "Danish Zubari"]
 readme = "README.md"
 packages = [
-    { include = "editor" },
-    { include = "Test"}
+    { include = "src" }
 ]
 
 [tool.poetry.dependencies]

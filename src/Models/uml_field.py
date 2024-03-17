@@ -3,7 +3,7 @@ from Models.uml_named_object import UML_Named_Object
 class UML_Field (UML_Named_Object):
     
     def __init__(self, name:str, type:str = "void"):
-        self._name:str = name
+        super().__init__(name)
         self._type:str = type
 
 #===================================== Accessors =====================================#

@@ -23,7 +23,7 @@ class UML_Diagram:
                      r.get_src_name() == r_src and r.get_dst_name() == r_dst
                      or r.get_src_name() == r_dst and r.get_dst_name() == r_src), None)
         if item is None: 
-            raise ValueError("Relation between %s and %s does not exist." % r_src, r_dst)
+            raise ValueError("Relation between {0} and {1} does not exist.".format(r_src, r_dst))
         return item
         
     def get_all_classes(self) -> list[UML_Class]:
@@ -53,9 +53,9 @@ class UML_Diagram:
             if r_type not in rel_types: 
                 raise ValueError("Relation type %s is invalid" % r_type)
             self._relations.append(UML_Relation(self.get_class(r_src), self.get_class(r_dst), r_type))
+            return
 
-        if item is not None: 
-            raise ValueError("Relation between %s and %s already exists." % r_src, r_dst)
+        raise ValueError("Relation between {0} and {1} already exists.".format(r_src, r_dst))
         
         
     def delete_class(self, c_name:str) -> None:

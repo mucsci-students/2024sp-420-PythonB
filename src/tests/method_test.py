@@ -90,7 +90,8 @@ def test_add_param():
     a = UML_Method("Test", "int", "p1", "p2")
     a.add_param("p3cO")
 
-    assert str(param("p3cO")) == str(a._params[2])
+    assert a.get_param("p3cO")
+    assert len(a.get_params()) == 3
 
 def test_delete_param():
     a = UML_Method("Test", "int", "p1", "p2")
@@ -114,11 +115,10 @@ def test_append_params():
     a.append_params("Gorillaz", "De La Soul")
 
     assert len(a.get_params()) == 4
-    #TODO: Fix once append params is deterministic
-    # assert str(param("p1")) == str(a._params[0])
-    # assert str(param("p2")) == str(a._params[1])
-    # assert str(param("Gorillaz")) == str(a._params[2])
-    # assert str(param("De La Soul")) == str(a._params[3])
+    assert a.get_param("p1")
+    assert a.get_param("p2")
+    assert a.get_param("Gorillaz")
+    assert a.get_param("De La Soul")
 
 #===================================== Operators =====================================#
 

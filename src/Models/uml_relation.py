@@ -68,5 +68,5 @@ class UML_Relation:
         
             Relation of type between src and dst
         '''
-        return "%s <--- %s ---> %s" \
-            % self._src.get_name(), self._type, self._dst.get_name()
+        return "{0} <--- {1} ---> {2}".format(
+            self._src.get_name(), self._type, self._dst.get_name())
