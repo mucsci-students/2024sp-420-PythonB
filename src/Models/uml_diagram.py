@@ -20,8 +20,7 @@ class UML_Diagram:
     def get_relation(self, r_src:str, r_dst:str) -> UML_Relation:
         #A relation between r_src and r_dst is the same as one between r_dst and r_src
         item = next((r for r in self._relations if 
-                     r.get_src_name() == r_src and r.get_dst_name() == r_dst
-                     or r.get_src_name() == r_dst and r.get_dst_name() == r_src), None)
+                     r.get_src_name() == r_src and r.get_dst_name() == r_dst), None)
         if item is None: 
             raise ValueError("Relation between {0} and {1} does not exist.".format(r_src, r_dst))
         return item
@@ -90,6 +89,7 @@ class UML_Diagram:
                 relation 1
                 relation 2
         '''
+        #TODO: fix this string override - join doesn't work right in this case
         return 'Classes:' + '\n\t'.join(str(c) for c in self._classes) + '\n' \
                 + 'Relationships:' + '\n\t'.join(str(r) for r in self._relations)
 
