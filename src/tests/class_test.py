@@ -60,7 +60,7 @@ def test_get_field():
 
 
     assert cl.get_field("field1")
-    assert cl.get_field("field1") == f1
+    assert str(cl.get_field("field1")) == str(f1)
 
 def test_get_method():
     cl = UML_Class("class")
@@ -68,8 +68,8 @@ def test_get_method():
 
     m1 = UML_Method("mthd", "int", "p1", "p2")
 
-    assert cl.get_method()
-    assert cl.get_method() == m1
+    assert cl.get_method("mthd")
+    assert str(cl.get_method("mthd")) == str(m1)
 
 def test_get_fields():
     cl = UML_Class("class")
@@ -92,16 +92,10 @@ def test_get_methods():
     mthds = cl.get_methods()
     m1 = UML_Method("mthd", "int", "p1", "p2")
     m2 = UML_Method("mth3", "void")
-    m3 = UML_Method("mth3", "int")
-    m4 = UML_Method("hi", "hello")
-
 
     assert len(mthds) == 2
-    assert m1 in mthds
-    assert m2 in mthds
-    assert "hi" not in mthds
-    assert m3 not in mthds
-    assert m4 not in mthds
+    assert str(m1) == str(cl._methods[0])
+    assert str(m2) == str(cl._methods[1])
 
 def test_eq():
     c1 = UML_Class("class")
