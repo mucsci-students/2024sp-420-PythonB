@@ -1,6 +1,7 @@
 from Models.uml_diagram import UML_Diagram
 from Models.error_handler import Error_Handler
 from Models.uml_parser import parse
+from Views.cli_view import CLI_View
 
 class CLI_Controller:
 
@@ -8,8 +9,9 @@ class CLI_Controller:
         self._diagram = diagram
         #TODO: Figure out a quick way of tracking saved (based on whether or not the last cmd called was save?)
         self._saved = saved
-        self._should_quit = False
+        self._view = CLI_View()
     
+    @Error_Handler.handle_error
     def update(self, input:str):
         if len(input.strip()) > 0:
             data = parse(self._diagram, input)

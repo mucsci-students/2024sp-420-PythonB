@@ -1,8 +1,8 @@
 from Models import *
-from Views.cli_view import CLI
+from Views.cli_view import CLI_View
 import re
 
-classes = [UML_Diagram, UML_Class, UML_Relation, UML_Method, UML_Field, UML_Param, CLI()]
+classes = [UML_Diagram, UML_Class, UML_Relation, UML_Method, UML_Field, UML_Param, CLI_View()]
 
 def parse(d:UML_Diagram, input:str) -> list:
     tokens = check_args(input.split())
