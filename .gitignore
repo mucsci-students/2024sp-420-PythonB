@@ -6,3 +6,4 @@ dist
 
 #virtual environment directory name
 .venv
+.DS_Store
