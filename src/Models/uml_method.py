@@ -1,7 +1,9 @@
 from Models.uml_named_object import UML_Named_Object
 from Models.uml_param import UML_Param
+from Models.uml_visitor import UML_Visitable, UML_Visitor
 from collections import OrderedDict
-class UML_Method (UML_Named_Object):
+
+class UML_Method (UML_Named_Object, UML_Visitable):
 
     def __init__ (self, name:str, ret:str, *params:str):
         super().__init__(name)
@@ -30,6 +32,9 @@ class UML_Method (UML_Named_Object):
     def get_params (self) -> list[UML_Param]:
         '''Accessor for the full list of this method's params'''
         return self._params
+    
+    def accept(self, uml_visitor: UML_Visitor):
+        return uml_visitor.visit_method(self)
 
 #===================================== Mutators =====================================#   
     def set_name (self, new_name:str) -> None:

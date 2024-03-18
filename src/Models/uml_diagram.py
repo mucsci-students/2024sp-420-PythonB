@@ -1,10 +1,9 @@
 from Models.uml_class import UML_Class
 from Models.uml_relation import UML_Relation, rel_types
+from Models.uml_visitor import UML_Visitable, UML_Visitor
 import re
 
-
-
-class UML_Diagram: 
+class UML_Diagram(UML_Visitable): 
     
     def __init__(self):
         self._classes:list[UML_Class] = []
@@ -30,6 +29,9 @@ class UML_Diagram:
     
     def get_all_relations(self) -> list[UML_Relation]:
         return self._relations
+    
+    def accept(self, uml_visitor: UML_Visitor):
+        return uml_visitor.visit_diagram(self)
 
 #===================================== Mutators =====================================#
     def add_class(self, c_name:str) -> None:
