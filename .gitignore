@@ -5,4 +5,5 @@ dist
 .pytest_cache
 
 #virtual environment directory name
-venv
+.venv
+.DS_Store

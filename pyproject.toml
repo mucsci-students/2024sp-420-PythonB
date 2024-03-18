@@ -11,6 +11,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.8"
 jsonschema = "*"
+prompt_toolkit = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
