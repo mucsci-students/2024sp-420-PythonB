@@ -1,9 +1,11 @@
-from Models.UML_Named_Object import UML_Named_Object
-from Models.UML_Param import UML_Param
+from Models.uml_named_object import UML_Named_Object
+from Models.uml_param import UML_Param
+from Models.uml_visitor import UML_Visitable, UML_Visitor
+from collections import OrderedDict
 
-class UML_Method (UML_Named_Object):
+class UML_Method (UML_Named_Object, UML_Visitable):
 
-    def __init__ (self, name:str, ret:str = "void", *params:str):
+    def __init__ (self, name:str, ret:str, *params:str):
         super().__init__(name)
         self._ret:str = ret
         self._params:list[UML_Param] = []
@@ -30,6 +32,9 @@ class UML_Method (UML_Named_Object):
     def get_params (self) -> list[UML_Param]:
         '''Accessor for the full list of this method's params'''
         return self._params
+    
+    def accept(self, uml_visitor: UML_Visitor):
+        return uml_visitor.visit_method(self)
 
 #===================================== Mutators =====================================#   
     def set_name (self, new_name:str) -> None:
@@ -49,26 +54,19 @@ class UML_Method (UML_Named_Object):
        self._params.append(UML_Param(p_name))
 
     def delete_param (self, p_name:str) -> None:
-        ''' Deletes a param if it exists
-            Raises: ValueError if p_name is not a parameter of this method
-        '''
-
-        p = self.__find_param(p_name)
-        if p == None:
-            raise ValueError ("No param named %s exists" % p_name)
-        self._params.remove(p)
+        self._params.remove(self.get_param(p_name))
     
     def change_params (self, *p_names) -> None:
-        ''' Replaces the current parameter list with a new list of params '''
+        ''' Replaces the current parameter list with a new list of params ''' 
         self._params.clear()
         self.append_params(*p_names)
     
     def append_params (self, *p_names) -> None:
         ''' Appends the supplied params to the param list '''
         self._params.extend([UML_Param(p_name) for p_name in p_names])
-        self._params = list(set(self._params))
-        
+        self._params = list(OrderedDict.fromkeys(self._params))
 #===================================== Helpers =====================================#
+        
     def __find_param (self, p_name) -> UML_Param | None:
         ''' Private helper. Finds a method with name p_name
             Returns None if the param doesn't exist in this method
@@ -78,7 +76,7 @@ class UML_Method (UML_Named_Object):
     
 #===================================== Operators =====================================#
     
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self._name)  \
             + hash(self._ret)    \
             + hash(self._params)
@@ -96,8 +94,8 @@ class UML_Method (UML_Named_Object):
     
     def __str__ (self) -> str:
         '''Strings a method in the following form: 
-            ret
-            name (param1, param2,..., paramN)
+        
+            ret name (param1, param2,..., paramN)
         '''
         
-        return self._ret + '\n' + self._name + ' (' + ', '.join(str(p) for p in self._params) + ')'
+        return self._ret + ' ' + self._name + ' (' + ', '.join(str(p) for p in self._params) + ')'

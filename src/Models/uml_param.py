@@ -1,7 +1,8 @@
-from Models.UML_Named_Object import UML_Named_Object
+from Models.uml_named_object import UML_Named_Object
+from Models.uml_visitor import UML_Visitable, UML_Visitor
 
 
-class UML_Param(UML_Named_Object):
+class UML_Param(UML_Named_Object, UML_Visitable):
 
     def __init__ (self, name:str):
         super().__init__(name)
@@ -13,6 +14,9 @@ class UML_Param(UML_Named_Object):
     def set_name(self, new_name:str) -> None:
         '''Mutator for name'''
         self._name = new_name
+
+    def accept(self, uml_visitor: UML_Visitor):
+        return uml_visitor.visit_param(self)
 
 #===================================== Operators =====================================#
 

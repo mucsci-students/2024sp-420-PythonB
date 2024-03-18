@@ -1,6 +1,8 @@
 save_folder
 __pycache__
 dist
+.vscode
+.pytest_cache
 
 #virtual environment directory name
 .venv

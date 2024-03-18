@@ -4,7 +4,7 @@ from Models.diagram import Diagram
 from Models.classadd import UMLClass
 import Models.attribute
 from Models.saveload import SaveLoad
-from guiV1 import UMLDiagramEditor
+from editor.Views.guiV1 import UMLDiagramEditor
 import tkinter as tk
 from Controllers.guicontroller import GUIController
 
