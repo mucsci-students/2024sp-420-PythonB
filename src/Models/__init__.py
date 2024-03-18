@@ -7,3 +7,5 @@ from .uml_method import *
 from .uml_named_object import *
 from .uml_param import *
 from .uml_relation import *
+from .uml_parser import parse
+from .error_handler import Error_Handler

@@ -1,4 +1,4 @@
-class ErrorHandler:
+class Error_Handler:
     @staticmethod
     def handle_error(func):
         def error_catcher(*args, **kwargs):
