@@ -1,8 +1,7 @@
-from .uml_visitor import UML_Visitor
 from Models.uml_named_object import UML_Named_Object
 from Models.uml_method import UML_Method
 from Models.uml_field import UML_Field
-from Models.uml_visitor import UML_Visitable
+from Models.uml_visitor import UML_Visitable, UML_Visitor
 
 class UML_Class(UML_Named_Object, UML_Visitable): 
 
