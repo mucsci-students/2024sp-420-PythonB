@@ -1,8 +1,9 @@
 from Models.uml_class import UML_Class
+from Models.uml_visitor import UML_Visitable, UML_Visitor
 
 rel_types = ["aggregation", "composition", "generalization", "inheritance"]
 
-class UML_Relation: 
+class UML_Relation(UML_Visitable): 
 
     def __init__ (self, src:UML_Class, dst:UML_Class, type:str):
         self._src = src
@@ -26,6 +27,9 @@ class UML_Relation:
     
     def get_dst_name(self) -> str: 
         return self._dst.get_name()
+    
+    def accept(self, uml_visitor: UML_Visitor):
+        return uml_visitor.visit_relation(self)
     
     #===================================== Mutators =====================================#   
 

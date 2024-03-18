@@ -3,6 +3,8 @@ from Models.uml_save_load import load_field
 from Models.uml_save_load import load_param
 from Models.uml_save_load import load_method
 from Models.uml_save_load import load_class
+from Models.uml_save_load import load_diagram
+from Models.uml_save_load import diagram_to_json, json_to_diagram
 from Models.uml_diagram import UML_Diagram
 from Models.uml_class import UML_Class
 from Models.uml_field import UML_Field
@@ -143,3 +145,71 @@ def test_save_load_class():
     loaded_cls6 = load_class(content)
     assert cls6 is not loaded_cls6
     assert cls6 == loaded_cls6
+
+def test_save_load_relation():
+    # TODO: Haven't figure out what's the best way to write this test
+    pass
+
+def test_save_load_diagram():
+    save_visitor = UML_Save_Visitor()
+
+    dgm1 = UML_Diagram()
+    dgm1.add_class('Class1')
+    cls1 = dgm1.get_class('Class1')
+    dgm1.add_class('Class2')
+    cls2 = dgm1.get_class('Class2')
+    cls2.add_field('Field1', 'string')
+    cls2.add_field('Field2', 'int')
+    dgm1.add_class('Class3')
+    cls3 = dgm1.get_class('Class3')
+    cls3.add_method('Method1', 'string')
+    cls3.add_method('Method2', 'int', 'Param1')
+    cls3.add_method('Method3', 'void', 'Param1', 'Param2')
+    dgm1.add_class('Class4')
+    cls4 = dgm1.get_class('Class4')
+    cls4.add_field('Field1', 'string')
+    cls4.add_field('Field2', 'int')
+    cls4.add_method('Method1', 'string')
+    cls4.add_method('Method2', 'int', 'Param1')
+    cls4.add_method('Method3', 'void', 'Param1', 'Param2')
+    dgm1.add_relation('Class1', 'Class2', 'aggregation')
+    dgm1.add_relation('Class2', 'Class1', 'composition')
+    #save 'Diagram1'
+    obj = dgm1.accept(save_visitor)
+    json = encode_json(obj)
+    content = decode_json(json)
+    #load 'Method1'
+    loaded_dgm1 = load_diagram(content)
+    assert dgm1 is not loaded_dgm1
+    assert dgm1 == loaded_dgm1
+
+    #TODO: add more tests for diagram
+
+def test_simple_diagram_json_convert_func():
+    dgm1 = UML_Diagram()
+    dgm1.add_class('Class1')
+    cls1 = dgm1.get_class('Class1')
+    dgm1.add_class('Class2')
+    cls2 = dgm1.get_class('Class2')
+    cls2.add_field('Field1', 'string')
+    cls2.add_field('Field2', 'int')
+    dgm1.add_class('Class3')
+    cls3 = dgm1.get_class('Class3')
+    cls3.add_method('Method1', 'string')
+    cls3.add_method('Method2', 'int', 'Param1')
+    cls3.add_method('Method3', 'void', 'Param1', 'Param2')
+    dgm1.add_class('Class4')
+    cls4 = dgm1.get_class('Class4')
+    cls4.add_field('Field1', 'string')
+    cls4.add_field('Field2', 'int')
+    cls4.add_method('Method1', 'string')
+    cls4.add_method('Method2', 'int', 'Param1')
+    cls4.add_method('Method3', 'void', 'Param1', 'Param2')
+    dgm1.add_relation('Class1', 'Class2', 'aggregation')
+    dgm1.add_relation('Class2', 'Class1', 'composition')
+
+    json = diagram_to_json(dgm1)
+    loaded_dgm1 = json_to_diagram(json)
+    assert json == 1
+    assert dgm1 is not loaded_dgm1
+    assert dgm1 == loaded_dgm1
