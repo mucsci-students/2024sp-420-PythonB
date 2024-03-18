@@ -1,17 +1,16 @@
 from Models.uml_class import UML_Class
 from Models.uml_relation import UML_Relation, rel_types
+from Models.uml_visitor import UML_Visitable, UML_Visitor
 import re
 
-
-
-class UML_Diagram: 
+class UML_Diagram(UML_Visitable): 
     
     def __init__(self):
         self._classes:list[UML_Class] = []
         self._relations:list[UML_Relation] = []
 
 #===================================== Accessors =====================================#
-    def get_class(self, c_name:str) -> UML_Relation:
+    def get_class(self, c_name:str) -> UML_Class:
         item = next((c for c in self._classes if c.get_name() == c_name), None)
         if item is None: 
             raise ValueError("Class %s does not exist" % c_name)
@@ -20,8 +19,7 @@ class UML_Diagram:
     def get_relation(self, r_src:str, r_dst:str) -> UML_Relation:
         #A relation between r_src and r_dst is the same as one between r_dst and r_src
         item = next((r for r in self._relations if 
-                     r.get_src_name() == r_src and r.get_dst_name() == r_dst
-                     or r.get_src_name() == r_dst and r.get_dst_name() == r_src), None)
+                     r.get_src_name() == r_src and r.get_dst_name() == r_dst), None)
         if item is None: 
             raise ValueError("Relation between {0} and {1} does not exist.".format(r_src, r_dst))
         return item
@@ -31,6 +29,9 @@ class UML_Diagram:
     
     def get_all_relations(self) -> list[UML_Relation]:
         return self._relations
+    
+    def accept(self, uml_visitor: UML_Visitor):
+        return uml_visitor.visit_diagram(self)
 
 #===================================== Mutators =====================================#
     def add_class(self, c_name:str) -> None:
@@ -90,6 +91,7 @@ class UML_Diagram:
                 relation 1
                 relation 2
         '''
+        #TODO: fix this string override - join doesn't work right in this case
         return 'Classes:' + '\n\t'.join(str(c) for c in self._classes) + '\n' \
                 + 'Relationships:' + '\n\t'.join(str(r) for r in self._relations)
     

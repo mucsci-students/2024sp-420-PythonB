@@ -1,6 +1,7 @@
 from Models.uml_named_object import UML_Named_Object
+from Models.uml_visitor import UML_Visitable, UML_Visitor
 
-class UML_Field (UML_Named_Object):
+class UML_Field (UML_Named_Object, UML_Visitable):
     
     def __init__(self, name:str, type:str = "void"):
         super().__init__(name)
@@ -14,6 +15,9 @@ class UML_Field (UML_Named_Object):
     def get_type (self) -> str:
         '''Accessor for this field's return type'''
         return self._type
+    
+    def accept(self, uml_visitor: UML_Visitor):
+        return uml_visitor.visit_field(self)
     
 #===================================== Mutators =====================================#
     def set_name(self, new_name:str) -> None:

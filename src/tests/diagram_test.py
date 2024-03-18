@@ -57,11 +57,12 @@ def test_get_relation():
     a_winning_combination = UML_Relation(fry, bender, "aggregation")
     
     dia.add_relation("Bender Bending Rodriguez", "Philip J. Fry", "composition")
+    dia.add_relation("Philip J. Fry", "Bender Bending Rodriguez", "aggregation")
     
     get_frender = dia.get_relation("Bender Bending Rodriguez", "Philip J. Fry")
     get_a_winning_combination = dia.get_relation("Philip J. Fry", "Bender Bending Rodriguez")
     assert str(get_frender) == str(frender)
-    assert str(get_a_winning_combination) == str(frender)
+    assert str(get_a_winning_combination) == str(a_winning_combination)
     assert get_frender != a_winning_combination
     assert get_a_winning_combination != frender
 

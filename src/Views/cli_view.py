@@ -1,8 +1,55 @@
+from prompt_toolkit import prompt
+from prompt_toolkit.completion import NestedCompleter
 
 class CLI:
     
+<<<<<<< HEAD
     def __init__(self):
         pass
+=======
+    def __init__(self, controller):
+        self.controller = controller
+        self.setup_autocomplete()
+        self.commands = {
+            "help": self.help,
+            "add" : self.controller.add,
+            "rename" : self.controller.rename,
+            "delete" : self.controller.delete,
+            "list" : self.list,
+            "save" : self.controller.save,
+            "load" : self.controller.load
+        }   
+
+    def setup_autocomplete(self):
+        self._completer = NestedCompleter.from_nested_dict({
+        'add': {
+            'class': None,
+            'field': None,
+            'method': None,
+            'relationship': None
+        },
+        'delete': {
+            'class': None,
+            'field': None,
+            'method': None,
+            'relationship': None
+        },
+        'rename':{
+            'class': None,
+            'field': None,
+            'method': None
+        },
+        'list':{
+            'class': None,
+            'classes': None,
+            'relationship': None,
+            'relationships': None
+        },
+        'save': None,
+        'load': None,
+        'exit': None
+        })  
+>>>>>>> develop
              
     #A list of surface level commands    
     def help(self):
@@ -46,7 +93,54 @@ class CLI:
                 "help relations                                         Displays this menu\n"
                 "add relation <src_class> <des_class> <relation_type>   Adds a relation between <src_class> and <des_class> of\n"
                 "   <relation_type>: (Aggregation, Composition, Generalization, Inheritance)\n"
+<<<<<<< HEAD
                 "delete relation <src_class> <des_class>                Deletes the relation between <src_class> <des_class>\n"
                 "list relations                                         Lists all relations\n"
                 "list relations <class_name>                            Lists all relations to <class_name>\n")
+=======
+                "delete relationship <src_class> <des_class>                Deletes the relationship between <src_class> <des_class>\n"
+                "list relationships                                         Lists all relationships\n"
+                "list relationships <class_name>                            Lists all relationships to <class_name>\n")
+        
+        # All varients of the help command
+    def help (self, tokens):
+
+        if len(tokens) == 1:
+            print(self.command_help())
+        else:
+            type = tokens[1].lower()
+            if type == "class" or type == "classes":
+                print(self.class_help())
+            elif type == "attribute" or type == "attributes":
+                print(self.attribute_help())
+            elif type == "relationship" or type == "relationships":
+                print(self.relationship_help())
+            
+        
+    def list (self,tokens):
+        print(self.controller.list(tokens))
+        
+        
+    # checks commands against given list of commands, also handles exit
+    def execute_command(self, user_input):
+        tokens = user_input.split()
+        if tokens:
+            command = tokens[0].lower()
+            if command in self.commands:
+                self.commands[command](tokens)
+            #Exits
+            elif command == "exit":
+                return False  # Signal to exit CL
+            else:
+                print("Command not recognized.")
+        return True  # Continue running CLI
+
+        
+    # what the user interacts with
+    def get_input(self):
+        while True:
+            user_input = prompt("Enter command or type 'help' for a list of commands: ", completer=self._completer).strip()
+            if not self.execute_command(user_input):
+                break
+>>>>>>> develop
     
