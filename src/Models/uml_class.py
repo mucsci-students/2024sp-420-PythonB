@@ -1,8 +1,10 @@
+from .uml_visitor import UML_Visitor
 from Models.uml_named_object import UML_Named_Object
 from Models.uml_method import UML_Method
 from Models.uml_field import UML_Field
+from Models.uml_visitor import UML_Visitable
 
-class UML_Class(UML_Named_Object): 
+class UML_Class(UML_Named_Object, UML_Visitable): 
 
     def __init__(self, name:str):
         super().__init__(name)
@@ -31,6 +33,9 @@ class UML_Class(UML_Named_Object):
     
     def get_methods(self) -> list[UML_Method]:
         return self._methods
+    
+    def accept(self, uml_visitor: UML_Visitor):
+        return uml_visitor.visit_class(self)
     
 #===================================== Mutators =====================================#   
     

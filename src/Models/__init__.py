@@ -7,3 +7,5 @@ from .uml_method import *
 from .uml_named_object import *
 from .uml_param import *
 from .uml_relation import *
+from .uml_visitor import *
+from .uml_save_load import *
