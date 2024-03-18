@@ -210,6 +210,5 @@ def test_simple_diagram_json_convert_func():
 
     json = diagram_to_json(dgm1)
     loaded_dgm1 = json_to_diagram(json)
-    assert json == 1
     assert dgm1 is not loaded_dgm1
     assert dgm1 == loaded_dgm1
