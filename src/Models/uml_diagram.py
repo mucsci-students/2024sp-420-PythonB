@@ -92,14 +92,6 @@ class UML_Diagram:
         '''
         return 'Classes:' + '\n\t'.join(str(c) for c in self._classes) + '\n' \
                 + 'Relationships:' + '\n\t'.join(str(r) for r in self._relations)
-
-
-def __check_args (*args:str):
-    '''Makes sure every string in *args is valid'''
-    regex = re.compile('^[a-zA-Z][a-zA-Z0-9_]*$')
-    for arg in [*args]: 
-        if not regex.match(arg):
-            raise ValueError("%s is not a valid name, please try again." % arg)
     
 
 

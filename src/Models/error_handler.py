@@ -5,5 +5,5 @@ class ErrorHandler:
             try:
                 return func(*args, **kwargs)
             except ValueError as e:
-                print(f"Error: {e}")
+                print(str(e))
         return error_catcher

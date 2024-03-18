@@ -1,6 +1,7 @@
 from ..Models.uml_diagram import UML_Diagram
 from ..Models.uml_class import UML_Class
 from ..Models.uml_relation import UML_Relation
+from Views.cli_view import CLI
 
 def test_ctor_dia():
     dia = UML_Diagram()
@@ -10,7 +11,6 @@ def test_ctor_dia():
 def test_add_class():
     dia = UML_Diagram()
     bender = UML_Class("Bender Bending Rodriguez")
-    
     assert len(dia.get_all_classes()) == 0
     dia.add_class("Bender Bending Rodriguez")
     assert dia._classes[0].get_name() == bender.get_name()
