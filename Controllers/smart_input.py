@@ -1,7 +1,7 @@
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import NestedCompleter
 
-completer = NestedCompleter.from_nested_dict({
+my_completer = NestedCompleter.from_nested_dict({
     'add': {
         'class': None,
         'field': None,
@@ -29,5 +29,5 @@ completer = NestedCompleter.from_nested_dict({
     'load': None,
     'exit': None
     })
-text = prompt('>', completer=completer)
+text = prompt('>', completer=my_completer)
 
