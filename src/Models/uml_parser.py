@@ -6,12 +6,15 @@ classes = [UML_Diagram, UML_Class, UML_Relation, UML_Method, UML_Field, UML_Para
 
 def parse(d:UML_Diagram, input:str) -> list:
     tokens = check_args(input.split())
-
+    print("parseing")
     if len(tokens) < 3:
-        #TODO: account for save, load, quit, help. 
+        #TODO: account for save, load, quit, help.
+        print("returning short list") 
         return [short_commands(tokens)].extend(tokens)
     else:
+        print("returning list")
         return [get_instance(d, tokens)].extend(tokens)
+        
     
 
 def check_args (*args:str) -> list[str]:
@@ -45,6 +48,14 @@ def __find_class(d:UML_Diagram, cmd:str):
     return next((getattr(f, cmd) for f in classes if hasattr(f, cmd)), __error(cmd))
 
 def get_instance(d:UML_Diagram, tokens:list[str]) -> list:
+    '''Turns a command into an instance of a method being applied to an object
+        and the args to that method
+        
+        Raises: ValueError if a command is invalid
+                AttributeError if the target class does not have the requested method
+        
+        Returns: A list in the form [function object, arg1, arg2,...,argn]
+    '''
     cmd = tokens.pop(0).lower()
     cmd_target_name = tokens.pop(0).lower()
     object = None

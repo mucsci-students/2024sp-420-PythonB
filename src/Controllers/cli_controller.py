@@ -11,13 +11,13 @@ class CLI_Controller:
         self._should_quit = False
     
     def update(self, input:str):
-        if len(input.strip() > 0):
+        if len(input.strip()) > 0:
             data = parse(self._diagram, input)
             if input[0] == 'save':
                 self._saved = True
             else:
                 self._saved = False
-            return data[0](*data[1:])
+            return data[0](data[1:])
         
     def quit(self):
         self._should_quit = True

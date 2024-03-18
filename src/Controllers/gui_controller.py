@@ -6,6 +6,7 @@ class GUI_Controller:
        self._should_quit = False
 
     def update (self, input:str = ''):
+        print("In gui controller")
         pass
 
 
