@@ -12,7 +12,10 @@ class CLI_Controller:
     def update(self, input:str):
         if len(input.strip()) > 0:
             data = parse(self._diagram, input)
-            return data[0](*data[1:])
+            if not hasattr(CLI_View, str(input[:4])):
+                return data[0](*data[1:])
+            #print help menu
+            print(data[0](*data[1:]))
 
     
 

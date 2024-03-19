@@ -37,7 +37,7 @@ class CLI_View:
              
     #A list of surface level commands    
     def help(self):
-        return ("\nCommands:\n"
+        return (
                 "help                                                           Displays this menu\n"
                 "help class                                                     Displays commands related to classes\n"
                 "help attribute                                                 Displays commands related to attributes\n"
@@ -48,7 +48,7 @@ class CLI_View:
           
     #Commands for classes      
     def help_class(self):
-        return ("\nClass Commands:\n"
+        return (
                 "help class                                                     Displays this menu\n"
                 "add class <class_name>                                         Adds a class named <class_name>\n"
                 "delete class <class_name>                                      Deletes class named <class_name> and all of its attributes/relations\n"
@@ -58,7 +58,7 @@ class CLI_View:
     
     #Commands for attributes
     def help_attribute(self):
-        return ("\nAttribute Commands:\n"
+        return (
                 "help attribute                                                 Displays this menu\n"
                 "add field <class_name> <field_name>                            Adds field named <field_name>\n" 
                 "add method <class_name> <method_name>                          Adds method named <method_name>\n"  
@@ -73,7 +73,7 @@ class CLI_View:
         
     #Commands for relations
     def help_relation(self):
-        return ("\nRelation Commands:\n"
+        return (
                 "help relations                                         Displays this menu\n"
                 "add relation <src_class> <des_class> <relation_type>   Adds a relation between <src_class> and <des_class> of\n"
                 "   <relation_type>: (Aggregation, Composition, Generalization, Inheritance)\n"
