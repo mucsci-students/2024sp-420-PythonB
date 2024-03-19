@@ -10,9 +10,11 @@ class CLI_Controller:
         self._tab_complete = CLI_View()
         self._should_quit = False
     
+    @Error_Handler.handle_error
     def update(self, input:str):
         if len(input.strip()) > 0:
             data = parse(self._diagram, input)
+            #if the first for chars are help or list, print instead of returning
             if not hasattr(CLI_View, str(input[:4])):
                 return data[0](*data[1:])
             #print help menu

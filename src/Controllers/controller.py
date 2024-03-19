@@ -6,10 +6,11 @@ class UML_Controller:
 
     def __init__(self):
         self._controller:CLI_Controller | GUI_Controller = self.__pick_controller()
+        self._should_quit = False
         
     
     def run(self):
-        while not self._controller._should_quit:
+        while not self._should_quit:
             self._controller.update(input("Command: ").strip().lower())
     
     def __pick_controller(self, args:str = sys.argv) -> CLI_Controller | GUI_Controller: 

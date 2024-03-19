@@ -47,13 +47,18 @@ def get_instance(d:UML_Diagram, tokens:list[str]) -> list:
     cmd_target_name = tokens.pop(0).lower()
     print (cmd_target_name)
     object = None
+    #if cmd target is relation or class, we can get it directly from the diagram
     if cmd_target_name == 'relation' or cmd_target_name == 'class':
         object = getattr(d, cmd + '_' + cmd_target_name)
-    else: 
+
+    else:
+        #if cmd target isn't in the diagram, we know it is at least in a class. Get that class.
         object = getattr(d, 'get_class')(tokens.pop(0))
         if cmd_target_name == 'method' or cmd_target_name == 'field':
             object = getattr(object, cmd + '_' + cmd_target_name)
+        #if cmd target isn't in a class, the only other place for it to be is in a method. 
         elif cmd_target_name == 'param':
             object = getattr(object, 'get_method')(tokens.pop(0))
             object = getattr(object, cmd + '_' + cmd_target_name)
+    
     return object
