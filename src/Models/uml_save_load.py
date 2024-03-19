@@ -1,4 +1,3 @@
-import sys 
 import os 
 from pathlib import Path 
 from Models.uml_visitor import UML_Visitor
