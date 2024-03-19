@@ -13,24 +13,24 @@ class UML_Method (UML_Named_Object, UML_Visitable):
 
 #===================================== Accessors =====================================#
     def get_name (self) -> str:
-        '''Accessor for this method's name'''
+        """Accessor for this method's name"""
         return self._name
     
     def get_ret (self) -> str:
-        '''Accessor for this method's return type'''
+        """Accessor for this method's return type"""
         return self._ret
     
     def get_param (self, p_name:str) -> UML_Param: 
-        '''Accessor for a param of this method
+        """Accessor for a param of this method
             Raises: ValueError if no param with p_name exists
-        '''
+        """
         for p in self._params: 
             if p.get_name() == p_name: 
                 return p
         raise ValueError ("No param with name %s exists" % p_name)
     
     def get_params (self) -> list[UML_Param]:
-        '''Accessor for the full list of this method's params'''
+        """Accessor for the full list of this method's params"""
         return self._params
     
     def accept(self, uml_visitor: UML_Visitor):
@@ -38,16 +38,16 @@ class UML_Method (UML_Named_Object, UML_Visitable):
 
 #===================================== Mutators =====================================#   
     def set_name (self, new_name:str) -> None:
-        '''Mutator for this method's name'''
+        """Mutator for this method's name"""
         self._name = new_name
 
     def set_ret (self, new_ret:str) -> None:
-        '''Mutator for this method's return type'''
+        """Mutator for this method's return type"""
         self._ret = new_ret
     
     def add_param (self, p_name:str) -> None: 
-       ''' Adds a param to this methods param list if it doesn't already exist
-        Raises: ValueError if p_name already exists. '''
+       """ Adds a param to this methods param list if it doesn't already exist
+        Raises: ValueError if p_name already exists. """
        
        if self.__find_param(p_name) is not None: 
         raise ValueError ("Param with name %s already exists" % p_name)
@@ -57,20 +57,20 @@ class UML_Method (UML_Named_Object, UML_Visitable):
         self._params.remove(self.get_param(p_name))
     
     def change_params (self, *p_names) -> None:
-        ''' Replaces the current parameter list with a new list of params ''' 
+        """ Replaces the current parameter list with a new list of params """ 
         self._params.clear()
         self.append_params(*p_names)
     
     def append_params (self, *p_names) -> None:
-        ''' Appends the supplied params to the param list '''
+        """ Appends the supplied params to the param list """
         self._params.extend([UML_Param(p_name) for p_name in p_names])
         self._params = list(OrderedDict.fromkeys(self._params))
 #===================================== Helpers =====================================#
         
     def __find_param (self, p_name) -> UML_Param | None:
-        ''' Private helper. Finds a method with name p_name
+        """ Private helper. Finds a method with name p_name
             Returns None if the param doesn't exist in this method
-        '''
+        """
 
         return next((p for p in self._params if p.get_name() == p_name), None)
     
@@ -93,9 +93,9 @@ class UML_Method (UML_Named_Object, UML_Visitable):
             and self._params == o._params
     
     def __str__ (self) -> str:
-        '''Strings a method in the following form: 
+        """Strings a method in the following form: 
         
             ret name (param1, param2,..., paramN)
-        '''
+        """
         
         return self._ret + ' ' + self._name + ' (' + ', '.join(str(p) for p in self._params) + ')'

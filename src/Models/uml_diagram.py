@@ -66,7 +66,7 @@ class UML_Diagram(UML_Visitable):
         self._relations.remove(self.get_relation(r_src, r_dst))
     
     def delete_relations_containing(self, c_name:str) -> None:
-        '''Remove all relations that have c_name from self._relations'''
+        """Remove all relations that have c_name from self._relations"""
         self._relations = list(filter(lambda rel: rel.get_src_name() != c_name and rel.get_dst_name() != c_name, self._relations))
 
 #===================================== Operators =====================================#
@@ -82,7 +82,7 @@ class UML_Diagram(UML_Visitable):
         return self._classes == o._classes and self._relations == o._relations
     
     def __str__(self):
-        '''Strings a diagram in the following format: 
+        """Strings a diagram in the following format: 
             
             Classes:
                 class1
@@ -90,7 +90,7 @@ class UML_Diagram(UML_Visitable):
             Relationships:
                 relation 1
                 relation 2
-        '''
+        """
         #TODO: fix this string override - join doesn't work right in this case
         return 'Classes:' + '\n\t'.join(str(c) for c in self._classes) + '\n' \
                 + 'Relationships:' + '\n\t'.join(str(r) for r in self._relations)

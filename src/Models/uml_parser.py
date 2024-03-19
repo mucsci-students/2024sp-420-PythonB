@@ -20,7 +20,7 @@ def parse(d:UML_Diagram, input:str) -> list | str:
     
 
 def check_args (args:list[str]) -> list[str]: 
-    '''Makes sure every string in *args is valid'''
+    """Makes sure every string in *args is valid"""
     regex = re.compile('^[a-zA-Z][a-zA-Z0-9_]*$')
     for arg in args: 
         if not regex.match(arg):
@@ -35,14 +35,14 @@ def __handle_help(tokens:list[str]):
     raise ValueError("No help options available for {0}.".format(tokens[1]))
 
 def get_instance(d:UML_Diagram, tokens:list[str]) -> list:
-    '''Turns a command into an instance of a method being applied to an object
+    """Turns a command into an instance of a method being applied to an object
         and the args to that method
         
         Raises: ValueError if a command is invalid
                 AttributeError if the target class does not have the requested method
         
         Returns: A list in the form [function object, arg1, arg2,...,argn]
-    '''
+    """
     cmd = tokens.pop(0).lower()
     cmd_target_name = tokens.pop(0).lower()
     print (cmd_target_name)

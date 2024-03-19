@@ -45,7 +45,7 @@ class UML_Relation(UML_Visitable):
     #===================================== Helpers =====================================#
         
     def __valid_type(self, type:str) -> str:
-        '''Helper to validate types before changes are made to self._type'''
+        """Helper to validate types before changes are made to self._type"""
         if type.lower() not in rel_types: 
             raise TypeError("%s is not a valid relation type" % type) 
         
@@ -68,9 +68,9 @@ class UML_Relation(UML_Visitable):
         return self._src == o._src and self._dst == o._dst
     
     def __str__(self) -> str:
-        '''Strings a relation in the following form: 
+        """Strings a relation in the following form: 
         
             Relation of type between src and dst
-        '''
+        """
         return "{0} <--- {1} ---> {2}".format(
             self._src.get_name(), self._type, self._dst.get_name())
