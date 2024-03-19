@@ -64,7 +64,7 @@ class UML_Class(UML_Named_Object, UML_Visitable):
 #===================================== Helpers =====================================#
 
     def __error(self, value:str, loc:list) -> None:
-        '''Iterate through a list and error if value already exists in list'''
+        """Iterate through a list and error if value already exists in list"""
         if self.__find_name(value, loc) is not None:
             raise ValueError("%s already exists" % value) 
     
@@ -72,7 +72,7 @@ class UML_Class(UML_Named_Object, UML_Visitable):
         return next((v for v in loc if v.get_name() == name), None)
     
     def __str_list(self, l:list) -> str:
-        '''Custom list format used in to_string'''
+        """Custom list format used in to_string"""
         out = ""
         for f in l: 
             out += '\n      ' + str(f)
@@ -97,7 +97,7 @@ class UML_Class(UML_Named_Object, UML_Visitable):
         and self._fields == o._fields
     
     def __str__ (self):
-        ''' Strings a class in the following format: 
+        """ Strings a class in the following format: 
 
         Class:
             Fields:
@@ -106,6 +106,6 @@ class UML_Class(UML_Named_Object, UML_Visitable):
             Methods:
                 method1
                 method2
-        '''
+        """
         return '%s:' % self._name + '\n   Fields:' + self.__str_list(self._fields) \
                 + '\n   Methods:' + self.__str_list(self._methods)

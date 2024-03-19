@@ -10,7 +10,6 @@ def test_ctor_dia():
 def test_add_class():
     dia = UML_Diagram()
     bender = UML_Class("Bender Bending Rodriguez")
-    
     assert len(dia.get_all_classes()) == 0
     dia.add_class("Bender Bending Rodriguez")
     assert dia._classes[0].get_name() == bender.get_name()
