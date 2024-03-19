@@ -1,3 +1,6 @@
+import sys 
+import os 
+from pathlib import Path 
 from Models.uml_visitor import UML_Visitor
 from Models.uml_diagram import UML_Diagram
 from Models.uml_class import UML_Class
@@ -208,4 +211,24 @@ def json_to_diagram(content) -> UML_Diagram:
     (UML_Diagram): the diagram object
     '''
     return load_diagram(decode_json(content))
+
+def save(d:UML_Diagram, filename:str):
+    """ Saves this controller's diagram to the provided filename 
+        NOTE: Overwrites an existing file with the same name
+    """
+    jsoned = diagram_to_json(d)
+    path = os.path.join(os.path.dirname(__file__), '../', 'saves')
+    if not os.path.exists(path):
+        os.makedirs(path)
+    path = os.path.join(path, filename + '.json')
+    file = open(path, "w")
+    file.write(jsoned)
+    file.close()
+
+def load(d:UML_Diagram, filename:str):
+    path = os.path.join(os.path.dirname(__file__), '../', 'saves')
+    if not os.path.exists(path):
+        raise ValueError("No file named {0}.json exists in the save folder.".format(filename))
+    path = os.path.join(path, filename + '.json')
+    d = json_to_diagram(Path(path).read_text())
 
