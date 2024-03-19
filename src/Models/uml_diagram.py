@@ -2,7 +2,6 @@ from Models.uml_class import UML_Class
 from Models.uml_relation import UML_Relation, rel_types
 from Models.uml_visitor import UML_Visitable, UML_Visitor
 import datetime #for default filename
-import os #for save and load
 
 class UML_Diagram(UML_Visitable): 
     
