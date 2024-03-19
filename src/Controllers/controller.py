@@ -6,7 +6,7 @@ class UML_Controller:
 
     def __init__(self):
         self._controller:CLI_Controller | GUI_Controller = self.__pick_controller()
-        self._tab_complete = CLI_View()
+        
     
     def run(self):
         while not self._controller._should_quit:

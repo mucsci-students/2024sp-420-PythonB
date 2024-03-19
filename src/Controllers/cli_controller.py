@@ -7,6 +7,7 @@ class CLI_Controller:
 
     def __init__(self, diagram:UML_Diagram = UML_Diagram(), saved:bool = False):
         self._diagram = diagram
+        self._tab_complete = CLI_View()
         self._should_quit = False
     
     def update(self, input:str):
