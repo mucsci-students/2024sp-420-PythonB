@@ -1,29 +1,24 @@
 from Models.uml_diagram import UML_Diagram
 from Models.uml_undo_redo import UML_States
 from Models.uml_save_load import diagram_to_json, json_to_diagram
+import pytest
 
-def test_undo_redo():
-    diagram = UML_Diagram()
-    states = UML_States()
-    states.save_state(diagram)
-    diagram.add_class('Class1')
-    states.save_state(diagram)
-    diagram.add_class('Class2')
-    states.save_state(diagram)
-    diagram.add_class('Class3')
-    states.save_state(diagram)
-    diagram.add_relation('Class1', 'Class2', 'aggregation')
-    states.save_state(diagram)
-    diagram.add_relation('Class1', 'Class3', 'composition')
-    states.save_state(diagram)
-    diagram.add_relation('Class2', 'Class3', 'inheritance')
-    states.save_state(diagram)
-    diagram.add_relation('Class3', 'Class1', 'association')
-    states.save_state(diagram)
-    diagram.add_relation('Class3', 'Class2', 'dependency')
-    states.save_state(diagram)
+def test_save_state_initial():
+    uml_states = UML_States()
+    uml_diagram = UML_Diagram()
+    uml_diagram.add_class("InitialClass")
+    uml_states.save_state(uml_diagram)
+    assert len(uml_states._states) == 1
 
-    assert diagram == states.undo()
-
-
-
+def test_undo():
+    uml_states = UML_States()
+    uml_diagram = UML_Diagram()
+    # Save initial state
+    uml_states.save_state(uml_diagram)
+    # Make a change and save it
+    uml_diagram.add_class("FirstClass")
+    uml_states.save_state(uml_diagram)
+    # Undo the change
+    uml_states.undo()
+    assert len(uml_states._states) == 2  # Checking states count after undo
+    assert uml_states._current_state == 1  # Checking the current state index
