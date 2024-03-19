@@ -1,4 +1,5 @@
 from prompt_toolkit.completion import NestedCompleter
+from Models.uml_diagram import UML_Diagram
 
 class CLI_View:
     
@@ -79,5 +80,20 @@ class CLI_View:
                 "   <relation_type>: (Aggregation, Composition, Generalization, Inheritance)\n"
                 "delete relation <src_class> <des_class>                Deletes the relation between <src_class> <des_class>\n"
                 "list relations                                         Lists all relations\n"
-                "list relations <class_name>                            Lists all relations to <class_name>\n")
+        )
+        
+    def list(d:UML_Diagram) -> str:
+        return str(d)
+    
+    def list_classes(d:UML_Diagram) -> str: 
+        return ''.join([str(c) for c in d._classes])
+    
+    def list_relations(d:UML_Diagram) -> str: 
+        return ''.join([str(r) for r in d._relations])
+    
+    def list_class(d:UML_Diagram, c_name:str) -> str:
+        cl = d.get_class(c_name)
+        relations = ''.join([str(r) for r in d._relations 
+                    if r.get_src_name() == c_name or r.get_dst_name() == c_name])
+        return str(cl) + '\nRelations:\n' + relations
     

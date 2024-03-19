@@ -2,8 +2,7 @@ from Models import *
 from Views.cli_view import CLI_View
 import re
 
-classes = [UML_Diagram, UML_Class, UML_Relation, UML_Method, UML_Field, UML_Param, uml_save_load]
-
+cli_view = CLI_View()
 def parse(d:UML_Diagram, input:str) -> list | str:
     tokens = check_args(input.split())
     
@@ -11,12 +10,16 @@ def parse(d:UML_Diagram, input:str) -> list | str:
         cmd = tokens[0].strip().lower()
         if cmd == 'quit':
             return cmd
-        if cmd == 'save' or cmd == 'load':
+        elif cmd == 'save' or cmd == 'load':
           return [getattr(uml_save_load, cmd), d, tokens[1]]
-        if cmd == 'help':
-            return __handle_help(tokens)
-    else:
-        return [get_instance(d, tokens)] + tokens
+        #this handles lsit and help.
+        else:
+            if cmd == 'help':
+                return __list_help_logic(tokens)
+            if cmd == 'list':
+                return __list_help_logic(tokens) + [d]
+
+    return [get_instance(d, tokens)] + tokens
     
 
 def check_args (args:list[str]) -> list[str]: 
@@ -27,12 +30,15 @@ def check_args (args:list[str]) -> list[str]:
             raise ValueError("Argument {0} is invalid.".format(arg))
     return args
 
-def __handle_help(tokens:list[str]):
+def __list_help_logic(tokens:list[str]):
+    """Parses list and help commands specifically"""
+    cmd = tokens[0].lower()
     if len(tokens) == 1: 
-        return [getattr(CLI_View(), 'help')]
-    if len(tokens) == 2: 
-        return [getattr(CLI_View(), 'help_' + tokens[1])]
-    raise ValueError("No help options available for {0}.".format(tokens[1]))
+        return [getattr(cli_view, cmd)]
+    elif len(tokens) == 2: 
+        return [getattr(cli_view, cmd + '_' + tokens[1])]
+    raise ValueError("No {0} options available for {1}.".format(cmd, tokens[1]))
+
 
 def get_instance(d:UML_Diagram, tokens:list[str]) -> list:
     """Turns a command into an instance of a method being applied to an object

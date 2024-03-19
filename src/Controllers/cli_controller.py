@@ -17,7 +17,8 @@ class CLI_Controller:
             #if the first for chars are help or list, print instead of returning
             if not hasattr(CLI_View, str(input[:4])):
                 return data[0](*data[1:])
-            #print help menu
+            #print if it comes from cli view
+            print(data)
             print(data[0](*data[1:]))
 
     
