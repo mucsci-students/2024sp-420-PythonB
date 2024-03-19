@@ -68,3 +68,17 @@ def get_instance(d:UML_Diagram, tokens:list[str]) -> list:
             object = getattr(object, cmd + '_' + cmd_target_name)
     
     return object
+
+#TODO: Length based parseing would probably be cleaner. EG:
+#       1) take the first token. If it is quit, return it. If it is save or load, prep them and return 
+#       2) take the second token and combine it with the first token. 
+#       3) If the second token is relation, branch into an edge case for relations that just preps and returns
+#       4) if there are only three tokens, call getattr on the diagram and append the third item to the list
+#       5) if there are more than three tokens, call getattr on the result of 4 and call that result with the next item in the token list
+#       6) if the second token is not param, repeat this process until len is 2.
+#       7) if the second token is param, repeat this process until len is 1. 
+#       NOTE: In cases 6 and 7, everything left on the list should be the params to the method call and there should now be an instance to call it on.
+
+#NOTE: Group, I will likely do this over the weekend. I don't have time to do it now. This should also fix the list issues. 
+    #There will be a few more branches than listed because list and help can both have either two or three tokens. 
+        #also, help does not need the diagram and list does. 
