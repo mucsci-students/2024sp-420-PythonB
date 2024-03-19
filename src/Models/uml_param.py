@@ -8,11 +8,11 @@ class UML_Param(UML_Named_Object, UML_Visitable):
         super().__init__(name)
 
     def get_name(self) -> str:
-        '''Accessor for name'''
+        """Accessor for name"""
         return self._name
     
     def set_name(self, new_name:str) -> None:
-        '''Mutator for name'''
+        """Mutator for name"""
         self._name = new_name
 
     def accept(self, uml_visitor: UML_Visitor):
@@ -21,11 +21,11 @@ class UML_Param(UML_Named_Object, UML_Visitable):
 #===================================== Operators =====================================#
 
     def __hash__(self) -> int:
-        '''Hashes this value by hashing all its fields'''
+        """Hashes this value by hashing all its fields"""
         return hash(self._name) 
     
     def __eq__(self, o):
-        '''Equality operator override for UML_Param'''
+        """Equality operator override for UML_Param"""
 
         #guard against error where o doesn't have _name as a field
         if not isinstance(o, UML_Param):
@@ -34,5 +34,5 @@ class UML_Param(UML_Named_Object, UML_Visitable):
         return self._name == o._name
     
     def __str__(self) -> str:
-        '''Returns a string of this param.'''
+        """Returns a string of this param."""
         return self._name
