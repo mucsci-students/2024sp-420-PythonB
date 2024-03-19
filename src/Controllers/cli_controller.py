@@ -7,11 +7,9 @@ class CLI_Controller:
 
     def __init__(self, diagram:UML_Diagram = UML_Diagram(), saved:bool = False):
         self._diagram = diagram
-        #TODO: Figure out a quick way of tracking saved (based on whether or not the last cmd called was save?)
-        self._saved = saved
+        self._should_quit = False
         self._view = CLI_View()
     
-    @Error_Handler.handle_error
     def update(self, input:str):
         if len(input.strip()) > 0:
             data = parse(self._diagram, input)
@@ -24,5 +22,10 @@ class CLI_Controller:
     def quit(self):
         self._should_quit = True
         if not self._saved: 
-            #TODO: decide how to route saving
+            if input("Would you like to save? ").strip().lower() in ['y','yes']:
+                to_write = diagram_to_json(self._diagram)
+
             pass
+
+    
+

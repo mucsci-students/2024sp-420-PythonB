@@ -2,28 +2,31 @@ from Models import *
 from Views.cli_view import CLI_View
 import re
 
-classes = [UML_Diagram, UML_Class, UML_Relation, UML_Method, UML_Field, UML_Param, CLI_View()]
+classes = [UML_Diagram, UML_Class, UML_Relation, UML_Method, UML_Field, UML_Param, CLI_View(), uml_save_load]
 
 def parse(d:UML_Diagram, input:str) -> list:
     tokens = check_args(input.split())
-    print("parseing")
+    
     if len(tokens) < 3:
         #TODO: account for save, load, quit, help.
-        print("returning short list") 
-        return [short_commands(tokens)].extend(tokens)
+        if tokens[0] == 'save':
+            print("In save")
+            print(tokens)
+            l = [getattr(d, tokens.pop(0))]
+            print(l + tokens)
+            return l + tokens
+        return [short_commands(tokens)] + tokens
     else:
-        print("returning list")
-        return [get_instance(d, tokens)].extend(tokens)
-        
+        return [get_instance(d, tokens)] + tokens
     
 
-def check_args (*args:str) -> list[str]:
+def check_args (args:list[str]) -> list[str]:
     '''Makes sure every string in *args is valid'''
     regex = re.compile('^[a-zA-Z][a-zA-Z0-9_]*$')
-    for arg in [*args]: 
+    for arg in args: 
         if not regex.match(arg):
-            raise ValueError("{0} is not valid, please try again.".format(arg))
-    return [*args]
+            raise ValueError("Argument {0} is invalid.".format(arg))
+    return args
 
 def short_commands(tokens:list[str]):
     '''Finds the class that the command being called should be executed in
@@ -40,11 +43,11 @@ def short_commands(tokens:list[str]):
     if len(tokens) == 0: 
         func = __find_class(cmd)
     else:
-        if cmd == 'save' | cmd == 'load':
+        if cmd == 'save' or cmd == 'load':
             func = __find_class(cmd)
     return func
 
-def __find_class(d:UML_Diagram, cmd:str):
+def __find_class(cmd:str):
     return next((getattr(f, cmd) for f in classes if hasattr(f, cmd)), __error(cmd))
 
 def get_instance(d:UML_Diagram, tokens:list[str]) -> list:
@@ -58,9 +61,10 @@ def get_instance(d:UML_Diagram, tokens:list[str]) -> list:
     '''
     cmd = tokens.pop(0).lower()
     cmd_target_name = tokens.pop(0).lower()
+    print (cmd_target_name)
     object = None
     if cmd_target_name == 'relation' or cmd_target_name == 'class':
-        object = getattr(d, cmd + '_' + object)
+        object = getattr(d, cmd + '_' + cmd_target_name)
     else: 
         object = getattr(d, 'get_class')(tokens.pop(0))
         if cmd_target_name == 'method' or cmd_target_name == 'field':

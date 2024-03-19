@@ -185,9 +185,9 @@ def decode_json(content):
 
 ################################################################################
 
-def diagram_to_json(uml_diagram: UML_Diagram):
+def diagram_to_json(uml_diagram: UML_Diagram) -> str:
     '''
-    Simple convert function to convert diagram to json str.
+    Simple function to convert diagram to json str.
 
     Parameter:
     (UML_Diagram): the diagram object
@@ -197,14 +197,15 @@ def diagram_to_json(uml_diagram: UML_Diagram):
     '''
     return encode_json(uml_diagram.accept(UML_Save_Visitor()))
 
-def json_to_diagram(content):
+def json_to_diagram(content) -> UML_Diagram:
     '''
-    Simple convert function to convert json str to diagram.
+    Simple function to convert json str to diagram.
 
     Parameter:
     (str): the json str
 
     Return:
-    (str): the diagram object
+    (UML_Diagram): the diagram object
     '''
     return load_diagram(decode_json(content))
+

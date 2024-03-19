@@ -3,7 +3,7 @@ from prompt_toolkit.completion import NestedCompleter
 
 class CLI_View:
     
-    def __init__(self, controller):
+    def __init__(self):
         self._autocompleter = self.setup_autocomplete()  
 
     def setup_autocomplete(self):
