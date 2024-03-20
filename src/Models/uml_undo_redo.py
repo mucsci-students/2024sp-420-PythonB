@@ -26,7 +26,7 @@ class UML_States:
         # The current state is after the first state
         if self._current_state > 0:
             self._current_state -= 1
-        return json_to_diagram(self._states[self._current_state])
+        return self.get_current_state()
 
     def redo(self):
         """
@@ -35,4 +35,10 @@ class UML_States:
         # The current state is before the last state
         if self._current_state < len(self._states) - 1:
             self._current_state += 1
+        return self.get_current_state()
+    
+    def get_current_state(self):
+        """
+        Return the current state
+        """
         return json_to_diagram(self._states[self._current_state])
