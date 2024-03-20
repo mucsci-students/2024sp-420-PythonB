@@ -13,6 +13,12 @@ class CLI_Controller:
         self._completer = self.setup_autocomplete()  
     
     def update(self):
+        """
+        Gathers input and executes a single cmd
+
+        Returns:
+        The result of the method call e.g. diagram/class/relation
+        """
         input = prompt("Command: ", completer=self._completer).strip().lower()
         if len(input.strip()) > 0:
             data = parse(self._diagram, input)
@@ -24,6 +30,10 @@ class CLI_Controller:
     def setup_autocomplete(self):
         """
         Sets up autocomplete functionality using the NestedCompleter.
+
+        Returns:
+        NestedCompleter: An instance of NestedCompleter configured with a dictionary representing available commands
+        and their respective subcommands or arguments.
         """
         return NestedCompleter.from_nested_dict({
         'add': {
