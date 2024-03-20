@@ -16,16 +16,16 @@ class UML_States:
 
     def undo(self):
         """
-        Undo the last change in the diagram.
+        Undo the last change in the diagram, reverting to the previous state.
         """
-        if self._current_state > 0:
+        if self._current_state > 1:
             self._current_state -= 1
-            return json_to_diagram(self._states[self._current_state])
+            return json_to_diagram(self._states[self._current_state - 1]) if self._states else None
 
     def redo(self):
         """
-        Redo the last change in the diagram.
+        Redoes the last undone change in the diagram, if any.
         """
-        if self._current_state < len(self._states) - 1:
+        if self._current_state < len(self._states):
             self._current_state += 1
-            return json_to_diagram(self._states[self._current_state])
+            return json_to_diagram(self._states[self._current_state - 1])
