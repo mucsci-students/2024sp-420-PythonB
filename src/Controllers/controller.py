@@ -5,15 +5,14 @@ class UML_Controller:
 
     def __init__(self):
         """
-        Initializes the instance with either a CLI_Controller or GUI_Controller based on user choice, 
-        and sets up autocomplete functionality.
+        Initializes the instance with either a CLI_Controller or GUI_Controller based on user choice
         """
         self._controller:CLI_Controller | GUI_Controller = self.__pick_controller()
 
         
     
     def run(self):
-        """Executes the main loop of the program, utilizing the prompt_toolkit prompt for autocomplete."""
+        """Executes the main loop of the program"""
         while not self._controller._should_quit:
             self._controller.update()
 
