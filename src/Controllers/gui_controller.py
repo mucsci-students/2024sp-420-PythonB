@@ -7,6 +7,7 @@ class GUI_Controller:
 
     def update (self, input:str = ''):
         print("In gui controller")
+        exit()
         pass
 
 

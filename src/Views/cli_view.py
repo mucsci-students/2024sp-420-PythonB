@@ -3,37 +3,7 @@ from prompt_toolkit.completion import NestedCompleter
 class CLI_View:
     
     def __init__(self):
-        self._autocompleter = self.setup_autocomplete()  
-
-    def setup_autocomplete(self):
-        return NestedCompleter.from_nested_dict({
-        'add': {
-            'class': None,
-            'field': None,
-            'method': None,
-            'relationship': None
-        },
-        'delete': {
-            'class': None,
-            'field': None,
-            'method': None,
-            'relationship': None
-        },
-        'rename':{
-            'class': None,
-            'field': None,
-            'method': None
-        },
-        'list':{
-            'class': None,
-            'classes': None,
-            'relationship': None,
-            'relationships': None
-        },
-        'save': None,
-        'load': None,
-        'exit': None
-        })  
+        pass
              
     #A list of surface level commands    
     def help(self):
