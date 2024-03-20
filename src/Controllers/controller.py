@@ -7,21 +7,29 @@ from prompt_toolkit.completion import NestedCompleter
 class UML_Controller:
 
     def __init__(self):
+        """
+        Initializes the instance with either a CLI_Controller or GUI_Controller based on user choice, 
+        and sets up autocomplete functionality.
+        """
         self._controller:CLI_Controller | GUI_Controller = self.__pick_controller()
-        self._autocompleter = self.setup_autocomplete()  
+        self.setup_autocomplete()  
         
     
     def run(self):
+        """Executes the main loop of the program, utilizing the prompt_toolkit prompt for autocomplete."""
         while not self._controller._should_quit:
-            self._controller.update(input("Command: ").strip().lower())
-    
+            self._controller.update(prompt("Command: ", completer=self._completer).strip().lower())
+
     def __pick_controller(self, args:str = sys.argv) -> CLI_Controller | GUI_Controller: 
         if len(args) > 1 and str(args[1]).strip().lower() == 'cli':
             return CLI_Controller()
         return GUI_Controller()
     
     def setup_autocomplete(self):
-        return NestedCompleter.from_nested_dict({
+        """
+        Sets up autocomplete functionality using the NestedCompleter.
+        """
+        self._completer = NestedCompleter.from_nested_dict({
         'add': {
             'class': None,
             'field': None,
