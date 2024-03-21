@@ -1,4 +1,3 @@
-#Test
 # LambdaLegion UML Program (CLI Edition) V1.0
 The UML Diagram (CLI Edition) is a command-line tool
 designed to help users create, manage, and visualize
