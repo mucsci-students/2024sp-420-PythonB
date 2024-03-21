@@ -6,21 +6,41 @@ cli_view = CLI_View()
 def parse(d:UML_Diagram, input:str) -> list | str:
     tokens = check_args(input.split())
     
-    if len(tokens) < 3:
-        cmd = tokens[0].strip().lower()
-        if cmd == 'quit':
-            return cmd
-        elif cmd == 'save' or cmd == 'load':
-          return [getattr(uml_save_load, cmd), d, tokens[1]]
-        #this handles lsit and help.
-        else:
-            if cmd == 'help':
-                return __list_help_logic(tokens)
-            if cmd == 'list':
-                return __list_help_logic(tokens) + [d]
-
-    return [get_instance(d, tokens)] + tokens
+    if len(tokens) < 3 or tokens[0].lower() == 'list': 
+        return short_command(d, tokens)
+    else: 
+        return get_instance(d, tokens)
     
+
+def short_command(d:UML_Diagram, tokens:list[str]) -> list:
+    """Parses all forms of the following commands, returning appropriate lists for each: 
+        quit
+        save
+        load
+        undo
+        redo
+        list
+        help
+    """
+    cur_token = tokens.pop(0).lower()
+
+    if cur_token == 'quit':
+        import src.Controllers.controller
+        return [getattr(src.Controllers.controller,"quit")]
+    elif cur_token == 'save' or cur_token == 'load':
+        return [getattr(uml_save_load, cur_token), d, tokens.pop(0)]
+    elif cur_token == 'undo' or cur_token == 'redo':
+        #TODO: return [getattr(UML_States, cur_token)]
+        pass
+    elif cur_token == 'list' or cur_token == 'help':
+        #TODO: list needs to have the diagram in idx 1 to work right
+            #TODO: TODO: to string methods need to be updated to work
+        out = None
+        if len(tokens) > 0:
+            out = [getattr(cli_view, cur_token + '_' + tokens.pop(0).lower())] + tokens
+        else:
+            out = [getattr(cli_view, cur_token)]
+        
 
 def check_args (args:list[str]) -> list[str]: 
     """Makes sure every string in *args is valid"""
@@ -29,15 +49,6 @@ def check_args (args:list[str]) -> list[str]:
         if not regex.match(arg):
             raise ValueError("Argument {0} is invalid.".format(arg))
     return args
-
-def __list_help_logic(tokens:list[str]):
-    """Parses list and help commands specifically"""
-    cmd = tokens[0].lower()
-    if len(tokens) == 1: 
-        return [getattr(cli_view, cmd)]
-    elif len(tokens) == 2: 
-        return [getattr(cli_view, cmd + '_' + tokens[1])]
-    raise ValueError("No {0} options available for {1}.".format(cmd, tokens[1]))
 
 
 def get_instance(d:UML_Diagram, tokens:list[str]) -> list:
@@ -67,7 +78,7 @@ def get_instance(d:UML_Diagram, tokens:list[str]) -> list:
             object = getattr(object, 'get_method')(tokens.pop(0))
             object = getattr(object, cmd + '_' + cmd_target_name)
     
-    return object
+    return [object] + tokens
 
 #TODO: Length based parseing would probably be cleaner. EG:
 #       1) take the first token. If it is quit, return it. If it is save or load, prep them and return 

@@ -18,3 +18,6 @@ class UML_Controller:
             return CLI_Controller()
         return GUI_Controller()
     
+    def quit():
+        pass
+    
