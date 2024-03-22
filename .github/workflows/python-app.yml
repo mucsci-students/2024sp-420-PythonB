@@ -22,11 +22,12 @@ jobs:
       with:
         python-version: '3.10' # Specify the Python version you need
 
-    - name: Install project and dependencies in editable mode
+    - name: Install dependencies and build project
       run: |
         pip install prompt-toolkit
         pip install jsonschema
         pip install pytest
+        pip install pytest-cov
         pip install -e .
 
     - name: Run tests
