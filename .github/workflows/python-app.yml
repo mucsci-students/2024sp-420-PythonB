@@ -1,12 +1,9 @@
 name: Python Build
 
 on:
-  push:
-    branches:
-      - contInt-1
   pull_request:
     branches:
-      - contInt-1
+      - develop
 
 jobs:
   build:
