@@ -31,6 +31,6 @@ jobs:
         pip install -e .
 
     - name: Run tests
-      run: pytest --cov=src
+      run: pytest --cov=src/Models
       
 
