@@ -104,10 +104,21 @@ def test_get_position():
     cls1 = UML_Class("Class1")
     assert cls1.get_position() == [0, 0]
 
+def test_get_position_x():
+    cls1 = UML_Class("Class1")
+    assert cls1.get_position_x() == 0
+
+def test_get_position_y():
+    cls1 = UML_Class("Class1")
+    assert cls1.get_position_y() == 0
+
 def test_set_position():
     cls1 = UML_Class("Class1")
     cls1.set_position([1, -1])
     assert cls1.get_position() == [1, -1]
+    # These two are actually part of get_position_x() / get_position_y() test
+    assert cls1.get_position_x() == 1
+    assert cls1.get_position_y() == -1
 
 def test_eq():
     c1 = UML_Class("class")

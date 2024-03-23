@@ -37,6 +37,12 @@ class UML_Class(UML_Named_Object, UML_Visitable):
     def get_position(self) -> list[int]:
         return self._position
     
+    def get_position_x(self) -> list[int]:
+        return self._position[0]
+    
+    def get_position_y(self) -> list[int]:
+        return self._position[1]
+    
     def accept(self, uml_visitor: UML_Visitor):
         return uml_visitor.visit_class(self)
     

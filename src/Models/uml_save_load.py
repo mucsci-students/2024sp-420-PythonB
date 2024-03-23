@@ -38,7 +38,7 @@ class UML_Save_Visitor(UML_Visitor):
                 'name'    : uml_class.get_name(),
                 'fields'  : [self.visit_field(uml_field=field) for field in uml_class.get_fields()],
                 'methods' : [self.visit_method(uml_method=method) for method in uml_class.get_methods()],
-                'position': {'x': 0, 'y': 0} #TODO: position to be defined
+                'position': {'x': uml_class.get_position_x(), 'y': uml_class.get_position_y()}
                }
     
     def visit_field(self, uml_field: UML_Field):
@@ -133,7 +133,11 @@ def load_class(obj):
         clss._fields.append(load_field(field)) #TODO: add checks(add_field)
     for method in obj['methods']:
         clss._methods.append(load_method(method)) #TODO: add checks(add_method)
-    #TODO: position to be defined
+    # position attribute is optional
+    if 'position' in obj:
+        position = obj['position']
+        clss._position[0] = position['x']
+        clss._position[1] = position['y']
     return clss
 
 def load_relation(obj, uml_classes: list[UML_Class]):
