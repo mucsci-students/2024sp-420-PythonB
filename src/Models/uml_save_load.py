@@ -10,6 +10,7 @@ from Models.uml_param import UML_Param
 from Models.uml_relation import UML_Relation
 
 import json
+import jsonschema
 
 class UML_Save_Visitor(UML_Visitor):
     def __init__(self) -> None:
@@ -167,6 +168,38 @@ def load_diagram(obj):
 
 ################################################################################
 
+def load_schema():
+    """
+    Load schema file
+    Error if schema file not found
+    """
+    path = os.path.join(os.path.dirname(__file__), '../', 'schema', 'uml_schema.json')
+    if not os.path.exists(path):
+        raise ValueError("Schema file not found.")
+    with open(path, 'r') as file:
+        return json.load(file)
+    
+def load_metaschema(filename: str):
+    """
+    Load metaschema file
+    Error if schema file not found
+    """
+    path = os.path.join(os.path.dirname(__file__), '../', 'schema', filename)
+    if not os.path.exists(path):
+        raise ValueError("Schema file not found.")
+    with open(path, 'r') as file:
+        return json.load(file)
+    
+def get_draft07_validator():
+    """
+    Create a draft07 validator
+    """
+    validator = jsonschema.Draft7Validator
+    validator.META_SCHEMA = load_metaschema(filename='draft07.json')
+    return validator
+
+################################################################################
+
 def encode_json(obj):
     """
     Encode json format object to json str.
@@ -175,8 +208,22 @@ def encode_json(obj):
     (str): the json str
     """
     try:
+        jsonschema.validate(instance=obj, schema=load_schema(), cls=get_draft07_validator())
         content = json.dumps(obj=obj)
-        #TODO: check schema
+    except Exception as e:
+        raise e
+    return content
+
+def encode_json_without_validate(obj):
+    """
+    Encode json format object to json str.
+    (No schema validate! For test use only!)
+
+    Return:
+    (str): the json str
+    """
+    try:
+        content = json.dumps(obj=obj)
     except Exception as e:
         raise e
     return content
@@ -188,7 +235,20 @@ def decode_json(content):
     Return:
     (Any): the json format object
     """
-    return json.loads(content)
+    obj = json.loads(content)
+    jsonschema.validate(instance=obj, schema=load_schema(), cls=get_draft07_validator())
+    return obj
+
+def decode_json_without_validate(content):
+    """
+    Decode json str to json format object.
+    (No schema validate! For test use only!)
+
+    Return:
+    (Any): the json format object
+    """
+    obj = json.loads(content)
+    return obj
 
 ################################################################################
 
