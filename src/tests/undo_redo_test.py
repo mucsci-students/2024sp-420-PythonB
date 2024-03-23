@@ -28,7 +28,7 @@ def test_save_state():
     cls4.add_method('Method1', 'string')
     cls4.add_method('Method2', 'int', 'Param1')
     cls4.add_method('Method3', 'void', 'Param1', 'Param2')
-    dgm1.add_relation('Class1', 'Class2', 'aggregation')
+    dgm1.add_relation('Class1', 'Class2', 'Aggregation')
     dgm1.add_relation('Class2', 'Class1', 'composition')
 
     states.save_state(dgm1) # at dgm1
@@ -60,7 +60,7 @@ def test_undo():
     cls4.add_method('Method1', 'string')
     cls4.add_method('Method2', 'int', 'Param1')
     cls4.add_method('Method3', 'void', 'Param1', 'Param2')
-    dgm1.add_relation('Class1', 'Class2', 'aggregation')
+    dgm1.add_relation('Class1', 'Class2', 'Aggregation')
     dgm1.add_relation('Class2', 'Class1', 'composition')
 
     states.save_state(dgm1) # at dgm1
@@ -112,7 +112,7 @@ def test_redo():
     cls4.add_method('Method1', 'string')
     cls4.add_method('Method2', 'int', 'Param1')
     cls4.add_method('Method3', 'void', 'Param1', 'Param2')
-    dgm1.add_relation('Class1', 'Class2', 'aggregation')
+    dgm1.add_relation('Class1', 'Class2', 'Aggregation')
     dgm1.add_relation('Class2', 'Class1', 'composition')
 
     states.save_state(dgm1) # at dgm1
@@ -148,7 +148,7 @@ def test_redo():
     dgm3 = UML_Diagram()
     dgm3.add_class('Class1')
     dgm3.add_class('Class2')
-    dgm3.add_relation('Class1', 'Class2', 'aggregation')
+    dgm3.add_relation('Class1', 'Class2', 'Aggregation')
 
     states.save_state(dgm3) # at dgm3, dgm2 is deleted
     # saved state is correct

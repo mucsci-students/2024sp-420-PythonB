@@ -51,7 +51,7 @@ class UML_Diagram(UML_Visitable):
             #if this doesn't error, the relation already exists
             item = self.get_relation(r_src, r_dst)
         except ValueError: 
-            if r_type not in rel_types: 
+            if r_type.title() not in rel_types: 
                 raise ValueError("Relation type %s is invalid" % r_type)
             self._relations.append(UML_Relation(self.get_class(r_src), self.get_class(r_dst), r_type))
             return
