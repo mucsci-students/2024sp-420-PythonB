@@ -146,6 +146,25 @@ def test_save_load_class():
     assert cls6 is not loaded_cls6
     assert cls6 == loaded_cls6
 
+    cls7 = UML_Class('Class7')
+    cls7.add_field('Field1', 'string')
+    cls7.add_field('Field2', 'void')
+    cls7.add_method('Method1', 'string')
+    cls7.add_method('Method2', 'void', 'Param1')
+    cls7.add_method('Method3', 'int', 'Param1', 'Param2')
+    cls7.set_position([1, -1])
+    #save 'Class7'
+    obj = cls7.accept(save_visitor)
+    json = encode_json(obj)
+    content = decode_json(json)
+    #load 'Class7'
+    loaded_cls7 = load_class(content)
+    assert cls7 is not loaded_cls7
+    assert cls7 == loaded_cls7
+    assert cls7.get_position() == loaded_cls7.get_position()
+    assert cls7.get_position_x() == loaded_cls7.get_position_x()
+    assert cls7.get_position_y() == loaded_cls7.get_position_y()
+
 def test_save_load_relation():
     # TODO: Haven't figure out what's the best way to write this test
     pass
