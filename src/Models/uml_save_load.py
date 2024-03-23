@@ -217,7 +217,7 @@ def save(d:UML_Diagram, filename:str):
         NOTE: Overwrites an existing file with the same name
     """
     jsoned = diagram_to_json(d)
-    path = os.path.join(os.path.dirname(__file__), '../', 'saves')
+    path = os.path.join(os.path.dirname(__file__), '../', '../', 'saves')
     if not os.path.exists(path):
         os.makedirs(path)
     path = os.path.join(path, filename + '.json')
@@ -226,7 +226,7 @@ def save(d:UML_Diagram, filename:str):
     file.close()
 
 def load(d:UML_Diagram, filename:str):
-    path = os.path.join(os.path.dirname(__file__), '../', 'saves')
+    path = os.path.join(os.path.dirname(__file__), '../', '../', 'saves')
     if not os.path.exists(path):
         raise ValueError("No file named {0}.json exists in the save folder.".format(filename))
     path = os.path.join(path, filename + '.json')
