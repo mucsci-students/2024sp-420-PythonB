@@ -230,5 +230,4 @@ def load(d:UML_Diagram, filename:str):
     if not os.path.exists(path):
         raise ValueError("No file named {0}.json exists in the save folder.".format(filename))
     path = os.path.join(path, filename + '.json')
-    d = json_to_diagram(Path(path).read_text())
-
+    d.replace_content(json_to_diagram(Path(path).read_text()))

@@ -69,6 +69,14 @@ class UML_Diagram(UML_Visitable):
         """Remove all relations that have c_name from self._relations"""
         self._relations = list(filter(lambda rel: rel.get_src_name() != c_name and rel.get_dst_name() != c_name, self._relations))
 
+    def replace_content(self, other) -> None:
+        """
+        Replace all attributes with references to other's attributes
+        (This is not making copies! Be careful modifying other after this call!)
+        """
+        self._classes = other._classes
+        self._relations = other._relations
+
 #===================================== Operators =====================================#
 
     #TODO: Remove this function if we make diagram Singleton            
