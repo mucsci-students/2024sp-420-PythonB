@@ -55,39 +55,16 @@ class UMLDiagramEditor(tk.Tk):
         # File
         file_menu = Menu(menu_bar, tearoff=0)
         file_menu.add_command(label="New", command=self.new_file)
-        file_menu.add_command(label="Open...", command=self.open_file)
+        file_menu.add_command(label="Load", command=self.open_file)
         file_menu.add_command(label="Save", command=self.save_file)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.quit)
         menu_bar.add_cascade(label="File", menu=file_menu)
 
+        # Temporarily removed as it's not used.
         # Edit
-        edit_menu = Menu(menu_bar, tearoff=0)
-        menu_bar.add_cascade(label="Edit", menu=edit_menu)
-
-        # Classes
-        classes_menu = Menu(menu_bar, tearoff=0)
-        classes_menu.add_command(label="New", command=self.add_class)
-        classes_menu.add_command(label="Delete", command=self.delete_class)
-        classes_menu.add_command(label="Rename", command=self.rename_class)
-        menu_bar.add_cascade(label="Classes", menu=classes_menu)
-
-        # Relationships
-        relationships_menu = Menu(menu_bar, tearoff=0)
-        relationships_menu.add_command(label="Add", command=self.add_relationship)
-        relationships_menu.add_command(label="Delete", command=self.delete_relationship)
-        menu_bar.add_cascade(label="Relationships", menu=relationships_menu)
-
-        # Attributes
-        attributes_menu = Menu(menu_bar, tearoff=0)
-        attributes_menu.add_command(label="Add Attribute", command=self.add_attribute_to_class)
-        attributes_menu.add_command(label="Delete Attribute", command=self.add_attribute)
-        attributes_menu.add_command(label="Rename Attribute", command=self.add_attribute)
-        attributes_menu.add_separator()
-        attributes_menu.add_command(label="New Parameter", command=self.new_param)
-        attributes_menu.add_command(label="Delete Parameter", command=self.delete_param)
-        attributes_menu.add_command(label="Rename Parameter", command=self.rename_param)
-        menu_bar.add_cascade(label="Attributes", menu=attributes_menu)
+        # edit_menu = Menu(menu_bar, tearoff=0)
+        # menu_bar.add_cascade(label="Edit", menu=edit_menu)
 
         # Help
         help_menu = Menu(menu_bar, tearoff=0)
@@ -103,12 +80,6 @@ class UMLDiagramEditor(tk.Tk):
     def create_sidebar(self):
         self.sidebar = tk.Frame(self, width=200, bg='lightgray')
         self.sidebar.pack(side=tk.LEFT, fill=tk.Y)
-
-        self.btn_class = tk.Button(self.sidebar, text="File", command=self.file_options_menu)
-        self.btn_class.pack(fill=tk.X, pady=(5, 5))
-
-        self.btn_class = tk.Button(self.sidebar, text="Edit", command=self.edit_options_menu)
-        self.btn_class.pack(fill=tk.X, pady=(5, 5))
 
         # Example button with dropdown for "Add Class"
         self.btn_class = tk.Button(self.sidebar, text="Classes", command=self.class_options_menu)
