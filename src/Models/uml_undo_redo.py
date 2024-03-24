@@ -2,10 +2,19 @@ from Models.uml_diagram import UML_Diagram
 from Models.uml_save_load import diagram_to_json, json_to_diagram
 
 class UML_States:
+    _self = None
+
+    #if you remove initial_diagram from this param list, everything breaks. IDK why.
+    def __new__(cls, initial_diagram: UML_Diagram):
+        if cls._self is None:
+            #idk how this explicit call to __new__ becomes a call to __init__
+            cls._self = super().__new__(cls)
+        return cls._self
+    
     def __init__(self, initial_diagram: UML_Diagram):
         """
         Initialize the UML_States with an initial state.
-        """
+        """ 
         self._states = []
         self._current_state = -1
         self.save_state(initial_diagram)
