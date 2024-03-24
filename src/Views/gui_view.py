@@ -131,13 +131,18 @@ class UMLDiagramEditor(tk.Tk):
 
     def attributes_options_menu(self):
         menu = Menu(self, tearoff=0)
-        menu.add_command(label="Add Attribute", command=self.add_attribute_to_class)
-        menu.add_command(label="Delete Attribute", command=self.delete_attribute)
-        menu.add_command(label="Rename Rename", command=self.rename_attribute)
-        menu.add_separator()
-        menu.add_command(label="Add Parameter", command=self.new_param)
-        menu.add_command(label="Delete Parameter", command=self.delete_param)
-        menu.add_command(label="Rename Parameter", command=self.rename_param)
+        if len(self.class_boxes) > 0:
+            # TODO: Implement this logic once new backend hooked in:
+            menu.add_command(label="Add Attribute", command=self.add_attribute_to_class)
+            ## If attributes > 0. For next 2 lines ##
+            menu.add_command(label="Delete Attribute", command=self.delete_attribute)
+            menu.add_command(label="Rename Rename", command=self.rename_attribute)
+            ## if Methods > 0. Indent next 4 ##
+            menu.add_separator()
+            menu.add_command(label="Add Parameter", command=self.new_param)
+            ## if Parameters > 0. Indent next 2 ##
+            menu.add_command(label="Delete Parameter", command=self.delete_param)
+            menu.add_command(label="Rename Parameter", command=self.rename_param)
 
         try:
             # Display the menu at the current mouse position
