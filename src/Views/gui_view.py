@@ -14,7 +14,7 @@ from tkinter import simpledialog
 
 from Models.diagram import Diagram
 
-class UMLDiagramEditor(tk.Tk):
+class GUI_View(tk.Tk):
     def __init__(self, controller):
         super().__init__()
         self.title("LambdaLegion UML Program (CWorld Edition) V1.0")
