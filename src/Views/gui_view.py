@@ -1,9 +1,11 @@
-from Models.attribute import Fields, Methods, Parameters
-from Models.classadd import UMLClass
-from Models.diagram import Diagram
-from Models.errorHandler import ErrorHandler
-from Models.relationship import UMLRelationship
-from Models.saveload import SaveLoad
+# from Models.attribute import Fields, Methods, Parameters
+# from Models.classadd import UMLClass
+# from Models.diagram import Diagram
+# from Models.errorHandler import ErrorHandler
+# from Models.relationship import UMLRelationship
+# from Models.saveload import SaveLoad
+from Models.uml_diagram import UML_Diagram
+
 import json
 import tkinter as tk
 from tkinter import filedialog
@@ -12,10 +14,10 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter import simpledialog
 
-from Models.diagram import Diagram
+# from Models.diagram import Diagram
 
 class GUI_View(tk.Tk):
-    def __init__(self, controller):
+    def __init__(self, controller, diagram:UML_Diagram):
         super().__init__()
         self.title("LambdaLegion UML Program (CWorld Edition) V1.0")
         self.geometry("800x600")
@@ -26,15 +28,17 @@ class GUI_View(tk.Tk):
         self.relationshipsList = []
         self.update_relationship_tracker()
         
-        self.diagram = Diagram()
-        self.classes = self.diagram.classes
-        self.errorHandler = ErrorHandler()
-        self.fields = Fields(self.classes)
-        self.methods = Methods(self.classes)
-        self.parameters = Parameters(self.methods)
-        self.relationships = UMLRelationship(self.classes)
-        self.saveload = SaveLoad()
-        self.diagram_class = Diagram()
+        self.diagram = diagram
+        self.classes = diagram.get_all_classes()
+        self.relations = diagram.get_all_relations()
+        # self.classes = self.diagram.classes
+        # self.errorHandler = ErrorHandler()
+        # self.fields = Fields(self.classes)
+        # self.methods = Methods(self.classes)
+        # self.parameters = Parameters(self.methods)
+        # self.relationships = UMLRelationship(self.classes)
+        # self.saveload = SaveLoad()
+        # self.diagram_class = Diagram()
         self.controller = controller
 
     def create_menu(self):
@@ -928,5 +932,5 @@ class DeleteRelationshipDialog(simpledialog.Dialog):
         self.result = next((r for r in self.relationshipsList if f"{r['source']} - {r['type']} - {r['destination']}" == selected_relationship_str), None)
 
 if __name__ == "__main__":
-    app = UMLDiagramEditor()
+    app = GUI_View()
     app.mainloop()

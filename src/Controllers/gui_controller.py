@@ -3,8 +3,9 @@ from Models.error_handler import Error_Handler
 from Views.gui_view import GUI_View
 class GUI_Controller:
 
-    def __init__(self):
-       self._diagram = UML_Diagram()
+    def __init__(self, diagram:UML_Diagram = UML_Diagram()):
+       self._diagram = diagram
+       self._should_quit = False
 
     def update (self, input:str = ''):
         print("In gui controller")
