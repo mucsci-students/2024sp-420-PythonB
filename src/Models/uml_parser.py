@@ -5,7 +5,6 @@ import re
 cli_view = CLI_View()
 
 def parse(d:UML_Diagram, input:str) -> list | str:
-    print("Input: " + input)
     tokens = check_args(input.split())
     
     if len(tokens) < 3 or tokens[0] == 'list': 
