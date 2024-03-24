@@ -1,17 +1,21 @@
 from Models import UML_Diagram
 from Models.error_handler import Error_Handler
 from Views.gui_view import GUI_View
+from Models.uml_parser import parse
 class GUI_Controller:
 
-    def __init__(self, diagram:UML_Diagram = UML_Diagram()):
-       self._diagram = diagram
-       self._should_quit = False
+    def __init__(self):
+       self._gui_view = GUI_View()
 
-    def update (self, input:str = ''):
-        print("In gui controller")
-        exit()
-        pass
+    def update (self, diagram:UML_Diagram):
+        while len(self._gui_view._commands) > 0:
+            cmd = self.request_update(diagram)
+            cmd[0](*cmd[1:])
 
+    def request_update(self, diagram:UML_Diagram):
+        while len(self._gui_view._commands) == 0:
+            pass
+        return parse(diagram, self._gui_view._commands.pop(0))
 
 #     """
 #     pydoc comment goes here

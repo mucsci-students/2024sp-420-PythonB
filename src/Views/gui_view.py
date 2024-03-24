@@ -1,9 +1,3 @@
-# from Models.attribute import Fields, Methods, Parameters
-# from Models.classadd import UMLClass
-# from Models.diagram import Diagram
-# from Models.errorHandler import ErrorHandler
-# from Models.relationship import UMLRelationship
-# from Models.saveload import SaveLoad
 from Models.uml_diagram import UML_Diagram
 
 import json
@@ -14,10 +8,8 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter import simpledialog
 
-# from Models.diagram import Diagram
-
 class GUI_View(tk.Tk):
-    def __init__(self, controller, diagram:UML_Diagram):
+    def __init__(self):
         super().__init__()
         self.title("LambdaLegion UML Program (CWorld Edition) V1.0")
         self.geometry("800x600")
@@ -27,19 +19,7 @@ class GUI_View(tk.Tk):
         self.class_boxes = []
         self.relationshipsList = []
         self.update_relationship_tracker()
-        
-        self.diagram = diagram
-        self.classes = diagram.get_all_classes()
-        self.relations = diagram.get_all_relations()
-        # self.classes = self.diagram.classes
-        # self.errorHandler = ErrorHandler()
-        # self.fields = Fields(self.classes)
-        # self.methods = Methods(self.classes)
-        # self.parameters = Parameters(self.methods)
-        # self.relationships = UMLRelationship(self.classes)
-        # self.saveload = SaveLoad()
-        # self.diagram_class = Diagram()
-        self.controller = controller
+        self._commands = []
 
     def create_menu(self):
         """
@@ -409,7 +389,6 @@ class GUI_View(tk.Tk):
                     canvas.create_text(x + 10 + indent_spacing, current_y, text=f"{bullet} {param['name']} : {param.get('type', 'Unknown')}", anchor="w")
                     current_y += text_spacing
 
-     
     def delete_class(self):
         """
         Deletes a class
@@ -439,8 +418,6 @@ class GUI_View(tk.Tk):
         self.redraw_canvas()  # Call redraw_canvas outside the loop to refresh the canvas once after any deletion
         self.update_relationship_tracker()
 
-        
-
         if not class_found:
             messagebox.showinfo("Delete Class", "Class not found!")
             return
@@ -469,18 +446,17 @@ class GUI_View(tk.Tk):
             self.create_class_box(self.diagram_canvas, class_box['class_name'], class_box.get('fields', []), class_box.get('methods', []), class_box['x'], class_box['y'])
 
     def rename_class(self):
-
         """
-              Renames a class
+        Renames a class
 
-              Parameters:
-                  self -- The parent
-                  className -- The name of the class to be renamed
-                  newClassName -- the new name of the class
+        Parameters:
+            self -- The parent
+            className -- The name of the class to be renamed
+            newClassName -- the new name of the class
 
-              Returns:
-                  successBool -- True if the rename class was successful, False otherwise
-              """
+        Returns:
+            successBool -- True if the rename class was successful, False otherwise
+        """
         dialog = RenameClassDialog(self,"Rename Class")
         if dialog.result:
             old_name, new_name = dialog.result
@@ -503,7 +479,6 @@ class GUI_View(tk.Tk):
             messagebox.showinfo("Rename Class", f"'{old_name}' has been renamed to '{new_name}'")   
 
     def add_attribute_to_class(self):
-    
         AddAttributeDialog(self, title="Add Attribute")
     
     def add_attribute(self, class_name, attribute_name, attribute_type):
@@ -528,7 +503,6 @@ class GUI_View(tk.Tk):
                 success_message = f"Field '{attribute_name}' added to class '{class_name}'." if attribute_type == 'field' else f"Method '{attribute_name}' added with parameters {parameters} to class '{class_name}'."
                 messagebox.showinfo("Success", success_message)
 
-
     def delete_relationship(self):
         dialog = DeleteRelationshipDialog(self, "Delete Relationship", self.relationshipsList)
         if dialog.result:
@@ -537,7 +511,6 @@ class GUI_View(tk.Tk):
             source_class = selected_rel['source']
             destination_class = selected_rel['destination']
 
-            
             # Attempt to delete the relationship using the controller
             self.controller.delete_relationship(source_class, destination_class)
             # If successful, update the relationships list and UI accordingly
@@ -574,7 +547,7 @@ class GUI_View(tk.Tk):
             self.redraw_canvas()
 
     def delete_attribute(self):
-    # Ask for the class name from which to delete an attribute
+        # Ask for the class name from which to delete an attribute
         dialog_result = DeleteAttributeDialog(self, title="Delete Attribute").result
         if dialog_result:
             class_name, attribute_name, attribute_type = dialog_result
@@ -675,7 +648,6 @@ class GUI_View(tk.Tk):
 
             self.controller.delete_param(class_name, method_name, param_name)
 
-
             found_class = False
             for class_box in self.class_boxes:
                 if class_box['class_name'] == class_name:
@@ -727,7 +699,6 @@ class GUI_View(tk.Tk):
             messagebox.showinfo("Error", "Parameter not found.")
     
     def help(self):
-        
         """
         Displays the classes help page
 
@@ -765,7 +736,6 @@ class AddAttributeDialog(simpledialog.Dialog):
         super().__init__(parent, title=title)
 
     def body(self, master):
-
         tk.Label(master,text="Class Name:").grid(row=0)
         self.entry_class_name = tk.Entry(master)
         self.entry_class_name.grid(row = 0, column = 1)

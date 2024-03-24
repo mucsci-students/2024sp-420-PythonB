@@ -1,22 +1,19 @@
 from Models.uml_diagram import UML_Diagram
 from Models.error_handler import Error_Handler
 from Models.uml_parser import parse
-from Views.cli_view import CLI_View
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import NestedCompleter
 
 class CLI_Controller:
 
-    def __init__(self, diagram:UML_Diagram = UML_Diagram(), saved:bool = False):
-        self._diagram = diagram
-        self._should_quit = False
+    def __init__(self):
         self._completer = self.setup_autocomplete()  
     
     @Error_Handler.handle_error
-    def update(self):
+    def update(self, diagram:UML_Diagram):
         input = prompt("Command: ", completer=self._completer).strip()
         if len(input.strip()) > 0:
-            data = parse(self._diagram, input)
+            data = parse(diagram, input)
             r_val = data[0](*data[1:])
             if isinstance(r_val, str):
                 print(r_val) 
@@ -57,8 +54,3 @@ class CLI_Controller:
         'load': None,
         'exit': None
         })  
-    
-
-
-    
-
