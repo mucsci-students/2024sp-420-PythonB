@@ -192,3 +192,4 @@ def test_singleton():
 
     #if they were different objects, states would have one save and states2 would have 0
     assert states == states2
+    assert states is states2
