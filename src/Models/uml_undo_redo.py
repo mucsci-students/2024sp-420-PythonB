@@ -7,7 +7,7 @@ class UML_States:
     _self = None
 
     #initial_diagram will be reflected into __init__, leave it here.
-    def __new__(cls, initial_diagram: UML_Diagram):
+    def __new__(cls, initial_diagram: UML_Diagram = UML_Diagram()):
         """Constructor insures that only one instance of UML_States ever exists"""
         if cls._self is None:
             #this passes through all params to __init__ 
