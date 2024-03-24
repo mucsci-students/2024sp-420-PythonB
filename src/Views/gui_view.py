@@ -17,7 +17,7 @@ from Models.diagram import Diagram
 class UMLDiagramEditor(tk.Tk):
     def __init__(self, controller):
         super().__init__()
-        self.title("LambdaLegion UML Program (GUI Edition) V1.0")
+        self.title("LambdaLegion UML Program (CWorld Edition) V1.0")
         self.geometry("800x600")
         self.create_menu()
         self.create_sidebar()
@@ -80,11 +80,11 @@ class UMLDiagramEditor(tk.Tk):
 
     def create_sidebar(self):
         self.sidebar = tk.Frame(self, width=200, bg='lightgray')
-        self.sidebar.pack(side=tk.LEFT, fill=tk.Y)
+        self.sidebar.pack(side=tk.LEFT, fill=tk.Y, padx=(5, 0), pady=(13, 12))
 
         # Example button with dropdown for "Add Class"
         self.btn_class = tk.Button(self.sidebar, text="Classes", command=self.class_options_menu)
-        self.btn_class.pack(fill=tk.X, padx=(5, 5), pady=(5, 5))
+        self.btn_class.pack(fill=tk.X, padx=(5, 5), pady=(10, 5))
 
         self.btn_relationships = tk.Button(self.sidebar, text="Relationships", command=self.relationship_options_menu)
         self.btn_relationships.pack(fill=tk.X, padx=(5, 5), pady=(5, 5))
