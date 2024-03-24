@@ -13,7 +13,8 @@ class CLI_Controller:
         self._completer = self.setup_autocomplete()  
     
     @Error_Handler.handle_error
-    def update(self, input:str):
+    def update(self):
+        input = prompt("Command: ", completer=self._completer).strip()
         if len(input.strip()) > 0:
             data = parse(self._diagram, input)
             r_val = data[0](*data[1:])

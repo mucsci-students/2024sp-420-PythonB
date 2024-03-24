@@ -83,7 +83,7 @@ def instance_command(d:UML_Diagram, tokens:list[str]) -> list:
     if cmd_target_name == 'relation' or cmd_target_name == 'class':
         object = getattr(d, cmd + '_' + cmd_target_name)
 
-    else:
+    elif cmd_target_name == 'method' or cmd_target_name == 'field' or cmd_target_name == 'param':
         #if cmd target isn't in the diagram, we know it is in a class. Get that class.
         object = getattr(d, 'get_class')(tokens.pop(0))
         if cmd_target_name == 'method' or cmd_target_name == 'field':
@@ -94,6 +94,7 @@ def instance_command(d:UML_Diagram, tokens:list[str]) -> list:
             object = getattr(object, cmd + '_' + cmd_target_name)
         else: 
             raise ValueError("Invalid Command.")
-    
+    else:
+        raise ValueError("Invalid Command.")
     return [object] + tokens
 
