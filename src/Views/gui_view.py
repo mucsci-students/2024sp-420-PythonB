@@ -11,7 +11,7 @@ from tkinter import simpledialog
 class GUI_View(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("LambdaLegion UML Program (CWorld Edition) V1.0")
+        self.title("LambdaLegion UML Program (CWorld Edition) V1.1")
         self.geometry("800x600")
         self.create_menu()
         self.create_sidebar()
@@ -202,6 +202,7 @@ class GUI_View(tk.Tk):
         # Placeholder for new file action
         messagebox.showinfo("Action", "Create a new file")
 
+    # TODO: self.controller
     def open_file(self):
         file_name = simpledialog.askstring("Load a File","Enter a Valid Filename", parent = self)
         data = self.controller.open_file(file_name)
@@ -319,7 +320,7 @@ class GUI_View(tk.Tk):
         
         fields = []
         methods = []
-
+        # TODO: self.controller
         self.controller.add_class(class_name)     
 
         next_x, next_y = self.get_next_position()
@@ -403,7 +404,7 @@ class GUI_View(tk.Tk):
         class_name = simpledialog.askstring("Delete Class", "Enter a class to delete:", parent=self)
         if class_name is None:
             return
-        
+        # TODO: self.controller
         self.controller.delete_class(class_name)
 
         class_found = False
@@ -457,10 +458,10 @@ class GUI_View(tk.Tk):
         Returns:
             successBool -- True if the rename class was successful, False otherwise
         """
-        dialog = RenameClassDialog(self,"Rename Class")
+        dialog = Rename_Class_Dialog(self,"Rename Class")
         if dialog.result:
             old_name, new_name = dialog.result
-
+            # TODO: self.controller
             self.controller.rename_class(old_name,new_name)
 
             for class_box in self.class_boxes:
@@ -479,13 +480,13 @@ class GUI_View(tk.Tk):
             messagebox.showinfo("Rename Class", f"'{old_name}' has been renamed to '{new_name}'")   
 
     def add_attribute_to_class(self):
-        AddAttributeDialog(self, title="Add Attribute")
+        Add_Attribute_Dialog(self, title="Add Attribute")
     
     def add_attribute(self, class_name, attribute_name, attribute_type):
         if not attribute_name or not class_name or attribute_type not in ['field', 'method']:
             messagebox.showinfo("Error", "Invalid input provided.")
             return
-
+        # TODO: self.controller
         self.controller.add_attribute(class_name, attribute_name, attribute_type)
 
         parameters = []
@@ -504,7 +505,7 @@ class GUI_View(tk.Tk):
                 messagebox.showinfo("Success", success_message)
 
     def delete_relationship(self):
-        dialog = DeleteRelationshipDialog(self, "Delete Relationship", self.relationshipsList)
+        dialog = Delete_Relationship_Dialog(self, "Delete Relationship", self.relationshipsList)
         if dialog.result:
             selected_rel = dialog.result
             # Extract the source and destination class names from the dialog's result
@@ -512,6 +513,7 @@ class GUI_View(tk.Tk):
             destination_class = selected_rel['destination']
 
             # Attempt to delete the relationship using the controller
+            # TODO: self.controller
             self.controller.delete_relationship(source_class, destination_class)
             # If successful, update the relationships list and UI accordingly
             self.relationshipsList[:] = [rel for rel in self.relationshipsList if not (rel['source'] == source_class and rel['destination'] == destination_class)]
@@ -528,11 +530,11 @@ class GUI_View(tk.Tk):
         Returns:
             none
         """
-        dialog = AddRelationshipDialog(self, "Add Relationship")
+        dialog = Add_Relationship_Dialog(self, "Add Relationship")
         if dialog.result:
             
             source_class, destination_class, relationship_type = dialog.result
-
+            # TODO: self.controller
             self.controller.add_relationship(source_class, destination_class, relationship_type)
             
             # Add the relationship
@@ -548,9 +550,10 @@ class GUI_View(tk.Tk):
 
     def delete_attribute(self):
         # Ask for the class name from which to delete an attribute
-        dialog_result = DeleteAttributeDialog(self, title="Delete Attribute").result
+        dialog_result = Delete_Attribute_Dialog(self, title="Delete Attribute").result
         if dialog_result:
             class_name, attribute_name, attribute_type = dialog_result
+            # TODO: self.controller
             self.controller.delete_attribute(class_name, attribute_name, attribute_type)
             # Find the class
             for class_box in self.class_boxes:
@@ -582,6 +585,7 @@ class GUI_View(tk.Tk):
             if class_box['class_name'] == class_name:
                 # Check and rename in fields
                 if attribute_name in class_box.get('fields', []):
+                    # TODO: self.controller
                     self.controller.rename_attribute(class_name, attribute_name, new_name, "field")
                     index = class_box['fields'].index(attribute_name)
                     class_box['fields'][index] = new_name
@@ -590,6 +594,7 @@ class GUI_View(tk.Tk):
                     return
                 # Check and rename in methods
                 elif attribute_name in class_box.get('methods', []):
+                    # TODO: self.controller
                     self.controller.rename_attribute(class_name, attribute_name, new_name, "method")
                     index = class_box['methods'].index(attribute_name)
                     class_box['methods'][index] = new_name
@@ -610,9 +615,10 @@ class GUI_View(tk.Tk):
         Returns:
             None
         """
-        dialog_result = AddParameterDialog(self, title="Add Parameter").result
+        dialog_result = Add_Parameter_Dialog(self, title="Add Parameter").result
         if dialog_result:
             class_name, method_name, param_name = dialog_result
+            # TODO: self.controller
             self.controller.add_param(class_name,method_name,param_name)
 
             if not class_name or not method_name or not param_name:
@@ -642,10 +648,10 @@ class GUI_View(tk.Tk):
             return [class_name, method_name, param_name]
     
     def delete_param(self):
-        dialog_result = DeleteParameterDialog(self, "Delete Parameter").result
+        dialog_result = Delete_Parameter_Dialog(self, "Delete Parameter").result
         if dialog_result:
             class_name, method_name, param_name = dialog_result
-
+            # TODO: self.controller
             self.controller.delete_param(class_name, method_name, param_name)
 
             found_class = False
@@ -681,10 +687,10 @@ class GUI_View(tk.Tk):
         Returns:
             None
         """
-        dialog_result = RenameParameterDialog(self, title="Rename Parameter").result
+        dialog_result = Rename_Parameter_Dialog(self, title="Rename Parameter").result
         if dialog_result:
             class_name, method_name, old_param_name, new_param_name = dialog_result
-
+            # TODO: self.controller
             self.controller.rename_param(class_name, method_name , old_param_name, new_param_name)
 
             for class_box in self.class_boxes:
@@ -710,9 +716,9 @@ class GUI_View(tk.Tk):
         """
         url = "https://github.com/mucsci-students/2024sp-420-LambdaLegion?tab=readme-ov-file#readme"
         new = 1
-        webbrowser.open(url, new = new )
+        webbrowser.open(url, new = new)
 
-class RenameClassDialog(simpledialog.Dialog):
+class Rename_Class_Dialog(simpledialog.Dialog):
     def __init__(self, parent, title=None):
         super().__init__(parent, title=title)
 
@@ -730,7 +736,7 @@ class RenameClassDialog(simpledialog.Dialog):
     def apply(self):
         self.result = (self.class_name_entry.get(), self.new_name_entry.get())
 
-class AddAttributeDialog(simpledialog.Dialog):
+class Add_Attribute_Dialog(simpledialog.Dialog):
 
     def __init__(self, parent, title=None):
         super().__init__(parent, title=title)
@@ -756,7 +762,7 @@ class AddAttributeDialog(simpledialog.Dialog):
         # Now, we can call the main method to add the attribute with all required information
         self.parent.add_attribute(class_name, attribute_name, attribute_type)
 
-class DeleteAttributeDialog(simpledialog.Dialog):
+class Delete_Attribute_Dialog(simpledialog.Dialog):
     def __init__(self, parent, title=None):
         super().__init__(parent, title=title)
 
@@ -779,7 +785,7 @@ class DeleteAttributeDialog(simpledialog.Dialog):
     def apply(self):
         self.result = (self.class_name_entry.get(), self.attribute_name_entry.get(), self.attribute_type_var.get())
 
-class AddParameterDialog(simpledialog.Dialog):
+class Add_Parameter_Dialog(simpledialog.Dialog):
     def __init__(self, parent, title=None):
         super().__init__(parent, title)
 
@@ -804,7 +810,7 @@ class AddParameterDialog(simpledialog.Dialog):
         param_name = self.param_name_entry.get()
         self.result = (class_name, method_name, param_name)
 
-class DeleteParameterDialog(simpledialog.Dialog):
+class Delete_Parameter_Dialog(simpledialog.Dialog):
     def __init__(self, parent, title=None):
         super().__init__(parent, title=title)
 
@@ -829,7 +835,7 @@ class DeleteParameterDialog(simpledialog.Dialog):
         param_name = self.param_name_entry.get()
         self.result = (class_name, method_name, param_name)
   
-class RenameParameterDialog(simpledialog.Dialog):
+class Rename_Parameter_Dialog(simpledialog.Dialog):
     def __init__(self, parent, title=None):
         super().__init__(parent, title=title)
 
@@ -855,7 +861,7 @@ class RenameParameterDialog(simpledialog.Dialog):
     def apply(self):
         self.result = (self.class_name_entry.get(), self.method_name_entry.get(), self.param_name_entry.get(), self.new_param_name_entry.get())
         
-class AddRelationshipDialog(simpledialog.Dialog):
+class Add_Relationship_Dialog(simpledialog.Dialog):
     def __init__(self, parent, title=None):
         super().__init__(parent, title=title)
 
@@ -881,7 +887,7 @@ class AddRelationshipDialog(simpledialog.Dialog):
         relationship_type = self.relationship_type.get()
         self.result = (source_class, destination_class, relationship_type)
 
-class DeleteRelationshipDialog(simpledialog.Dialog):
+class Delete_Relationship_Dialog(simpledialog.Dialog):
     def __init__(self, parent, title=None, relationships=[]):
         self.relationshipsList = relationships
         super().__init__(parent, title=title)
