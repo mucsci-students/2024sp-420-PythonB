@@ -11,7 +11,7 @@ class UML_Controller:
     
     def run(self):
         while not self._should_quit:
-            self._controller.update(input("Command: ").strip().lower())
+            self._controller.update(input("Command: ").strip())
     
     def __pick_controller(self, args:str = sys.argv) -> CLI_Controller | GUI_Controller: 
         if len(args) > 1 and str(args[1]).strip().lower() == 'cli':

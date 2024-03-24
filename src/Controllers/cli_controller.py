@@ -14,12 +14,10 @@ class CLI_Controller:
     def update(self, input:str):
         if len(input.strip()) > 0:
             data = parse(self._diagram, input)
-            #if the first for chars are help or list, print instead of returning
-            if not hasattr(CLI_View, str(input[:4])):
-                return data[0](*data[1:])
-            #print if it comes from cli view
-            print(data)
-            print(data[0](*data[1:]))
+            r_val = data[0](*data[1:])
+            if isinstance(r_val, str):
+                print(r_val) 
+            return r_val
 
     
 

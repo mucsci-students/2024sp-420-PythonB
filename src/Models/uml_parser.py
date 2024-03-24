@@ -3,55 +3,68 @@ from Views.cli_view import CLI_View
 import re
 
 cli_view = CLI_View()
+
 def parse(d:UML_Diagram, input:str) -> list | str:
+    print("Input: " + input)
     tokens = check_args(input.split())
     
-    if len(tokens) < 3 or tokens[0].lower() == 'list': 
+    if len(tokens) < 3 or tokens[0] == 'list': 
         return short_command(d, tokens)
     else: 
-        return get_instance(d, tokens)
+        return instance_command(d, tokens)
     
 
 def short_command(d:UML_Diagram, tokens:list[str]) -> list:
     """Parses all forms of the following commands, returning appropriate lists for each: 
-        quit
-        save
-        load
-        undo
-        redo
-        list
-        help
+        quit, save, load, undo, redo, list, help
     """
-    cur_token = tokens.pop(0).lower()
+    cur_token = tokens.pop(0)
+    match cur_token: 
+        case 'quit':
+            import src.Controllers.controller
+            return [getattr(src.Controllers.controller,"quit")]
+        case 'save' | 'load':
+            return [getattr(uml_save_load, cur_token), d, tokens.pop(0)]
+        case 'undo' | 'redo':
+            #TODO: return [getattr(UML_States, cur_token)]
+            pass
+        case 'list':
+            return __parse_list_cmd(d, tokens)
+        case 'help':
+            return __parse_help_cmd(tokens)
+        case _:
+            raise ValueError("Invalid command.")
 
-    if cur_token == 'quit':
-        import src.Controllers.controller
-        return [getattr(src.Controllers.controller,"quit")]
-    elif cur_token == 'save' or cur_token == 'load':
-        return [getattr(uml_save_load, cur_token), d, tokens.pop(0)]
-    elif cur_token == 'undo' or cur_token == 'redo':
-        #TODO: return [getattr(UML_States, cur_token)]
-        pass
-    elif cur_token == 'list' or cur_token == 'help':
-        #TODO: list needs to have the diagram in idx 1 to work right
-            #TODO: TODO: to string methods need to be updated to work
-        out = None
-        if len(tokens) > 0:
-            out = [getattr(cli_view, cur_token + '_' + tokens.pop(0).lower())] + tokens
-        else:
-            out = [getattr(cli_view, cur_token)]
-        
+def __parse_list_cmd(d:UML_Diagram, tokens:list[str]):
+    """Parses a list command, returning it in a state ready to be called"""
+    match len(tokens):
+        case 0:
+            return [getattr(cli_view, 'list'), d]
+        case 1 | 2:
+            return [getattr(cli_view, 'list_' + tokens.pop(0)), d] + tokens
+        case _:
+            raise ValueError("Invalid use of list.")
+
+def __parse_help_cmd(tokens:list[str]):
+    """Parses a help command, returning it in a form ready to be run"""
+    if len(tokens) == 0:
+                return [getattr(cli_view, 'help')]
+    elif len(tokens) == 1:
+        return [getattr(cli_view, 'help_' + tokens.pop(0))]
+    else:
+        raise ValueError("Invalid command.")
 
 def check_args (args:list[str]) -> list[str]: 
-    """Makes sure every string in *args is valid"""
+    """Makes sure every string in args is valid
+        Valid names match the following regex: ^[a-zA-Z][a-zA-Z0-9_]*$
+    """
     regex = re.compile('^[a-zA-Z][a-zA-Z0-9_]*$')
     for arg in args: 
         if not regex.match(arg):
             raise ValueError("Argument {0} is invalid.".format(arg))
     return args
 
-
-def get_instance(d:UML_Diagram, tokens:list[str]) -> list:
+def instance_command(d:UML_Diagram, tokens:list[str]) -> list:
     """Turns a command into an instance of a method being applied to an object
         and the args to that method
         
@@ -60,16 +73,19 @@ def get_instance(d:UML_Diagram, tokens:list[str]) -> list:
         
         Returns: A list in the form [function object, arg1, arg2,...,argn]
     """
-    cmd = tokens.pop(0).lower()
-    cmd_target_name = tokens.pop(0).lower()
-    print (cmd_target_name)
+    cmd = tokens.pop(0)
+    cmd_target_name = tokens.pop(0)
+    
+    if not cmd.islower() or not cmd_target_name.islower():
+        raise ValueError("Commands should be lowercase.")
+ 
     object = None
     #if cmd target is relation or class, we can get it directly from the diagram
     if cmd_target_name == 'relation' or cmd_target_name == 'class':
         object = getattr(d, cmd + '_' + cmd_target_name)
 
     else:
-        #if cmd target isn't in the diagram, we know it is at least in a class. Get that class.
+        #if cmd target isn't in the diagram, we know it is in a class. Get that class.
         object = getattr(d, 'get_class')(tokens.pop(0))
         if cmd_target_name == 'method' or cmd_target_name == 'field':
             object = getattr(object, cmd + '_' + cmd_target_name)
@@ -77,19 +93,8 @@ def get_instance(d:UML_Diagram, tokens:list[str]) -> list:
         elif cmd_target_name == 'param':
             object = getattr(object, 'get_method')(tokens.pop(0))
             object = getattr(object, cmd + '_' + cmd_target_name)
+        else: 
+            raise ValueError("Invalid Command.")
     
     return [object] + tokens
 
-#TODO: Length based parseing would probably be cleaner. EG:
-#       1) take the first token. If it is quit, return it. If it is save or load, prep them and return 
-#       2) take the second token and combine it with the first token. 
-#       3) If the second token is relation, branch into an edge case for relations that just preps and returns
-#       4) if there are only three tokens, call getattr on the diagram and append the third item to the list
-#       5) if there are more than three tokens, call getattr on the result of 4 and call that result with the next item in the token list
-#       6) if the second token is not param, repeat this process until len is 2.
-#       7) if the second token is param, repeat this process until len is 1. 
-#       NOTE: In cases 6 and 7, everything left on the list should be the params to the method call and there should now be an instance to call it on.
-
-#NOTE: Group, I will likely do this over the weekend. I don't have time to do it now. This should also fix the list issues. 
-    #There will be a few more branches than listed because list and help can both have either two or three tokens. 
-        #also, help does not need the diagram and list does. 
