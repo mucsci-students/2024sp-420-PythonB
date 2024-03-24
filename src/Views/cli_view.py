@@ -5,7 +5,8 @@ from Models.uml_list import UML_List_Visitor
 class CLI_View:
     
     def __init__(self):
-        self._lister = UML_List_Visitor()  
+        self._lister = UML_List_Visitor() 
+        self._completer = self.setup_autocomplete() 
 
 
              
@@ -76,3 +77,43 @@ class CLI_View:
         """Lists all relations that r_name is a part of in d"""
         return ''.join(r.accept(self._lister) for r in d.get_all_relations() 
                        if r.get_dst_name() == r_name or r.get_src_name() == r_name)
+    
+
+    def setup_autocomplete(self):
+        """
+        Sets up autocomplete functionality using the NestedCompleter.
+
+        Returns:
+        NestedCompleter: An instance of NestedCompleter configured with a dictionary representing available commands
+        and their respective subcommands or arguments.
+        """
+        return NestedCompleter.from_nested_dict({
+        'add': {
+            'class': None,
+            'field': None,
+            'method': None,
+            'relation': None
+        },
+        'delete': {
+            'class': None,
+            'field': None,
+            'method': None,
+            'relation': None
+        },
+        'rename':{
+            'class': None,
+            'field': None,
+            'method': None
+        },
+        'list':{
+            'class': None,
+            'classes': None,
+            'relation': None,
+            'relations': None
+        },
+        'save': None,
+        'load': None,
+        'exit': None,
+        'undo': None,
+        'redo': None
+        })  
