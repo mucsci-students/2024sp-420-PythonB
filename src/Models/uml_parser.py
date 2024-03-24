@@ -25,8 +25,7 @@ def short_command(d:UML_Diagram, tokens:list[str]) -> list:
         case 'save' | 'load':
             return [getattr(uml_save_load, cur_token), d, tokens.pop(0)]
         case 'undo' | 'redo':
-            #TODO: return [getattr(UML_States, cur_token)]
-            pass
+            return [getattr(UML_States(), cur_token)]
         case 'list':
             return __parse_list_cmd(d, tokens)
         case 'help':

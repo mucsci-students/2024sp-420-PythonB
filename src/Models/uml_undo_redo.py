@@ -2,10 +2,22 @@ from Models.uml_diagram import UML_Diagram
 from Models.uml_save_load import diagram_to_json, json_to_diagram
 
 class UML_States:
+    #this will become an instance of UML_States the first time UML_States is constructed
+    #after that, this will be returned instead of making a new one.
+    _self = None
+
+    #initial_diagram will be reflected into __init__, leave it here.
+    def __new__(cls, initial_diagram: UML_Diagram):
+        """Constructor insures that only one instance of UML_States ever exists"""
+        if cls._self is None:
+            #this passes through all params to __init__ 
+            cls._self = super().__new__(cls)
+        return cls._self
+    
     def __init__(self, initial_diagram: UML_Diagram):
         """
         Initialize the UML_States with an initial state.
-        """
+        """ 
         self._states = []
         self._current_state = -1
         self.save_state(initial_diagram)
