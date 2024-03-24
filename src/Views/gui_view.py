@@ -14,11 +14,10 @@ from tkinter import simpledialog
 
 from Models.diagram import Diagram
 
-
 class UMLDiagramEditor(tk.Tk):
     def __init__(self, controller):
         super().__init__()
-        self.title("LambdaLegion UML Program (GUI Edition) V1.0")
+        self.title("LambdaLegion UML Program (CWorld Edition) V1.0")
         self.geometry("800x600")
         self.create_menu()
         self.create_sidebar()
@@ -55,39 +54,18 @@ class UMLDiagramEditor(tk.Tk):
         # File
         file_menu = Menu(menu_bar, tearoff=0)
         file_menu.add_command(label="New", command=self.new_file)
-        file_menu.add_command(label="Open...", command=self.open_file)
+        file_menu.add_command(label="Load", command=self.open_file)
         file_menu.add_command(label="Save", command=self.save_file)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.quit)
         menu_bar.add_cascade(label="File", menu=file_menu)
 
+        # Temporarily removed as it's not used.
+        # We may want Undo/Redo in here
+            # Will probably try to make buttons for this though
         # Edit
-        edit_menu = Menu(menu_bar, tearoff=0)
-        menu_bar.add_cascade(label="Edit", menu=edit_menu)
-
-        # Classes
-        classes_menu = Menu(menu_bar, tearoff=0)
-        classes_menu.add_command(label="New", command=self.add_class)
-        classes_menu.add_command(label="Delete", command=self.delete_class)
-        classes_menu.add_command(label="Rename", command=self.rename_class)
-        menu_bar.add_cascade(label="Classes", menu=classes_menu)
-
-        # Relationships
-        relationships_menu = Menu(menu_bar, tearoff=0)
-        relationships_menu.add_command(label="Add", command=self.add_relationship)
-        relationships_menu.add_command(label="Delete", command=self.delete_relationship)
-        menu_bar.add_cascade(label="Relationships", menu=relationships_menu)
-
-        # Attributes
-        attributes_menu = Menu(menu_bar, tearoff=0)
-        attributes_menu.add_command(label="Add Attribute", command=self.add_attribute_to_class)
-        attributes_menu.add_command(label="Delete Attribute", command=self.add_attribute)
-        attributes_menu.add_command(label="Rename Attribute", command=self.add_attribute)
-        attributes_menu.add_separator()
-        attributes_menu.add_command(label="New Parameter", command=self.new_param)
-        attributes_menu.add_command(label="Delete Parameter", command=self.delete_param)
-        attributes_menu.add_command(label="Rename Parameter", command=self.rename_param)
-        menu_bar.add_cascade(label="Attributes", menu=attributes_menu)
+        # edit_menu = Menu(menu_bar, tearoff=0)
+        # menu_bar.add_cascade(label="Edit", menu=edit_menu)
 
         # Help
         help_menu = Menu(menu_bar, tearoff=0)
@@ -102,26 +80,17 @@ class UMLDiagramEditor(tk.Tk):
 
     def create_sidebar(self):
         self.sidebar = tk.Frame(self, width=200, bg='lightgray')
-        self.sidebar.pack(side=tk.LEFT, fill=tk.Y)
-
-        self.btn_class = tk.Button(self.sidebar, text="File", command=self.file_options_menu)
-        self.btn_class.pack(fill=tk.X, pady=(5, 5))
-
-        self.btn_class = tk.Button(self.sidebar, text="Edit", command=self.edit_options_menu)
-        self.btn_class.pack(fill=tk.X, pady=(5, 5))
+        self.sidebar.pack(side=tk.LEFT, fill=tk.Y, padx=(5, 0), pady=(13, 12))
 
         # Example button with dropdown for "Add Class"
         self.btn_class = tk.Button(self.sidebar, text="Classes", command=self.class_options_menu)
-        self.btn_class.pack(fill=tk.X, pady=(5, 5))
+        self.btn_class.pack(fill=tk.X, padx=(5, 5), pady=(10, 5))
 
         self.btn_relationships = tk.Button(self.sidebar, text="Relationships", command=self.relationship_options_menu)
-        self.btn_relationships.pack(fill=tk.X, pady=(5, 5))
+        self.btn_relationships.pack(fill=tk.X, padx=(5, 5), pady=(5, 5))
 
         self.btn_methods = tk.Button(self.sidebar, text="Attributes", command=self.attributes_options_menu)
-        self.btn_methods.pack(fill=tk.X, pady=(5, 5))
-
-        self.btn_class = tk.Button(self.sidebar, text="Help", command=self.help_options_menu)
-        self.btn_class.pack(fill=tk.X, pady=(5, 5))
+        self.btn_methods.pack(fill=tk.X, padx=(5, 5), pady=(5, 5))
 
         tk.Label(self.sidebar, text="Relationships Tracker", bg='lightgray', font=('TkDefaultFont', 10, 'bold')).pack(pady=(10, 0))
 
@@ -147,9 +116,11 @@ class UMLDiagramEditor(tk.Tk):
         # Create a menu that will appear at the current mouse position
         menu = tk.Menu(self, tearoff=0)
         menu.add_command(label="Add Class", command=self.add_class)
-        menu.add_command(label="Delete Class", command=self.delete_class)
-        menu.add_command(label="Rename Class", command=self.rename_class)
-        menu.add_separator()
+        # This will show Delete Class and Rename Class only when there is
+            # at least one class card.
+        if len(self.class_boxes) > 0:
+            menu.add_command(label="Delete Class", command=self.delete_class)
+            menu.add_command(label="Rename Class", command=self.rename_class)
 
         try:
             # Display the menu at the current mouse position
@@ -160,13 +131,18 @@ class UMLDiagramEditor(tk.Tk):
 
     def attributes_options_menu(self):
         menu = Menu(self, tearoff=0)
-        menu.add_command(label="Add Attribute", command=self.add_attribute_to_class)
-        menu.add_command(label="Delete Attribute", command=self.delete_attribute)
-        menu.add_command(label="Rename Rename", command=self.rename_attribute)
-        menu.add_separator()
-        menu.add_command(label="Add Parameter", command=self.new_param)
-        menu.add_command(label="Delete Parameter", command=self.delete_param)
-        menu.add_command(label="Rename Parameter", command=self.rename_param)
+        if len(self.class_boxes) > 0:
+            # TODO: Implement this logic once new backend hooked in:
+            menu.add_command(label="Add Attribute", command=self.add_attribute_to_class)
+            ## If attributes > 0. For next 2 lines ##
+            menu.add_command(label="Delete Attribute", command=self.delete_attribute)
+            menu.add_command(label="Rename Rename", command=self.rename_attribute)
+            ## if Methods > 0. Indent next 4 ##
+            menu.add_separator()
+            menu.add_command(label="Add Parameter", command=self.new_param)
+            ## if Parameters > 0. Indent next 2 ##
+            menu.add_command(label="Delete Parameter", command=self.delete_param)
+            menu.add_command(label="Rename Parameter", command=self.rename_param)
 
         try:
             # Display the menu at the current mouse position
@@ -178,8 +154,12 @@ class UMLDiagramEditor(tk.Tk):
     def relationship_options_menu(self):
         menu = Menu(self, tearoff=0)
         menu = Menu(self, tearoff=0)
-        menu.add_command(label="Add", command=self.add_relationship)
-        menu.add_command(label="Delete", command=self.delete_relationship)
+        if len(self.class_boxes) > 1:
+            menu.add_command(label="Add", command=self.add_relationship)
+        # The below check *should* work, but given the state of things, I can't add a relation to test
+            # Until then, as long as there is at least 2 classes, Delete relation will appear.
+        # if len(self.relationshipsList) > 0:
+            menu.add_command(label="Delete", command=self.delete_relationship)
 
         try:
             # Display the menu at the current mouse position
