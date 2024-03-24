@@ -178,3 +178,18 @@ def test_redo():
     assert states.get_current_state() == undo_dgm0
     assert undo_dgm0 is not dgm0
     assert undo_dgm0 == dgm0
+
+def test_singleton():
+    dgm1 = UML_Diagram()
+    states = UML_States(dgm1)
+    dgm1.add_class("clTest")
+    
+    dgm2 = UML_Diagram()
+    dgm2.add_class("cl1")
+
+    states2 = UML_States(dgm2)
+    states.save_state(dgm1)
+
+    #if they were different objects, states would have one save and states2 would have 0
+    assert states == states2
+    assert states is states2

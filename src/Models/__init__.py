@@ -11,3 +11,4 @@ from .uml_visitor import *
 from .uml_save_load import *
 from .uml_parser import parse
 from .error_handler import Error_Handler
+from .uml_undo_redo import UML_States
