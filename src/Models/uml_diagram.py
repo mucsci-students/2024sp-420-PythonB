@@ -51,7 +51,7 @@ class UML_Diagram(UML_Visitable):
             #if this doesn't error, the relation already exists
             item = self.get_relation(r_src, r_dst)
         except ValueError: 
-            if r_type not in rel_types: 
+            if r_type.title() not in rel_types: 
                 raise ValueError("Relation type %s is invalid" % r_type)
             self._relations.append(UML_Relation(self.get_class(r_src), self.get_class(r_dst), r_type))
             return
@@ -68,6 +68,14 @@ class UML_Diagram(UML_Visitable):
     def delete_relations_containing(self, c_name:str) -> None:
         """Remove all relations that have c_name from self._relations"""
         self._relations = list(filter(lambda rel: rel.get_src_name() != c_name and rel.get_dst_name() != c_name, self._relations))
+
+    def replace_content(self, other) -> None:
+        """
+        Replace all attributes with references to other's attributes
+        (This is not making copies! Be careful modifying other after this call!)
+        """
+        self._classes = other._classes
+        self._relations = other._relations
 
 #===================================== Operators =====================================#
 

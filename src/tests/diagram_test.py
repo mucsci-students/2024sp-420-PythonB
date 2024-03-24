@@ -93,11 +93,11 @@ def test_get_relations():
     dia.add_class("Leela")
     dia.add_class("Zoiberg")
 
-    friend1 = UML_Relation(bender, fry, "generalization")
+    friend1 = UML_Relation(bender, fry, "Realization")
     friend2 = UML_Relation(fry, leela, "inheritance")
     friend3 = UML_Relation(bender, leela, "aggregation")
 
-    dia.add_relation("Bender", "Fry", "generalization")
+    dia.add_relation("Bender", "Fry", "Realization")
     dia.add_relation("Fry", "Leela", "inheritance")
     dia.add_relation("Bender", "Leela", "aggregation")
 
