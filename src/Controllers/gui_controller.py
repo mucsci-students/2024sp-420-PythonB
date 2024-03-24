@@ -3,7 +3,6 @@ class GUI_Controller:
 
     def __init__(self):
        self._diagram = UML_Diagram()
-       self._should_quit = False
 
     def update (self, input:str = ''):
         print("In gui controller")

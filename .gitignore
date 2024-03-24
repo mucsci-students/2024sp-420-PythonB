@@ -1,4 +1,5 @@
 save_folder
+poetry.lock
 __pycache__
 dist
 .vscode

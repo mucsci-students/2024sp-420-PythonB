@@ -1,9 +1,13 @@
 from prompt_toolkit.completion import NestedCompleter
+from Models.uml_diagram import UML_Diagram
+from Models.uml_list import UML_List_Visitor
 
 class CLI_View:
     
     def __init__(self):
-        pass
+        self._lister = UML_List_Visitor()  
+
+
              
     #A list of surface level commands    
     def help(self):
@@ -49,5 +53,26 @@ class CLI_View:
                 "   <relation_type>: (Aggregation, Composition, Generalization, Inheritance)\n"
                 "delete relation <src_class> <des_class>                Deletes the relation between <src_class> <des_class>\n"
                 "list relations                                         Lists all relations\n"
-                "list relations <class_name>                            Lists all relations to <class_name>\n")
+                "list relation <class>                                  Lists all relations <class> is a part of"
+        )
+        
+    def list(self, d:UML_Diagram) -> str:
+        """Lists the whole diagram"""
+        return d.accept(self._lister)
     
+    def list_classes(self, d:UML_Diagram) -> str:
+        """Lists all the classes in the provided diagram""" 
+        return ''.join(c.accept(self._lister) for c in d.get_all_classes())
+    
+    def list_relations(self, d:UML_Diagram) -> str: 
+        """Lists all the relations in the provided diagram"""
+        return ''.join(r.accept(self._lister) for r in d.get_all_relations())
+    
+    def list_class(self, d:UML_Diagram, c_name:str) -> str:
+        """Lists all the data about class c_name"""
+        return d.get_class(c_name).accept(self._lister)
+    
+    def list_relation(self, d:UML_Diagram, r_name:str) -> str: 
+        """Lists all relations that r_name is a part of in d"""
+        return ''.join(r.accept(self._lister) for r in d.get_all_relations() 
+                       if r.get_dst_name() == r_name or r.get_src_name() == r_name)

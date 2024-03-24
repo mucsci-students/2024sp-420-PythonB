@@ -8,8 +8,6 @@ class UML_Controller:
         Initializes the instance with either a CLI_Controller or GUI_Controller based on user choice
         """
         self._controller:CLI_Controller | GUI_Controller = self.__pick_controller()
-
-        
     
     def run(self):
         """Executes the main loop of the program"""
@@ -20,4 +18,7 @@ class UML_Controller:
         if len(args) > 1 and str(args[1]).strip().lower() == 'cli':
             return CLI_Controller()
         return GUI_Controller()
+    
+    def quit():
+        pass
     

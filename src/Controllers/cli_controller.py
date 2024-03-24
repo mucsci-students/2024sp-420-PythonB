@@ -12,21 +12,15 @@ class CLI_Controller:
         self._should_quit = False
         self._completer = self.setup_autocomplete()  
     
+    @Error_Handler.handle_error
     def update(self):
-        """
-        Gathers input and executes a single cmd
-
-        Returns:
-        The result of the method call e.g. diagram/class/relation
-        """
-        input = prompt("Command: ", completer=self._completer).strip().lower()
+        input = prompt("Command: ", completer=self._completer).strip()
         if len(input.strip()) > 0:
             data = parse(self._diagram, input)
-            if not hasattr(CLI_View, str(input[:4])):
-                return data[0](*data[1:])
-            #print help menu
-            print(data[0](*data[1:]))
-    
+            r_val = data[0](*data[1:])
+            if isinstance(r_val, str):
+                print(r_val) 
+               
     def setup_autocomplete(self):
         """
         Sets up autocomplete functionality using the NestedCompleter.
@@ -64,6 +58,7 @@ class CLI_Controller:
         'exit': None
         })  
     
+
 
     
 
