@@ -38,8 +38,4 @@ class CLI_Controller:
         elif len(tokens) == 1:
             return [getattr(self._view, 'help_' + tokens.pop(0))]
         else:
-            raise ValueError("Invalid command.")   
-        
-
-
-            
+            raise ValueError("Invalid command.")
