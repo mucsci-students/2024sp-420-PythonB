@@ -1,56 +1,41 @@
+
 from Models.uml_diagram import UML_Diagram
 from Models.error_handler import Error_Handler
-from Models.uml_parser import parse
 from prompt_toolkit import prompt
-from prompt_toolkit.completion import NestedCompleter
+from Views.cli_view import CLI_View
+
+
 
 class CLI_Controller:
 
     def __init__(self):
-        self._completer = self.setup_autocomplete()  
+        self._view = CLI_View()
     
     @Error_Handler.handle_error
-    def update(self, diagram:UML_Diagram):
-        input = prompt("Command: ", completer=self._completer).strip()
-        if len(input.strip()) > 0:
-            data = parse(diagram, input)
-            r_val = data[0](*data[1:])
-            if isinstance(r_val, str):
-                print(r_val) 
-               
-    def setup_autocomplete(self):
-        """
-        Sets up autocomplete functionality using the NestedCompleter.
+    def update(self, parsed_input:list):
+        r_val = parsed_input[0](*parsed_input[1:])
+        if isinstance(r_val, str):
+            print(r_val) 
+    
+    def request_update(self):
+         return prompt("Command: ", completer=self._view._completer).strip()
 
-        Returns:
-        NestedCompleter: An instance of NestedCompleter configured with a dictionary representing available commands
-        and their respective subcommands or arguments.
-        """
-        return NestedCompleter.from_nested_dict({
-        'add': {
-            'class': None,
-            'field': None,
-            'method': None,
-            'relationship': None
-        },
-        'delete': {
-            'class': None,
-            'field': None,
-            'method': None,
-            'relationship': None
-        },
-        'rename':{
-            'class': None,
-            'field': None,
-            'method': None
-        },
-        'list':{
-            'class': None,
-            'classes': None,
-            'relationship': None,
-            'relationships': None
-        },
-        'save': None,
-        'load': None,
-        'exit': None
-        })  
+
+    def parse_list_cmd(self, d:UML_Diagram, tokens:list[str]):
+        """Parses a list command, returning it in a state ready to be called"""
+        match len(tokens):
+            case 0:
+                return [getattr(self._view, 'list'), d]
+            case 1 | 2:
+                return [getattr(self._view, 'list_' + tokens.pop(0)), d] + tokens
+            case _:
+                raise ValueError("Invalid use of list.")
+
+    def parse_help_cmd(self, tokens:list[str]):
+        """Parses a help command, returning it in a form ready to be run"""
+        if len(tokens) == 0:
+            return [getattr(self._view, 'help')]
+        elif len(tokens) == 1:
+            return [getattr(self._view, 'help_' + tokens.pop(0))]
+        else:
+            raise ValueError("Invalid command.")

@@ -60,7 +60,9 @@ class UML_Diagram(UML_Visitable):
         
         
     def delete_class(self, c_name:str) -> None:
+        """Deletes class c_name and all relations including c_name"""
         self._classes.remove(self.get_class(c_name))
+        self.delete_relations_containing(c_name)
     
     def delete_relation(self, r_src:str, r_dst:str) -> None:
         self._relations.remove(self.get_relation(r_src, r_dst))
