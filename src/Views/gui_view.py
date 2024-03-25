@@ -23,10 +23,7 @@ class GUI_View(tk.Tk):
 
     def create_menu(self):
         """
-        Creates the main menu bar for the application window.
-
-        This method initializes and configures the menu bar with several cascading menus including File, Edit, Classes,
-        Relationships, Attributes, and Help.
+        Initializes the menu bar with cascading menus for File and Help.
         Parameters:
             self - The parent
 
@@ -44,7 +41,6 @@ class GUI_View(tk.Tk):
         file_menu.add_command(label="Exit", command=self.quit)
         menu_bar.add_cascade(label="File", menu=file_menu)
 
-        # Temporarily removed as it's not used.
         # We may want Undo/Redo in here
             # Will probably try to make buttons for this though
         # Edit
@@ -55,7 +51,6 @@ class GUI_View(tk.Tk):
         help_menu = Menu(menu_bar, tearoff=0)
         help_menu.add_command(label="Read Me", command=self.help)
         help_menu.add_command(label="Redraw Diagram", command = self.redraw_canvas)
-        
         menu_bar.add_cascade(label="Help", menu=help_menu)
 
     def create_canvas(self):
@@ -90,9 +85,7 @@ class GUI_View(tk.Tk):
             self.relationship_tracker.insert(tk.END, relationship_str)
 
     def create_diagram_space(self):
-        
         self.diagram_canvas = tk.Canvas(self, bg='white')
-        
         # Pack the canvas to fill the remaining space after the sidebar
         self.diagram_canvas.pack(side=tk.LEFT, padx=10, pady=10, fill=tk.BOTH, expand=True)
 
@@ -123,7 +116,7 @@ class GUI_View(tk.Tk):
             menu.add_command(label="Rename Rename", command=self.rename_attribute)
             ## if Methods > 0. Indent next 4 ##
             menu.add_separator()
-            menu.add_command(label="Add Parameter", command=self.new_param)
+            menu.add_command(label="Add Parameter", command=self.add_param)
             ## if Parameters > 0. Indent next 2 ##
             menu.add_command(label="Delete Parameter", command=self.delete_param)
             menu.add_command(label="Rename Parameter", command=self.rename_param)
@@ -304,7 +297,6 @@ class GUI_View(tk.Tk):
         # Notify the user of success
         messagebox.showinfo("Save File", "The diagram has been saved successfully.")
 
-    
     def add_class(self):
         """
         Adds a class
@@ -317,20 +309,20 @@ class GUI_View(tk.Tk):
             successBool -- True if the add class was successful, False otherwise
         """
         class_name = simpledialog.askstring("Input", "Enter a Class Name:", parent=self)
-        
+
         fields = []
         methods = []
         # TODO: self.controller
-        self.controller.add_class(class_name)     
+        new_command = 'add class ' + class_name
+        self._commands.append(new_command)
+        # self.controller.add_class(class_name)
 
         next_x, next_y = self.get_next_position()
-                
         self.class_boxes.append({'class_name': class_name, 'fields': fields, 'methods': methods, 'x': next_x, 'y': next_y})
-
         self.create_class_box(self.diagram_canvas, class_name, fields, methods, next_x,next_y)
 
         return class_name
-    
+
     def get_next_position(self):
         # For simplicity, let's just arrange them in a horizontal line for now
         spacing = 10  # Spacing between class boxes
@@ -358,10 +350,7 @@ class GUI_View(tk.Tk):
         for method in methods:
             # Check if 'params' exists, otherwise default to an empty list
             params = method.get('params', method.get('parameters', []))
-            adapted_methods.append({
-                'name': method['name'],
-                'params': params
-            })
+            adapted_methods.append({'name': method['name'], 'params': params})
 
         # Calculate box height dynamically based on contents
         num_text_lines = 2 + len(fields) + sum(len(method['params']) + 1 for method in adapted_methods) + (2 if fields else 0) + (2 if adapted_methods else 0)
@@ -405,7 +394,9 @@ class GUI_View(tk.Tk):
         if class_name is None:
             return
         # TODO: self.controller
-        self.controller.delete_class(class_name)
+        new_command = "delete class " + class_name
+        self._commands.add(new_command)
+        # self.controller.delete_class(class_name)
 
         class_found = False
         for i, class_box in enumerate(self.class_boxes):
@@ -413,7 +404,7 @@ class GUI_View(tk.Tk):
                 del self.class_boxes[i]
                 class_found = True
                 break  # Correctly placed to break out of the loop when a class is found and deleted
-            
+
         if class_found:
             self.relationshipsList[:] = [rel for rel in self.relationshipsList if rel['source'] != class_name and rel['destination']!= class_name]
         self.redraw_canvas()  # Call redraw_canvas outside the loop to refresh the canvas once after any deletion
@@ -422,11 +413,10 @@ class GUI_View(tk.Tk):
         if not class_found:
             messagebox.showinfo("Delete Class", "Class not found!")
             return
-        
-        messagebox.showinfo("Delete Class", f"'{class_name}' has been removed.")
 
+        messagebox.showinfo("Delete Class", f"'{class_name}' has been removed.")
         return class_name
- 
+
     def redraw_canvas(self):
         self.diagram_canvas.delete("all")  # Clears the canvas
         # Draw relationships
@@ -462,7 +452,9 @@ class GUI_View(tk.Tk):
         if dialog.result:
             old_name, new_name = dialog.result
             # TODO: self.controller
-            self.controller.rename_class(old_name,new_name)
+            new_command = "rename class " + old_name + " " + new_name
+            self._commands.add(new_command)
+            # self.controller.rename_class(old_name,new_name)
 
             for class_box in self.class_boxes:
                 if class_box['class_name'] == old_name:
@@ -477,20 +469,26 @@ class GUI_View(tk.Tk):
 
             self.update_relationship_tracker()
             self.redraw_canvas()
-            messagebox.showinfo("Rename Class", f"'{old_name}' has been renamed to '{new_name}'")   
+            messagebox.showinfo("Rename Class", f"'{old_name}' has been renamed to '{new_name}'")
 
     def add_attribute_to_class(self):
         Add_Attribute_Dialog(self, title="Add Attribute")
-    
+
+    # TODO: This either needs broken into add_field and add_method
+        # Or needs a conditional for if field do x if method do x
     def add_attribute(self, class_name, attribute_name, attribute_type):
         if not attribute_name or not class_name or attribute_type not in ['field', 'method']:
             messagebox.showinfo("Error", "Invalid input provided.")
             return
         # TODO: self.controller
-        self.controller.add_attribute(class_name, attribute_name, attribute_type)
+        new_command = "add "
+        if (attribute_type == "field"):
+            new_command += "field " + attribute_name
+        else:
+            new_command += "method " + attribute_name
+        # self.controller.add_attribute(class_name, attribute_name, attribute_type)
 
         parameters = []
-
         # Find the class box with the given class_name
         for class_box in self.class_boxes:
             if class_box['class_name'] == class_name:
@@ -509,14 +507,17 @@ class GUI_View(tk.Tk):
         if dialog.result:
             selected_rel = dialog.result
             # Extract the source and destination class names from the dialog's result
-            source_class = selected_rel['source']
-            destination_class = selected_rel['destination']
+            src = selected_rel['source']
+            dest = selected_rel['destination']
 
             # Attempt to delete the relationship using the controller
             # TODO: self.controller
-            self.controller.delete_relationship(source_class, destination_class)
+            new_command = "delete relationship " + src + " " + dest
+            self._commands.add(new_command)
+            # self.controller.delete_relationship(source_class, destination_class)
+            
             # If successful, update the relationships list and UI accordingly
-            self.relationshipsList[:] = [rel for rel in self.relationshipsList if not (rel['source'] == source_class and rel['destination'] == destination_class)]
+            self.relationshipsList[:] = [rel for rel in self.relationshipsList if not (rel['source'] == src and rel['destination'] == dest)]
             self.update_relationship_tracker()
             self.redraw_canvas()
             messagebox.showinfo("Success", "Relationship deleted successfully.")
@@ -532,29 +533,34 @@ class GUI_View(tk.Tk):
         """
         dialog = Add_Relationship_Dialog(self, "Add Relationship")
         if dialog.result:
-            
-            source_class, destination_class, relationship_type = dialog.result
+
+            src, dest, rel = dialog.result
             # TODO: self.controller
-            self.controller.add_relationship(source_class, destination_class, relationship_type)
-            
+            new_command = "add relation " + src + " " + dest + " " + rel
+            self._commands.add(new_command)
+            # self.controller.add_relationship(source_class, destination_class, relationship_type)
+
             # Add the relationship
             self.relationshipsList.append({
-                "source": source_class,
-                "destination": destination_class,
-                "type": relationship_type
+                "source": src,
+                "destination": dest,
+                "type": rel
             })
 
             self.update_relationship_tracker()
 
             self.redraw_canvas()
 
+    # TODO: This is the same as the above attribute
     def delete_attribute(self):
         # Ask for the class name from which to delete an attribute
         dialog_result = Delete_Attribute_Dialog(self, title="Delete Attribute").result
         if dialog_result:
             class_name, attribute_name, attribute_type = dialog_result
             # TODO: self.controller
-            self.controller.delete_attribute(class_name, attribute_name, attribute_type)
+            new_command = "delete " + attribute_type + " " + class_name + " " + attribute_name
+            self._commands.add(new_command)
+            # self.controller.delete_attribute(class_name, attribute_name, attribute_type)
             # Find the class
             for class_box in self.class_boxes:
                 if class_box['class_name'] == class_name:
@@ -571,41 +577,45 @@ class GUI_View(tk.Tk):
                     messagebox.showinfo("Success", f"{attribute_type.capitalize()} '{attribute_name}' deleted from class '{class_name}'.")
                     return
             messagebox.showinfo("Error", f"Class '{class_name}' not found.")
-
             return [class_name, attribute_name, attribute_type]
 
+    # TODO: Either needs broken apart, or needs to be told if it's method or field
+            # Should not assume there is not a method and a field with the same name
     def rename_attribute(self):
         class_name = simpledialog.askstring("Rename Attribute", "Enter the name of the class:", parent=self)
-        
-        attribute_name = simpledialog.askstring("Rename Attribute", "Enter the name of the attribute to rename:", parent=self)
-        
+
+        old_name = simpledialog.askstring("Rename Attribute", "Enter the name of the attribute to rename:", parent=self)
+
         new_name = simpledialog.askstring("Rename Attribute", "Enter the new name for the attribute:", parent=self)
-        
+
         for class_box in self.class_boxes:
             if class_box['class_name'] == class_name:
                 # Check and rename in fields
-                if attribute_name in class_box.get('fields', []):
+                if old_name in class_box.get('fields', []):
                     # TODO: self.controller
-                    self.controller.rename_attribute(class_name, attribute_name, new_name, "field")
-                    index = class_box['fields'].index(attribute_name)
+                    new_command = "rename field " + class_name + " " + old_name + " " + new_name
+                    self._commands.add(new_command)
+                    # self.controller.rename_attribute(class_name, attribute_name, new_name, "field")
+                    index = class_box['fields'].index(old_name)
                     class_box['fields'][index] = new_name
                     self.redraw_canvas()
-                    messagebox.showinfo("Success", f"Field '{attribute_name}' renamed to '{new_name}' in class '{class_name}'.")
+                    messagebox.showinfo("Success", f"Field '{old_name}' renamed to '{new_name}' in class '{class_name}'.")
                     return
                 # Check and rename in methods
-                elif attribute_name in class_box.get('methods', []):
+                elif old_name in class_box.get('methods', []):
                     # TODO: self.controller
-                    self.controller.rename_attribute(class_name, attribute_name, new_name, "method")
-                    index = class_box['methods'].index(attribute_name)
+                    new_command = "rename method " + class_name + " " + old_name + " " + new_name
+                    self._commands.add(new_command)
+                    # self.controller.rename_attribute(class_name, attribute_name, new_name, "method")
+                    index = class_box['methods'].index(old_name)
                     class_box['methods'][index] = new_name
                     self.redraw_canvas()
-                    messagebox.showinfo("Success", f"Method '{attribute_name}' renamed to '{new_name}' in class '{class_name}'.")
+                    messagebox.showinfo("Success", f"Method '{old_name}' renamed to '{new_name}' in class '{class_name}'.")
                     return
         messagebox.showinfo("Error", "Attribute not found.")
+        return [class_name, old_name, new_name]
 
-        return [class_name, attribute_name, new_name]
-
-    def new_param(self):
+    def add_param(self):
         """
         Adds a new parameter to a class
 
@@ -619,12 +629,14 @@ class GUI_View(tk.Tk):
         if dialog_result:
             class_name, method_name, param_name = dialog_result
             # TODO: self.controller
-            self.controller.add_param(class_name,method_name,param_name)
+            new_command = "add param " + " " + class_name + " " + param_name
+            self._commands.add(new_command)
+            # self.controller.add_param(class_name,method_name,param_name)
 
             if not class_name or not method_name or not param_name:
                 messagebox.showinfo("Error","All fields are required.")
                 return
-            
+
             found_class = False
             for class_box in self.class_boxes:
                 if class_box['class_name'] == class_name:
@@ -642,17 +654,19 @@ class GUI_View(tk.Tk):
             if not found_class:
                 messagebox.showinfo("Add Parameter", f"Class '{class_name}' not found.")
                 return
-            
+
             self.redraw_canvas()
             messagebox.showinfo("Success", f"Parameter '{param_name}' added to '{class_name}")
             return [class_name, method_name, param_name]
-    
+
     def delete_param(self):
         dialog_result = Delete_Parameter_Dialog(self, "Delete Parameter").result
         if dialog_result:
             class_name, method_name, param_name = dialog_result
             # TODO: self.controller
-            self.controller.delete_param(class_name, method_name, param_name)
+            new_command = "delete param " + class_name + " " + method_name + " " + param_name
+            self._commands(new_command)
+            # self.controller.delete_param(class_name, method_name, param_name)
 
             found_class = False
             for class_box in self.class_boxes:
@@ -676,7 +690,7 @@ class GUI_View(tk.Tk):
             if not found_class:
                 messagebox.showinfo("Error", f"Class '{class_name}' not found.")
             return [class_name, method_name, param_name]
-    
+
     def rename_param(self):
         """
         Renames a parameter in a class
@@ -689,8 +703,10 @@ class GUI_View(tk.Tk):
         """
         dialog_result = Rename_Parameter_Dialog(self, title="Rename Parameter").result
         if dialog_result:
-            class_name, method_name, old_param_name, new_param_name = dialog_result
+            class_name, method_name, old_name, new_name = dialog_result
             # TODO: self.controller
+            new_command = "rename param " + class_name + " " + method_name + " " + old_name + " " + new_name
+            self._commands.add(new_command)
             self.controller.rename_param(class_name, method_name , old_param_name, new_param_name)
 
             for class_box in self.class_boxes:
@@ -703,7 +719,7 @@ class GUI_View(tk.Tk):
                             messagebox.showinfo("Success", "Parameter renamed successfully.")
                             return
             messagebox.showinfo("Error", "Parameter not found.")
-    
+
     def help(self):
         """
         Displays the classes help page
@@ -834,7 +850,7 @@ class Delete_Parameter_Dialog(simpledialog.Dialog):
         method_name = self.method_name_entry.get()
         param_name = self.param_name_entry.get()
         self.result = (class_name, method_name, param_name)
-  
+
 class Rename_Parameter_Dialog(simpledialog.Dialog):
     def __init__(self, parent, title=None):
         super().__init__(parent, title=title)
@@ -860,7 +876,7 @@ class Rename_Parameter_Dialog(simpledialog.Dialog):
 
     def apply(self):
         self.result = (self.class_name_entry.get(), self.method_name_entry.get(), self.param_name_entry.get(), self.new_param_name_entry.get())
-        
+
 class Add_Relationship_Dialog(simpledialog.Dialog):
     def __init__(self, parent, title=None):
         super().__init__(parent, title=title)
