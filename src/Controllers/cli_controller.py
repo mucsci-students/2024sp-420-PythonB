@@ -16,6 +16,9 @@ class CLI_Controller:
         r_val = parsed_input[0](*parsed_input[1:])
         if isinstance(r_val, str):
             print(r_val) 
+        # return the Diagram if the function called returns a Diagram
+        if isinstance(r_val, UML_Diagram):
+            return r_val
     
     def request_update(self):
          return prompt("Command: ", completer=self._view._completer).strip()
