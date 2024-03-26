@@ -7,8 +7,6 @@ class CLI_View:
     def __init__(self):
         self._lister = UML_List_Visitor() 
         self._completer = self.setup_autocomplete() 
-
-
              
     #A list of surface level commands    
     def help(self):
@@ -89,21 +87,26 @@ class CLI_View:
         """
         return NestedCompleter.from_nested_dict({
         'add': {
+            'relation': None,
             'class': None,
             'field': None,
             'method': None,
-            'relation': None
+            'param': None
+            
         },
         'delete': {
+            'relation': None,
             'class': None,
             'field': None,
             'method': None,
-            'relation': None
+            'param': None
+            
         },
         'rename':{
             'class': None,
             'field': None,
-            'method': None
+            'method': None,
+            'param': None
         },
         'list':{
             'class': None,
