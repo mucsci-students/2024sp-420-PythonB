@@ -26,7 +26,14 @@ class UML_Controller:
         while not self._should_quit:
             try: 
                 data = self.parse(self._controller.request_update())
-                self._controller.update(data)
+                ret = self._controller.update(data)
+                # For now this is only for undo/redo
+                if isinstance(ret, UML_Diagram):
+                    self._diagram = ret
+                # For now this will ensure the state is not saved
+                #     when doing list commands(commands that starts with 'list' prefix)
+                elif not data[0].__name__.startswith('list'):
+                    self._states.save_state(self._diagram)
             except KeyboardInterrupt:
                 self.quit()
             except EOFError:
@@ -35,8 +42,6 @@ class UML_Controller:
                 print(str(e))
                 self._states.undo()   
                 continue
-            self._states.save_state(self._diagram)
-                
 
     def __pick_controller(self, args:str = sys.argv) -> CLI_Controller | GUI_Controller: 
         if len(args) > 1 and str(args[1]).strip().lower() == 'cli':
