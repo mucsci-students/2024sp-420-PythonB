@@ -49,7 +49,7 @@ class UML_Class(UML_Named_Object, UML_Visitable):
 #===================================== Mutators =====================================#   
     
     def set_name(self, new_name:str) -> None:
-        self._name == new_name
+        self._name = new_name
     
     def add_field(self, new_f_name:str, new_f_type:str) -> None:
         self.__error(new_f_name, self._fields)

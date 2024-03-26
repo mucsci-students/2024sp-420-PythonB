@@ -9,6 +9,7 @@ from Models.uml_diagram import UML_Diagram
 from Models.uml_undo_redo import UML_States
 from Models.uml_save_load import json_to_diagram, diagram_to_json
 
+
 class UML_Controller:
 
     def __init__(self):
@@ -19,7 +20,7 @@ class UML_Controller:
         self._diagram = UML_Diagram()
         self._states = UML_States(self._diagram)
         self._should_quit = False
-    
+
     def run(self):
         """Executes the main loop of the program"""
         while not self._should_quit:
@@ -30,8 +31,9 @@ class UML_Controller:
                 self.quit()
             except EOFError:
                 self.quit()
-            except:
-                self._states.undo(self._diagram)   
+            except Exception as e:
+                print(str(e))
+                self._states.undo()   
                 continue
             self._states.save_state(self._diagram)
                 
@@ -74,7 +76,6 @@ class UML_Controller:
         else: 
             return self.instance_command(tokens)
         
-
     def short_command(self, tokens:list[str]) -> list:
         """Parses all forms of the following commands, returning appropriate lists for each: 
             quit, save, load, undo, redo, list, help
@@ -118,7 +119,10 @@ class UML_Controller:
         
         if not cmd.islower() or not cmd_target_name.islower():
             raise ValueError("Commands should be lowercase.")
-    
+        
+        if cmd == 'rename':
+            return self.__handle_rename([cmd_target_name] + tokens)
+
         object = None
         #if cmd target is relation or class, we can get it directly from the diagram
         if cmd_target_name == 'relation' or cmd_target_name == 'class':
@@ -126,18 +130,63 @@ class UML_Controller:
 
         elif cmd_target_name == 'method' or cmd_target_name == 'field' or cmd_target_name == 'param':
             #if cmd target isn't in the diagram, we know it is in a class. Get that class.
-            object = getattr(self._diagram, 'get_class')(tokens.pop(0))
+            object = self._diagram.get_class(tokens.pop(0))
             if cmd_target_name == 'method' or cmd_target_name == 'field':
                 object = getattr(object, cmd + '_' + cmd_target_name)
             #if cmd target isn't in a class, the only other place for it to be is in a method. 
             elif cmd_target_name == 'param':
-                object = getattr(object, 'get_method')(tokens.pop(0))
+                object = object.get_method(tokens.pop(0))
                 object = getattr(object, cmd + '_' + cmd_target_name)
             else: 
                 raise ValueError("Invalid Command.")
         else:
             raise ValueError("Invalid Command.")
         return [object] + tokens
+    
+    def __handle_rename(self, tokens:list[str]):
+        """Rename has different logic from the rest of the methods, handle it separately.
+        
+            Raises:
+            ValueError - attempt to rename an item that doesn't support renaming
+            ValueError - provided too many or too few arguments
+
+            Returns: 
+            A list in the form [function object, arg1, ..., argn]
+        """
+        #this is the name of the object being renamed
+        cmd_target_name = tokens.pop(0)
+        match cmd_target_name: 
+            case 'class':
+                old_name = tokens.pop(0)
+                self.__check_duplicate_item(tokens[0], self._diagram.get_all_classes())
+                cl = self._diagram.get_class(old_name)
+                return [cl.set_name, tokens[0]]
+            case 'method' | 'field':
+                cl = self._diagram.get_class(tokens.pop(0))
+                obj = getattr(cl, 'get_' + cmd_target_name)(tokens.pop(0))
+                obj_list = getattr(cl, 'get_' + cmd_target_name + 's')()
+                self.__check_duplicate_item(tokens[0], obj_list)
+                return [obj.set_name, tokens.pop(0)]     
+            case 'param':
+                 cl = self._diagram.get_class(tokens.pop(0))
+                 mthd = cl.get_method(tokens.pop(0))
+                 param = mthd.get_param(tokens.pop(0))
+                 self.__check_duplicate_item(tokens[0], mthd.get_params())
+                 return [param.set_name, tokens.pop(0)]
+            case _: 
+                raise ValueError ("Invalid target for rename.")
+                
+    def __check_duplicate_item (self, i_name:str, search_loc:list):
+        """Makes sure that no class with name c_name exists in the diagram
+        
+            Raises: 
+            ValueError - an item with name i_name exists in search_loc already
+        """
+        cl = next((item for item in search_loc if item.get_name() == i_name), None)
+        if cl is not None:
+            raise ValueError("{0} already exists.".format(i_name))
+
+
     
 
     

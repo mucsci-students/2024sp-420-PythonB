@@ -1,4 +1,3 @@
-import sys
 from src.Controllers.controller import UML_Controller
 
 def main():

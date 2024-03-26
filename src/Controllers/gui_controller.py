@@ -1,6 +1,5 @@
-from Models import UML_Diagram
-from Models.error_handler import Error_Handler
 from Views.gui_view import GUI_View
+
 class GUI_Controller:
 
     def __init__(self):
