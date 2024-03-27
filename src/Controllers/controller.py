@@ -27,7 +27,7 @@ class UML_Controller:
             try: 
                 data = self.parse(self._controller.request_update())
                 ret = data[0](*data[1:])
-                if isinstance(ret, str):
+                if isinstance(ret, str) and isinstance(self._controller, CLI_Controller):
                     print(ret) 
                 # For now this is only for undo/redo
                 if isinstance(ret, UML_Diagram):
