@@ -1,3 +1,4 @@
+from tkinter import ttk
 from Models.uml_diagram import UML_Diagram
 
 import json
@@ -49,8 +50,7 @@ class GUI_View(tk.Tk):
 
         # Help
         help_menu = Menu(menu_bar, tearoff=0)
-        help_menu.add_command(label="Read Me", command=self.help)
-        help_menu.add_command(label="Redraw Diagram", command = self.redraw_canvas)
+        help_menu.add_command(label="Input", command = self.help_input())
         menu_bar.add_cascade(label="Help", menu=help_menu)
 
     def create_canvas(self):
@@ -531,7 +531,13 @@ class GUI_View(tk.Tk):
         Returns:
             none
         """
-        dialog = Add_Relationship_Dialog(self, "Add Relationship")
+        # TODO: This will break once our back end is in
+        # Create list of classes in Diagram
+        class_options = []
+        for c in self.class_boxes:
+            class_options.append(c['class_name'])
+        
+        dialog = Add_Relationship_Dialog(self, class_options, "Add Relationship")
         if dialog.result:
 
             src, dest, rel = dialog.result
@@ -734,6 +740,24 @@ class GUI_View(tk.Tk):
         new = 1
         webbrowser.open(url, new = new)
 
+    # TODO: This is effectively just a proof f concept, it does not work quite right
+    def help_input(self):
+        """
+        Displays valid input options
+        """
+        display = (
+            "Valid inputs must start with a letter."
+            "\nOther characters can be alphanumeric, -, or _."
+        )
+        popup = tk.Tk()
+        popup.wm_title("!")
+        label = ttk.Label(popup, text = display)
+        label.pack(side="top", fill="x", pady=10)
+        tk.messagebox.showinfo(display)
+        B1 = ttk.Button(popup, text="Okay", command = popup.destroy)
+        B1.pack()
+
+
 class Rename_Class_Dialog(simpledialog.Dialog):
     def __init__(self, parent, title=None):
         super().__init__(parent, title=title)
@@ -878,30 +902,31 @@ class Rename_Parameter_Dialog(simpledialog.Dialog):
         self.result = (self.class_name_entry.get(), self.method_name_entry.get(), self.param_name_entry.get(), self.new_param_name_entry.get())
 
 class Add_Relationship_Dialog(simpledialog.Dialog):
-    def __init__(self, parent, title=None):
+    def __init__(self, parent, class_options = None, title = None):
+        self._class_options = class_options
         super().__init__(parent, title=title)
 
     def body(self, master):
         tk.Label(master, text="Source Class:").grid(row=0)
-        self.source_entry = tk.Entry(master)
-        self.source_entry.grid(row=0, column=1)
+        self._src = tk.StringVar(master)
+        tk.OptionMenu(master, self._src, *self._class_options).grid(row = 0, column = 1)
 
         tk.Label(master, text="Destination Class:").grid(row=1)
-        self.destination_entry = tk.Entry(master)
-        self.destination_entry.grid(row=1, column=1)
+        self._dest = tk.StringVar(master)
+        tk.OptionMenu(master, self._dest, *self._class_options).grid(row = 1, column = 1)
 
         tk.Label(master, text="Relationship Type:").grid(row=2)
-        self.relationship_type = tk.StringVar(master)
-        self.relationship_type.set("Aggregation")  # default value
-        tk.OptionMenu(master, self.relationship_type, "Aggregation", "Composition", "Generalization", "Inheritence").grid(row=2, column=1)
+        self._rel_type = tk.StringVar(master)
+        rel_options = ["Aggregation", "Composition", "Inheritance", "Realization"]
+        tk.OptionMenu(master, self._rel_type, *rel_options).grid(row=2, column=1)
 
-        return self.source_entry  # initial focus
+        return self._src # initial focus
 
     def apply(self):
-        source_class = self.source_entry.get()
-        destination_class = self.destination_entry.get()
-        relationship_type = self.relationship_type.get()
-        self.result = (source_class, destination_class, relationship_type)
+        src = self.src.get()
+        dest = self.dest.get()
+        rel_type = self.rel_type.get()
+        self.result = (src, dest, rel_type)
 
 class Delete_Relationship_Dialog(simpledialog.Dialog):
     def __init__(self, parent, title=None, relationships=[]):
