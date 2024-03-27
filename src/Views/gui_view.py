@@ -22,6 +22,27 @@ class GUI_View(tk.Tk):
         self.update_relationship_tracker()
         self._commands = []
 
+    def draw(self, diagram: UML_Diagram) -> None:
+        #TODO: draw the whole diagram
+        print('Draw this diagram')
+        pass
+
+    def clear(self) -> None:
+        #TODO: remove everything of the diagram that was drawn
+        print('clear this diagram')
+        pass
+
+    def listen(self) -> str:
+        '''
+        Wait for user action and return as a command
+        '''
+        #TODO: change this to an command received from user action
+        #       Or do this in gui controller
+        cmd = input('GUI is listening...')
+        print('input received')
+        cmd = 'undo'
+        return cmd
+
     def create_menu(self):
         """
         Initializes the menu bar with cascading menus for File and Help.

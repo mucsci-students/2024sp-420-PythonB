@@ -26,7 +26,9 @@ class UML_Controller:
         while not self._should_quit:
             try: 
                 data = self.parse(self._controller.request_update())
-                ret = self._controller.update(data)
+                ret = data[0](*data[1:])
+                if isinstance(ret, str) and isinstance(self._controller, CLI_Controller):
+                    print(ret) 
                 # For now this is only for undo/redo
                 if isinstance(ret, UML_Diagram):
                     self._diagram = ret
@@ -42,6 +44,7 @@ class UML_Controller:
                 print(str(e))
                 self._states.undo()   
                 continue
+            self._controller.draw(self._diagram)
 
     def __pick_controller(self, args:str = sys.argv) -> CLI_Controller | GUI_Controller: 
         if len(args) > 1 and str(args[1]).strip().lower() == 'cli':
