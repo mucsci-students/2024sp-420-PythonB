@@ -33,15 +33,15 @@ class CLI_View:
     def help_attribute(self):
         return (
                 "help attribute                                                 Displays this menu\n"
-                "add field <class_name> <field_name>                            Adds field named <field_name>\n" 
-                "add method <class_name> <method_name>                          Adds method named <method_name>\n"  
+                "add field <class_name> <field_name> <field_type>               Adds field named <field_name> with type <field_type>\n" 
+                "add method <class_name> <method_name> <return_type>            Adds method named <method_name> with return type <return_type>\n"  
                 "add param <class_name> <method_name> <param_name>              Adds param named <param_name> to method <method_name>\n"              
                 "delete method <class_name> <method_name>                       Deletes method named <method_name>\n"
                 "delete field <class_name> <field_name>                         Deletes field named <field_name>\n"
-                "delete parameter <class_name> <method_name> <param_name>       Deletes param named <param_name> from <method_name>\n"
+                "delete param <class_name> <method_name> <param_name>           Deletes param named <param_name> from <method_name>\n"
                 "rename field <class_name> <current_name> <new_name>            Renames field <current_name> to <new_name>\n"
                 "rename method <class_name> <current_name> <new_name>           Renames method <current_name> to <new_name>\n"
-                "rename parameter <class_name> <method_name> <current_name> <new_name>          Renames param <current_name> in method\n"
+                "rename param <class_name> <method_name> <current_name> <new_name>          Renames param <current_name> in method\n"
                 "   <method_name> to <new_name>\n")
         
     #Commands for relations
