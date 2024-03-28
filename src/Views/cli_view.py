@@ -14,10 +14,10 @@ class CLI_View:
                 "help                                                           Displays this menu\n"
                 "help class                                                     Displays commands related to classes\n"
                 "help attribute                                                 Displays commands related to attributes\n"
-                "help relation                                              Displays commands related to relations\n"
+                "help relation                                                  Displays commands related to relations\n"
                 "save <file_name>                                               Saves your UML diagram as a JSON file\n"
                 "load <file_name>                                               Loads a UML diagram from a JSON file\n"
-                "exit                                                           Exits the program\n")   
+                "quit                                                           Exits the program\n")   
           
     #Commands for classes      
     def help_class(self):
@@ -121,7 +121,6 @@ class CLI_View:
         },
         'save': None,
         'load': None,
-        'exit': None,
         'undo': None,
         'redo': None,
         'quit': None
