@@ -14,11 +14,11 @@ class GUI_View(tk.Tk):
         super().__init__()
         self.title("LambdaLegion UML Program (CWorld Edition) V1.1")
         self.geometry("800x600")
+        self.class_boxes = []
+        self.relationshipsList = []
         self.create_menu()
         self.create_sidebar()
         self.create_diagram_space()
-        self.class_boxes = []
-        self.relationshipsList = []
         self.update_relationship_tracker()
         self._commands = []
 
@@ -71,12 +71,8 @@ class GUI_View(tk.Tk):
 
         # Help
         help_menu = Menu(menu_bar, tearoff=0)
-        help_menu.add_command(label="Input", command = self.help_input())
+        # help_menu.add_command(label="Input", command = self.help_input())
         menu_bar.add_cascade(label="Help", menu=help_menu)
-
-    def create_canvas(self):
-        self.canvas = tk.Canvas(self, bg='LightBlue', width=600, height=400)
-        self.canvas.pack(expand=True, fill=tk.BOTH)
 
     def create_sidebar(self):
         self.sidebar = tk.Frame(self, width=200, bg='lightgray')
@@ -86,11 +82,15 @@ class GUI_View(tk.Tk):
         self.btn_class = tk.Button(self.sidebar, text="Classes", command=self.class_options_menu)
         self.btn_class.pack(fill=tk.X, padx=(5, 5), pady=(10, 5))
 
-        self.btn_relationships = tk.Button(self.sidebar, text="Relationships", command=self.relationship_options_menu)
-        self.btn_relationships.pack(fill=tk.X, padx=(5, 5), pady=(5, 5))
+        # if True:
+        if len(self.class_boxes) > 1:
+            self.btn_relationships = tk.Button(self.sidebar, text="Relationships", command=self.relationship_options_menu)
+            self.btn_relationships.pack(fill=tk.X, padx=(5, 5), pady=(5, 5))
 
-        self.btn_methods = tk.Button(self.sidebar, text="Attributes", command=self.attributes_options_menu)
-        self.btn_methods.pack(fill=tk.X, padx=(5, 5), pady=(5, 5))
+        # if True:
+        if len(self.class_boxes) > 0:
+            self.btn_methods = tk.Button(self.sidebar, text="Attributes", command=self.attributes_options_menu)
+            self.btn_methods.pack(fill=tk.X, padx=(5, 5), pady=(5, 5))
 
         tk.Label(self.sidebar, text="Relationships Tracker", bg='lightgray', font=('TkDefaultFont', 10, 'bold')).pack(pady=(10, 0))
 
@@ -106,7 +106,7 @@ class GUI_View(tk.Tk):
             self.relationship_tracker.insert(tk.END, relationship_str)
 
     def create_diagram_space(self):
-        self.diagram_canvas = tk.Canvas(self, bg='white')
+        self.diagram_canvas = tk.Canvas(self, bg = 'white')
         # Pack the canvas to fill the remaining space after the sidebar
         self.diagram_canvas.pack(side=tk.LEFT, padx=10, pady=10, fill=tk.BOTH, expand=True)
 
@@ -339,8 +339,14 @@ class GUI_View(tk.Tk):
         # self.controller.add_class(class_name)
 
         next_x, next_y = self.get_next_position()
-        self.class_boxes.append({'class_name': class_name, 'fields': fields, 'methods': methods, 'x': next_x, 'y': next_y})
-        self.create_class_box(self.diagram_canvas, class_name, fields, methods, next_x,next_y)
+        box = Class_Box(self.diagram_canvas, class_name, next_x, next_y)
+        self.class_boxes.append(box)
+        # This doesn't work, creates a second sidebar instead of replacing original
+        # May not need it depending on what we recreate on load
+        # if len(self.class_boxes) <= 2:
+        #     self.create_sidebar()
+
+        # self.create_class_box(self.diagram_canvas, class_name, fields, methods, next_x,next_y)
 
         return class_name
 
@@ -352,53 +358,14 @@ class GUI_View(tk.Tk):
 
         if self.class_boxes:
             # Get the position of the last class box
-            last_box = self.class_boxes[-1]
-            x, y = last_box['x'], last_box['y']
+            index = len(self.class_boxes) - 1
+            last_box = self.class_boxes[index]
+            x, y = last_box._x, last_box._y
 
             # Move to the next position to the right
             x += box_width + spacing
 
         return x, y
-
-    def create_class_box(self, canvas, class_name, fields, methods, x, y):
-        box_width = 150
-        text_spacing = 20
-        indent_spacing = 10  # Indentation for sub-items like parameters
-        bullet = "\u2022"  # Unicode character for a bullet point
-
-        # Adaptation for 'params' or 'parameters'
-        adapted_methods = []
-        for method in methods:
-            # Check if 'params' exists, otherwise default to an empty list
-            params = method.get('params', method.get('parameters', []))
-            adapted_methods.append({'name': method['name'], 'params': params})
-
-        # Calculate box height dynamically based on contents
-        num_text_lines = 2 + len(fields) + sum(len(method['params']) + 1 for method in adapted_methods) + (2 if fields else 0) + (2 if adapted_methods else 0)
-        box_height = text_spacing * num_text_lines
-
-        canvas.create_rectangle(x, y, x + box_width, y + box_height, fill='lightgray', outline='black')
-        canvas.create_text(x + box_width / 2, y + text_spacing, text=class_name, font=('TkDefaultFont', 10, 'bold'))
-
-        current_y = y + text_spacing * 2
-        if fields:
-            canvas.create_text(x + 10, current_y, text="Fields:", anchor="w", font=('TkDefaultFont', 10, 'underline'))
-            current_y += text_spacing
-            for field in fields:
-                canvas.create_text(x + 10, current_y, text=f"{field['name']} : {field.get('type', 'Unknown')}", anchor="w")
-                current_y += text_spacing
-
-        if adapted_methods:
-            current_y += text_spacing / 2  # Additional space before Methods if there are fields
-            canvas.create_text(x + 10, current_y, text="Methods:", anchor="w", font=('TkDefaultFont', 10, 'underline'))
-            current_y += text_spacing
-
-            for method in adapted_methods:
-                canvas.create_text(x + 10, current_y, text=f"{method['name']}()", anchor="w")
-                current_y += text_spacing
-                for param in method['params']:
-                    canvas.create_text(x + 10 + indent_spacing, current_y, text=f"{bullet} {param['name']} : {param.get('type', 'Unknown')}", anchor="w")
-                    current_y += text_spacing
 
     def delete_class(self):
         """
@@ -454,8 +421,8 @@ class GUI_View(tk.Tk):
                 self.diagram_canvas.create_line(source_center, destination_center, arrow=tk.LAST)
 
         # Re-draw each class box
-        for class_box in self.class_boxes:
-            self.create_class_box(self.diagram_canvas, class_box['class_name'], class_box.get('fields', []), class_box.get('methods', []), class_box['x'], class_box['y'])
+        # for class_box in self.class_boxes:
+        #     self.create_class_box(self.diagram_canvas, class_box['class_name'], class_box.get('fields', []), class_box.get('methods', []), class_box['x'], class_box['y'])
 
     def rename_class(self):
         """
@@ -555,8 +522,9 @@ class GUI_View(tk.Tk):
         # TODO: This will break once our back end is in
         # Create list of classes in Diagram
         class_options = []
-        for c in self.class_boxes:
-            class_options.append(c['class_name'])
+        for cb in self.class_boxes:
+            
+            class_options.append(cb._name)
         
         dialog = Add_Relationship_Dialog(self, class_options, "Add Relationship")
         if dialog.result:
@@ -762,21 +730,22 @@ class GUI_View(tk.Tk):
         webbrowser.open(url, new = new)
 
     # TODO: This is effectively just a proof f concept, it does not work quite right
-    def help_input(self):
-        """
-        Displays valid input options
-        """
-        display = (
-            "Valid inputs must start with a letter."
-            "\nOther characters can be alphanumeric, -, or _."
-        )
-        popup = tk.Tk()
-        popup.wm_title("!")
-        label = ttk.Label(popup, text = display)
-        label.pack(side="top", fill="x", pady=10)
-        tk.messagebox.showinfo(display)
-        B1 = ttk.Button(popup, text="Okay", command = popup.destroy)
-        B1.pack()
+        # commented out because it pops up on load.
+    # def help_input(self):
+    #     """
+    #     Displays valid input options
+    #     """
+    #     display = (
+    #         "Valid inputs must start with a letter."
+    #         "\nOther characters can be alphanumeric, -, or _."
+    #     )
+    #     popup = tk.Tk()
+    #     popup.wm_title("!")
+    #     label = ttk.Label(popup, text = display)
+    #     label.pack(side="top", fill="x", pady=10)
+    #     tk.messagebox.showinfo(display)
+    #     B1 = ttk.Button(popup, text="Okay", command = popup.destroy)
+    #     B1.pack()
 
 
 class Rename_Class_Dialog(simpledialog.Dialog):
@@ -944,9 +913,9 @@ class Add_Relationship_Dialog(simpledialog.Dialog):
         return self._src # initial focus
 
     def apply(self):
-        src = self.src.get()
-        dest = self.dest.get()
-        rel_type = self.rel_type.get()
+        src = self._src.get()
+        dest = self._dest.get()
+        rel_type = self._rel_type.get()
         self.result = (src, dest, rel_type)
 
 class Delete_Relationship_Dialog(simpledialog.Dialog):
@@ -969,6 +938,70 @@ class Delete_Relationship_Dialog(simpledialog.Dialog):
         selected_relationship_str = self.relationship_var.get()
         self.result = next((r for r in self.relationshipsList if f"{r['source']} - {r['type']} - {r['destination']}" == selected_relationship_str), None)
 
+class Class_Box():
+    def __init__(self, canvas, name:str, x, y) -> None:
+        self._name = name
+        self._methods = []
+        self._fields = []
+        self._width = 150
+        self._text_spacing = 20
+        self._indent_spacing = 10
+        self._x = x
+        self._y = y
+        self.create_class_box(canvas)
+        # canvas.bind('<B1-Motion>', move)
+
+        # def move(e):
+        #     class_box = self
+        #     move_box = canvas.recreate_class_box(class_box, e.x, e.y)
+
+    def create_class_box(self, canvas):
+        bullet = "\u2022"  # Unicode character for a bullet point
+        # Adaptation for 'params' or 'parameters'
+        adapted_methods = []
+        for method in self._methods:
+            # Check if 'params' exists, otherwise default to an empty list
+            params = method.get('params', method.get('parameters', []))
+            adapted_methods.append({'name': method['name'], 'params': params})
+
+        # Calculate box height dynamically based on contents
+        num_text_lines = 2 + len(self._fields) + sum(len(method['params']) + 1 for method in adapted_methods) + (2 if self._fields else 0) + (2 if adapted_methods else 0)
+        box_height = self._text_spacing * num_text_lines
+
+        canvas.create_rectangle(self._x, self._y, self._x + self._width, self._y + box_height, fill='lightgray', outline='black')
+        canvas.create_text(self._x + self._width / 2, self._y + self._text_spacing, text=self._name, font=('TkDefaultFont', 10, 'bold'))
+
+        current_y = self._y + self._text_spacing * 2
+        if self._fields:
+            canvas.create_text(self._x + 10, current_y, text="Fields:", anchor="w", font=('TkDefaultFont', 10, 'underline'))
+            current_y += self._text_spacing
+            for field in self._fields:
+                canvas.create_text(self._x + 10, current_y, text=f"{field['name']} : {field.get('type', 'Unknown')}", anchor="w")
+                current_y += self._text_spacing
+
+        if adapted_methods:
+            current_y += self._text_spacing / 2  # Additional space before Methods if there are fields
+            canvas.create_text(self._x + 10, current_y, text="Methods:", anchor="w", font=('TkDefaultFont', 10, 'underline'))
+            current_y += self._text_spacing
+
+            for method in adapted_methods:
+                canvas.create_text(self._x + 10, current_y, text=f"{method['name']}()", anchor="w")
+                current_y += self._text_spacing
+                for param in method['params']:
+                    canvas.create_text(self._x + 10 + self._indent_spacing, current_y, text=f"{bullet} {param['name']} : {param.get('type', 'Unknown')}", anchor="w")
+                    current_y += self._text_spacing
+
+    def recreate_class_box(self, class_box, x, y):
+        new_box = Class_Box(class_box._name)
+        new_box._methods = class_box._methods
+        new_box._fields = class_box._fields
+        new_box._width = class_box._width
+        new_box._text_spacing = class_box._text_spacing
+        new_box._indent_spacing = class_box._indent_spacing
+        new_box._x = x
+        new_box._y = y
+        class_box = new_box
+        
 if __name__ == "__main__":
     app = GUI_View()
     app.mainloop()
