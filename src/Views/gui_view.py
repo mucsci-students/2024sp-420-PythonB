@@ -82,8 +82,8 @@ class GUI_View(tk.Tk):
         self.btn_class = tk.Button(self.sidebar, text="Classes", command=self.class_options_menu)
         self.btn_class.pack(fill=tk.X, padx=(5, 5), pady=(10, 5))
 
-        # if True:
-        if len(self.class_boxes) > 1:
+        if True:
+        # if len(self.class_boxes) > 1:
             self.btn_relationships = tk.Button(self.sidebar, text="Relationships", command=self.relationship_options_menu)
             self.btn_relationships.pack(fill=tk.X, padx=(5, 5), pady=(5, 5))
 
@@ -331,8 +331,6 @@ class GUI_View(tk.Tk):
         """
         class_name = simpledialog.askstring("Input", "Enter a Class Name:", parent=self)
 
-        fields = []
-        methods = []
         # TODO: self.controller
         new_command = 'add class ' + class_name
         self._commands.append(new_command)
@@ -696,6 +694,9 @@ class GUI_View(tk.Tk):
         Returns:
             None
         """
+        # This is all yellow because these paramaters don't exist anymore
+            # I'm leaving the function here as a stump/reminder for what we need to do
+                # Just meaning to do rename_param, not that this code is necessary
         dialog_result = Rename_Parameter_Dialog(self, title="Rename Parameter").result
         if dialog_result:
             class_name, method_name, old_name, new_name = dialog_result
@@ -941,6 +942,7 @@ class Delete_Relationship_Dialog(simpledialog.Dialog):
 class Class_Box():
     def __init__(self, canvas, name:str, x, y) -> None:
         self._name = name
+        self._canvas = canvas
         self._methods = []
         self._fields = []
         self._width = 150
@@ -948,59 +950,44 @@ class Class_Box():
         self._indent_spacing = 10
         self._x = x
         self._y = y
-        self.create_class_box(canvas)
-        # canvas.bind('<B1-Motion>', move)
+        self._click_x = x
+        self._click_y = y
+        self._last_x = 0
+        self._last_y = 0
+        self._box, self._box_text, self._height = self.create_class_box(canvas)
 
-        # def move(e):
-        #     class_box = self
-        #     move_box = canvas.recreate_class_box(class_box, e.x, e.y)
+        canvas.tag_bind(self._box, '<Button-1>', self.on_click)
+        canvas.tag_bind(self._box, '<B1-Motion>', self.on_move)
+        canvas.tag_bind(self._box_text, '<Button-1>', self.on_click)
+        canvas.tag_bind(self._box_text, '<B1-Motion>', self.on_move)
+
+    def on_move(self, e):
+        offset_x = e.x - self._last_x
+        offset_y = e.y - self._last_y
+        self._canvas.move(self._box, offset_x, offset_y)
+        self._canvas.move(self._box_text, offset_x, offset_y)
+        self._last_x = self._last_x + offset_x
+        self._last_y = self._last_y + offset_y
+        self._x = self._last_x
+        self._y = self._last_y
+
+    def on_click(self, e):
+        self._last_x = e.x
+        self._last_y = e.y
 
     def create_class_box(self, canvas):
-        bullet = "\u2022"  # Unicode character for a bullet point
-        # Adaptation for 'params' or 'parameters'
-        adapted_methods = []
-        for method in self._methods:
-            # Check if 'params' exists, otherwise default to an empty list
-            params = method.get('params', method.get('parameters', []))
-            adapted_methods.append({'name': method['name'], 'params': params})
-
+        # TODO: This value is just hard coded (obviously)
+            # It should could the number of lines in the class box
+        num_text_lines = 2
         # Calculate box height dynamically based on contents
-        num_text_lines = 2 + len(self._fields) + sum(len(method['params']) + 1 for method in adapted_methods) + (2 if self._fields else 0) + (2 if adapted_methods else 0)
         box_height = self._text_spacing * num_text_lines
 
-        canvas.create_rectangle(self._x, self._y, self._x + self._width, self._y + box_height, fill='lightgray', outline='black')
-        canvas.create_text(self._x + self._width / 2, self._y + self._text_spacing, text=self._name, font=('TkDefaultFont', 10, 'bold'))
+        box = canvas.create_rectangle(self._x, self._y, self._x + self._width, self._y + box_height, fill='lightgray', outline='black')
+        box_text = canvas.create_text(self._x + self._width / 2, self._y + self._text_spacing, text=self._name, font=('TkDefaultFont', 10, 'bold'))
 
-        current_y = self._y + self._text_spacing * 2
-        if self._fields:
-            canvas.create_text(self._x + 10, current_y, text="Fields:", anchor="w", font=('TkDefaultFont', 10, 'underline'))
-            current_y += self._text_spacing
-            for field in self._fields:
-                canvas.create_text(self._x + 10, current_y, text=f"{field['name']} : {field.get('type', 'Unknown')}", anchor="w")
-                current_y += self._text_spacing
-
-        if adapted_methods:
-            current_y += self._text_spacing / 2  # Additional space before Methods if there are fields
-            canvas.create_text(self._x + 10, current_y, text="Methods:", anchor="w", font=('TkDefaultFont', 10, 'underline'))
-            current_y += self._text_spacing
-
-            for method in adapted_methods:
-                canvas.create_text(self._x + 10, current_y, text=f"{method['name']}()", anchor="w")
-                current_y += self._text_spacing
-                for param in method['params']:
-                    canvas.create_text(self._x + 10 + self._indent_spacing, current_y, text=f"{bullet} {param['name']} : {param.get('type', 'Unknown')}", anchor="w")
-                    current_y += self._text_spacing
-
-    def recreate_class_box(self, class_box, x, y):
-        new_box = Class_Box(class_box._name)
-        new_box._methods = class_box._methods
-        new_box._fields = class_box._fields
-        new_box._width = class_box._width
-        new_box._text_spacing = class_box._text_spacing
-        new_box._indent_spacing = class_box._indent_spacing
-        new_box._x = x
-        new_box._y = y
-        class_box = new_box
+        # TODO: We will need to add more info to the Class_Box
+            # Removed all of the old functionality as it would never be used again.
+        return box, box_text, box_height
         
 if __name__ == "__main__":
     app = GUI_View()
