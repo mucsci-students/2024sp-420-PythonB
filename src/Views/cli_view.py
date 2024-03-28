@@ -123,5 +123,6 @@ class CLI_View:
         'load': None,
         'exit': None,
         'undo': None,
-        'redo': None
+        'redo': None,
+        'quit': None
         })  
