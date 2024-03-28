@@ -114,6 +114,11 @@ class CLI_View:
             'relation': None,
             'relations': None
         },
+        'help':{
+            'class': None,
+            'attribute': None,
+            'relation': None
+        },
         'save': None,
         'load': None,
         'exit': None,
