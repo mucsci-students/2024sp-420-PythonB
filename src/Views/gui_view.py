@@ -6,6 +6,7 @@ import tkinter as tk
 from tkinter import filedialog
 import webbrowser
 from tkinter import *
+import tkinter.font as tkFont
 from tkinter import messagebox
 from tkinter import simpledialog
 
@@ -63,6 +64,7 @@ class GUI_View(tk.Tk):
         file_menu.add_command(label="Exit", command=self.quit)
         menu_bar.add_cascade(label="File", menu=file_menu)
 
+
         # We may want Undo/Redo in here
             # Will probably try to make buttons for this though
         # Edit
@@ -73,6 +75,18 @@ class GUI_View(tk.Tk):
         help_menu = Menu(menu_bar, tearoff=0)
         # help_menu.add_command(label="Input", command = self.help_input())
         menu_bar.add_cascade(label="Help", menu=help_menu)
+        
+        menu_bar.add_separator()
+        menu_bar.add_separator()
+
+        menu_bar.add_command(label = "Undo", command = self.undo)
+        menu_bar.add_command(label = "Redo", command = self.redo)
+
+    def undo(self):
+        pass
+
+    def redo(self):
+        pass
 
     def create_sidebar(self):
         self.sidebar = tk.Frame(self, width=200, bg='lightgray')
