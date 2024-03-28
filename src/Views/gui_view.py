@@ -83,9 +83,11 @@ class GUI_View(tk.Tk):
         menu_bar.add_command(label = "Redo", command = self.redo)
 
     def undo(self):
+        # TODO: Hook Undo in here
         pass
 
     def redo(self):
+        # TODO: Hook Redo in here
         pass
 
     def create_sidebar(self):
@@ -227,6 +229,9 @@ class GUI_View(tk.Tk):
         Returns:
             newFile -- The new file
         """
+        # TODO: This either needs removed or needs to ask if you want to save, then restart the program
+            # new Diagram and everything
+            # If removed, this needs to be removed from the file menu
         # Placeholder for new file action
         messagebox.showinfo("Action", "Create a new file")
 
@@ -281,53 +286,7 @@ class GUI_View(tk.Tk):
             # User cancelled the save
             return
 
-        # Prepare data according to the schema
-        data = {
-            "classes": [],
-            "relationships": []
-        }
-
-        # Add classes with fields and methods
-        for class_box in self.class_boxes:
-            class_data = {
-                "name": class_box["class_name"],
-                "fields": [],
-                "methods": []
-            }
-
-            # Assume fields and methods are stored in class_box as lists of dictionaries
-            for field in class_box.get("fields", []):
-                class_data["fields"].append({
-                    "name": field["name"],
-                    "type": field.get("type", "Unknown")  # Default type if not specified
-                })
-
-            for method in class_box.get("methods", []):
-                method_data = {
-                    "name": method["name"],
-                    "return_type": method.get("return_type", "void"),  # Default return type if not specified
-                    "params": []
-                }
-                for param in method.get("params", []):
-                    method_data["params"].append({
-                        "name": param["name"],
-                        "type": param.get("type", "Unknown")  # Default type if not specified
-                    })
-                class_data["methods"].append(method_data)
-
-            data["classes"].append(class_data)
-
-        # Add relationships
-        for rel in self.relationshipsList:
-            data["relationships"].append({
-                "source": rel["source"],
-                "destination": rel["destination"],
-                "type": rel["type"]
-            })
-
-        # Save data to file
-        with open(filename, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
+        # TODO: Hook save in here
 
         # Notify the user of success
         messagebox.showinfo("Save File", "The diagram has been saved successfully.")
@@ -353,6 +312,7 @@ class GUI_View(tk.Tk):
         next_x, next_y = self.get_next_position()
         box = Class_Box(self.diagram_canvas, class_name, next_x, next_y)
         self.class_boxes.append(box)
+        # TODO:
         # This doesn't work, creates a second sidebar instead of replacing original
         # May not need it depending on what we recreate on load
         # if len(self.class_boxes) <= 2:
@@ -363,6 +323,8 @@ class GUI_View(tk.Tk):
         return class_name
 
     def get_next_position(self):
+        # TODO: This should probably be more involved as the cards won't just appear in a row
+            # Probably not high priority
         # For simplicity, let's just arrange them in a horizontal line for now
         spacing = 10  # Spacing between class boxes
         box_width = 150  # Assume a fixed width for now
