@@ -24,11 +24,13 @@ class GUI_View(tk.Tk):
         # Set the window size and position
         self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
         self._class_boxes = []
+        self._sidebar_buttons = []
 
         # TODO: class_list could be moved here
         self.relationshipsList = []
         self.create_menu()
         self.create_sidebar()
+        self.update_button_state()
         self.create_diagram_space()
         self.update_relationship_tracker()
         self._commands = []
@@ -105,30 +107,39 @@ class GUI_View(tk.Tk):
         self._btn_class = tk.Button(self._sidebar, text = "Classes", command = self.class_options_menu)
         self._btn_class.pack(fill = tk.X, padx = (5, 5), pady = (10, 5))
 
-        # if True:
-        if len(self._class_boxes) >= 2:
-            self._btn_relations = tk.Button(self._sidebar, text = "Relationships", command = self.relations_options_menu)
-            self._btn_relations.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
+        self._btn_methods = tk.Button(self._sidebar, text = "Methods", command = self.methods_options_menu)
+        self._btn_methods.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
 
-        # if True:
-        if len(self._class_boxes) >= 1:
-            self._btn_fields = tk.Button(self._sidebar, text = "Fields", command = self.fields_options_menu)
-            self._btn_fields.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
+        self._btn_fields = tk.Button(self._sidebar, text = "Fields", command = self.fields_options_menu)
+        self._btn_fields.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
 
-        # if True:
-        if len(self._class_boxes) >= 1:
-            self._btn_methods = tk.Button(self._sidebar, text = "Methods", command = self.methods_options_menu)
-            self._btn_methods.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
-
+        self._btn_relations = tk.Button(self._sidebar, text = "Relationships", command = self.relations_options_menu)
+        self._btn_relations.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
+        
         tk.Label(self._sidebar, text="Relationships Tracker", bg = 'lightgray', font = ('TkDefaultFont', 10, 'bold')).pack(pady = (10, 0))
 
         # Relationship Tracker Listbox
         self.relationship_tracker = tk.Listbox(self._sidebar, height = 10)
         self.relationship_tracker.pack(padx = 5, pady = 5, fill = tk.BOTH, expand = True)
 
-    def reload_sidebar(self):
-        self._sidebar.pack_forget()
-        self.create_sidebar()
+    def update_button_state(self):
+        self._btn_class.config(state="disabled")
+        self._btn_fields.config(state="disabled")
+        self._btn_methods.config(state="disabled")
+        self._btn_relations.config(state="disabled")
+
+        class_count = len(self._class_boxes)
+        if class_count == 0:
+            self._btn_class.config(state="active")
+        elif class_count == 1:
+            self._btn_class.config(state="active")
+            self._btn_fields.config(state="active")
+            self._btn_methods.config(state="active")
+        elif class_count > 1:
+            self._btn_class.config(state="active")
+            self._btn_fields.config(state="active")
+            self._btn_methods.config(state="active")
+            self._btn_relations.config(state="active")
 
     def update_relationship_tracker(self):
         self.relationship_tracker.delete(0, tk.END)  # Clear existing entries
@@ -302,8 +313,7 @@ class GUI_View(tk.Tk):
         box = Class_Box(self.diagram_canvas, class_name, next_x, next_y)
         self._class_boxes.append(box)
         # TODO: This works, but shifts the sidebar to the right
-        if len(self._class_boxes) <= 3:
-            self.reload_sidebar()
+        self.update_button_state()
         return class_name
       
     def delete_class(self) -> str:
@@ -319,7 +329,7 @@ class GUI_View(tk.Tk):
             new_command = "delete class " + class_name
             self._commands.add(new_command)
 
-        messagebox.showinfo("Delete Class", f"'{class_name}' has been removed.")
+        self.update_button_state()
         return class_name
     
     def rename_class(self) -> None:
