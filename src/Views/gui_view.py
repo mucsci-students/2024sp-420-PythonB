@@ -152,7 +152,7 @@ class GUI_View(tk.Tk):
         menu = Menu(self, tearoff = 0)
         if len(self._class_boxes) > 0:
             # TODO: Implement this logic once new backend hooked in:
-            menu.add_command(label = "Add Field", command = self.add_field_to_class)
+            menu.add_command(label = "Add Field", command = self.add_field)
             ## If attributes > 0. For next 2 lines ##
             menu.add_command(label = "Delete Field", command = self.delete_field)
             menu.add_command(label = "Rename Field", command = self.rename_field)
@@ -446,31 +446,45 @@ class GUI_View(tk.Tk):
 
     # TODO: This either needs broken into add_field and add_method
         # Or needs a conditional for if field do x if method do x
-    def add_field(self, class_name, attribute_name, attribute_type):
-        if not attribute_name or not class_name or attribute_type not in ['field', 'method']:
-            messagebox.showinfo("Error", "Invalid input provided.")
-            return
-        # TODO: self.controller
-        new_command = "add "
-        if (attribute_type == "field"):
-            new_command += "field " + attribute_name
-        else:
-            new_command += "method " + attribute_name
-        # self.controller.add_attribute(class_name, attribute_name, attribute_type)
+    def add_field(self):
+        class_options = []
+        for cb in self._class_boxes:
+            class_options.append(cb._name)
 
-        parameters = []
-        # Find the class box with the given class_name
-        for class_box in self._class_boxes:
-            if class_box['class_name'] == class_name:
-                if attribute_type == 'field':
-                    class_box.setdefault('fields', []).append(attribute_name)
-                else:  # attribute_type == 'method'
-                    # Append a dictionary for the method with its parameters
-                    class_box.setdefault('methods', []).append({'name': attribute_name, 'parameters': parameters})
+        dialog = Add_Field_Dialog(self, class_options, "Add Field")
 
-                self.redraw_canvas()  # Refresh the canvas to show the updated class box
-                success_message = f"Field '{attribute_name}' added to class '{class_name}'." if attribute_type == 'field' else f"Method '{attribute_name}' added with parameters {parameters} to class '{class_name}'."
-                messagebox.showinfo("Success", success_message)
+        if dialog.result:
+            class_name, field = dialog.result
+            new_command = "add field " + class_name + " " + field
+            self._commands.add(new_command)
+        
+
+        # This is here in case we need it for reference later, but can probably be deleted
+
+        # if not attribute_name or not class_name or attribute_type not in ['field', 'method']:
+        #     messagebox.showinfo("Error", "Invalid input provided.")
+        #     return
+        # # TODO: self.controller
+        # new_command = "add "
+        # if (attribute_type == "field"):
+        #     new_command += "field " + attribute_name
+        # else:
+        #     new_command += "method " + attribute_name
+        # # self.controller.add_attribute(class_name, attribute_name, attribute_type)
+
+        # parameters = []
+        # # Find the class box with the given class_name
+        # for class_box in self._class_boxes:
+        #     if class_box['class_name'] == class_name:
+        #         if attribute_type == 'field':
+        #             class_box.setdefault('fields', []).append(attribute_name)
+        #         else:  # attribute_type == 'method'
+        #             # Append a dictionary for the method with its parameters
+        #             class_box.setdefault('methods', []).append({'name': attribute_name, 'parameters': parameters})
+
+        #         self.redraw_canvas()  # Refresh the canvas to show the updated class box
+        #         success_message = f"Field '{attribute_name}' added to class '{class_name}'." if attribute_type == 'field' else f"Method '{attribute_name}' added with parameters {parameters} to class '{class_name}'."
+        #         messagebox.showinfo("Success", success_message)
 
     def delete_relationship(self):
         dialog = Delete_Relationship_Dialog(self, "Delete Relationship", self.relationshipsList)
@@ -505,7 +519,6 @@ class GUI_View(tk.Tk):
         # Create list of classes in Diagram
         class_options = []
         for cb in self._class_boxes:
-
             class_options.append(cb._name)
 
         dialog = Add_Relationship_Dialog(self, class_options, "Add Relationship")
@@ -752,30 +765,26 @@ class Rename_Class_Dialog(simpledialog.Dialog):
         self.result = (self.class_name_entry.get(), self.new_name_entry.get())
 
 class Add_Field_Dialog(simpledialog.Dialog):
-
-    def __init__(self, parent, title=None):
+    def __init__(self, parent, class_options = None, title=None):
+        self._class_options = class_options
         super().__init__(parent, title=title)
 
     def body(self, master):
-        tk.Label(master,text="Class Name:").grid(row=0)
-        self.entry_class_name = tk.Entry(master)
-        self.entry_class_name.grid(row = 0, column = 1)
+        tk.Label(master, text="Class:").grid(row=0)
+        self._class = tk.StringVar(master)
+        tk.OptionMenu(master, self._class, *self._class_options).grid(row = 0, column = 1)
+
         tk.Label(master, text="Field Name:").grid(row=1)
-        self.entry_attribute_name = tk.Entry(master)
-        self.entry_attribute_name.grid(row=1, column=1)
+        self._field_entry = tk.Entry(master)
+        self._field_entry.grid(row = 1, column = 1)
 
-        self.attribute_type = tk.StringVar(value="field")
-        # tk.Radiobutton(master, text="Field", variable=self.attribute_type, value="field").grid(row=2, column=0)
-        # tk.Radiobutton(master, text="Method", variable=self.attribute_type, value="method").grid(row=2, column=1)
-
-        return self.entry_attribute_name
+        return self._class, self._field_entry # initial focus
 
     def apply(self):
-        class_name = self.entry_class_name.get()
-        field_name = self.entry_attribute_name.get()
-        field_type = self.attribute_type.get()
+        class_name = self._class.get()
+        field_name = self._field_entry.get()
         # Now, we can call the main method to add the attribute with all required information
-        self.parent.add_field(class_name, field_name, field_type)
+        self.result = class_name, field_name
 
 class Delete_Field_Dialog(simpledialog.Dialog):
     def __init__(self, parent, title=None):
