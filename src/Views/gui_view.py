@@ -379,43 +379,25 @@ class GUI_View(tk.Tk):
 
         return x, y
 
-    def delete_class(self):
-        """
-        Deletes a class
+    def delete_class(self) -> str:
+        class_options = []
+        for cb in self._class_boxes:
+            class_options.append(cb._name)
 
-        Parameters:
-            self -- The parent
-            className -- The name of the class to be created
+        dialog = Delete_Class_Dialog(self, class_options, "Delete Class")
 
-        Returns:
-            successBool -- True if the Delete class was successful, False otherwise
-        """
-        class_name = simpledialog.askstring("Delete Class", "Enter a class to delete:", parent=self)
-        if class_name is None:
-            return
-        # TODO: self.controller
-        new_command = "delete class " + class_name
-        self._commands.add(new_command)
-        # self.controller.delete_class(class_name)
-
-        class_found = False
-        for i, class_box in enumerate(self._class_boxes):
-            if class_box['class_name'] == class_name:
-                del self._class_boxes[i]
-                class_found = True
-                break  # Correctly placed to break out of the loop when a class is found and deleted
-
-        if class_found:
-            self.relationshipsList[:] = [rel for rel in self.relationshipsList if rel['source'] != class_name and rel['destination']!= class_name]
-        self.redraw_canvas()  # Call redraw_canvas outside the loop to refresh the canvas once after any deletion
-        self.update_relationship_tracker()
-
-        if not class_found:
-            messagebox.showinfo("Delete Class", "Class not found!")
-            return
+        if dialog.result:
+            class_name = dialog.result
+            
+            new_command = "delete class " + class_name
+            self._commands.add(new_command)
 
         messagebox.showinfo("Delete Class", f"'{class_name}' has been removed.")
         return class_name
+    
+
+        dialog = Add_Relationship_Dialog(self, class_options, "Add Relationship")
+
 
     def redraw_canvas(self):
         self.diagram_canvas.delete("all")  # Clears the canvas
@@ -968,6 +950,22 @@ class Add_Relationship_Dialog(simpledialog.Dialog):
         dest = self._dest.get()
         rel_type = self._rel_type.get()
         self.result = (src, dest, rel_type)
+
+class Delete_Class_Dialog(simpledialog.Dialog):
+    def __init__(self, parent, class_options:list = None, title:str = None):
+        self._class_options = class_options
+        super().__init__(parent, title=title)
+
+    def body(self, master):
+        tk.Label(master, text="Class:").grid(row=0)
+        self._class_delete = tk.StringVar(master)
+        tk.OptionMenu(master, self._class_delete, *self._class_options).grid(row = 0, column = 1)
+
+        return self._class_delete # initial focus
+
+    def apply(self):
+        class_name = self._class_delete.get()
+        self.result = class_name
 
 class Delete_Relationship_Dialog(simpledialog.Dialog):
     def __init__(self, parent, title=None, relationships=[]):
