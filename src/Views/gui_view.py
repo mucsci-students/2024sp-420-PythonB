@@ -4,10 +4,11 @@ from Models.uml_diagram import UML_Diagram
 import json
 import tkinter as tk
 from tkinter import filedialog
-import webbrowser
 from tkinter import *
 from tkinter import messagebox
 from tkinter import simpledialog
+
+#===================================== View Setup =====================================#
 
 class GUI_View(tk.Tk):
     def __init__(self):
@@ -73,7 +74,6 @@ class GUI_View(tk.Tk):
         menu_bar.add_cascade(label="File", menu=file_menu)
 
         # We may want Undo/Redo in here
-            # Will probably try to make buttons for this though
         # Edit
         # edit_menu = Menu(menu_bar, tearoff=0)
         # menu_bar.add_cascade(label="Edit", menu=edit_menu)
@@ -88,25 +88,6 @@ class GUI_View(tk.Tk):
 
         menu_bar.add_command(label = "Undo", command = self.undo)
         menu_bar.add_command(label = "Redo", command = self.redo)
-    
-    def show_help_messagebox(self):
-        help_content = """
-            Valid Input:
-                - Names must start with a letter
-                - Can include numbers, dashes (-), and underscores (_).
-
-            Requirements:
-                - To create relationships, you need at least two classes.
-
-            Visuals and Meanings:
-                - Aggregation: An empty diamond to a normal arrow.
-                - Composition: A filled diamond to a normal arrow.
-                - Realization: A dashed line to a hollow arrow.
-                - Inheritance: A solid line to an empty arrow.
-
-            This quick guide helps you understand the basics of interacting with the UML editor.
-                """
-        messagebox.showinfo("Help - CWorld UML Program", help_content, parent=self)
 
     def undo(self):
         # TODO: Hook Undo in here
@@ -160,101 +141,7 @@ class GUI_View(tk.Tk):
         # Pack the canvas to fill the remaining space after the sidebar
         self.diagram_canvas.pack(side=tk.LEFT, padx=10, pady=10, fill=tk.BOTH, expand=True)
 
-    def class_options_menu(self):
-        # Create a menu that will appear at the current mouse position
-        menu = tk.Menu(self, tearoff=0)
-        menu.add_command(label = "Add Class", command = self.add_class)
-        # This will show Delete Class and Rename Class only when there is
-            # at least one class card.
-        if len(self._class_boxes) > 0:
-            menu.add_command(label = "Delete Class", command = self.delete_class)
-            menu.add_command(label = "Rename Class", command = self.rename_class)
-
-        try:
-            # Display the menu at the current mouse position
-            menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
-        finally:
-            # Make sure the menu is torn down properly
-            menu.grab_release()
-
-    def fields_options_menu(self):
-        menu = Menu(self, tearoff = 0)
-        if len(self._class_boxes) > 0:
-            # TODO: Replace this menu with all available classes, then when you click one of those give a dialog?
-                # Potentially a second menu for these three related to that class?
-            menu.add_command(label = "Add Field", command = self.add_field)
-            menu.add_command(label = "Delete Field", command = self.delete_field)
-            menu.add_command(label = "Rename Field", command = self.rename_field)
-        try:
-            menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
-        finally:
-            menu.grab_release()
-
-    def methods_options_menu(self):
-        menu = Menu(self, tearoff = 0)
-        if len(self._class_boxes) > 0:
-            # TODO: See field_options_menu above
-            menu.add_command(label = "Add Method", command = self.add_method)
-            # menu.add_command(label = "Delete Method", command = self.delete_method)
-            # menu.add_command(label = "Rename Method", command = self.rename_method)
-        try:
-            menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
-        finally:
-            menu.grab_release()
-
-    def relationship_options_menu(self):
-        menu = Menu(self, tearoff=0)
-        menu = Menu(self, tearoff=0)
-        if len(self._class_boxes) > 1:
-            menu.add_command(label="Add", command=self.add_relationship)
-        # The below check *should* work, but given the state of things, I can't add a relation to test
-            # Until then, as long as there is at least 2 classes, Delete relation will appear.
-        # if len(self.relationshipsList) > 0:
-            menu.add_command(label="Delete", command=self.delete_relationship)
-
-        try:
-            # Display the menu at the current mouse position
-            menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
-        finally:
-            # Make sure the menu is torn down properly
-            menu.grab_release()
-
-    def file_options_menu(self):
-        file_menu = Menu(self, tearoff=0)
-        file_menu.add_command(label="New", command=self.new_file)
-        file_menu.add_command(label="Open...", command=self.open_file)
-        file_menu.add_command(label="Save", command=self.save_file)
-        file_menu.add_separator()
-        file_menu.add_command(label="Exit", command=self.quit)
-
-        try:
-            # Display the menu at the current mouse position
-            file_menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
-        finally:
-            # Make sure the menu is torn down properly
-            file_menu.grab_release()
-
-    def edit_options_menu(self):
-        edit_menu = Menu(self, tearoff=0)
-
-        try:
-            # Display the menu at the current mouse position
-            edit_menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
-        finally:
-            # Make sure the menu is torn down properly
-            edit_menu.grab_release()
-
-    def help_options_menu(self):
-        help_menu = Menu(self, tearoff=0)
-        help_menu.add_command(label="Read Me", command=self.help)
-        help_menu.add_command(label="Redraw Diagram", command = self.redraw_canvas)
-
-        try:
-            # Display the menu at the current mouse position
-            help_menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
-        finally:
-            # Make sure the menu is torn down properly
-            help_menu.grab_release()
+#===================================== Menu Methods =====================================#
 
     def new_file(self):
         """
@@ -328,18 +215,91 @@ class GUI_View(tk.Tk):
         # Notify the user of success
         messagebox.showinfo("Save File", "The diagram has been saved successfully.")
 
-    def add_class(self):
-        """
-        Adds a class
+    
+    def show_help_messagebox(self):
+        help_content = """
+            Valid Input:
+                - Names must start with a letter
+                - Can include numbers, dashes (-), and underscores (_).
 
-        Parameters:
-            self -- The parent
-            className -- The name of the class to be created
+            Requirements:
+                - To create relationships, you need at least two classes.
 
-        Returns:
-            successBool -- True if the add class was successful, False otherwise
-        """
-        class_name = simpledialog.askstring("Input", "Enter a Class Name:", parent=self)
+            Visuals and Meanings:
+                - Aggregation: An empty diamond to a normal arrow.
+                - Composition: A filled diamond to a normal arrow.
+                - Realization: A dashed line to a hollow arrow.
+                - Inheritance: A solid line to an empty arrow.
+
+            This quick guide helps you understand the basics of interacting with the UML editor.
+                """
+        messagebox.showinfo("Help - CWorld UML Program", help_content, parent=self)
+
+#===================================== Create Menus =====================================#
+
+    def class_options_menu(self):
+        # Create a menu that will appear at the current mouse position
+        menu = tk.Menu(self, tearoff=0)
+        menu.add_command(label = "Add Class", command = self.add_class)
+        # This will show Delete Class and Rename Class only when there is
+            # at least one class card.
+        if len(self._class_boxes) > 0:
+            menu.add_command(label = "Delete Class", command = self.delete_class)
+            menu.add_command(label = "Rename Class", command = self.rename_class)
+
+        try:
+            # Display the menu at the current mouse position
+            menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
+        finally:
+            # Make sure the menu is torn down properly
+            menu.grab_release()
+
+    def fields_options_menu(self):
+        menu = Menu(self, tearoff = 0)
+        if len(self._class_boxes) > 0:
+            # TODO: Replace this menu with all available classes, then when you click one of those give a dialog?
+                # Potentially a second menu for these three related to that class?
+            menu.add_command(label = "Add Field", command = self.add_field)
+            menu.add_command(label = "Delete Field", command = self.delete_field)
+            menu.add_command(label = "Rename Field", command = self.rename_field)
+        try:
+            menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
+        finally:
+            menu.grab_release()
+
+    def methods_options_menu(self):
+        menu = Menu(self, tearoff = 0)
+        if len(self._class_boxes) > 0:
+            # TODO: See field_options_menu above
+            menu.add_command(label = "Add Method", command = self.add_method)
+            # menu.add_command(label = "Delete Method", command = self.delete_method)
+            # menu.add_command(label = "Rename Method", command = self.rename_method)
+        try:
+            menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
+        finally:
+            menu.grab_release()
+
+    def relationship_options_menu(self):
+        menu = Menu(self, tearoff=0)
+        menu = Menu(self, tearoff=0)
+        if len(self._class_boxes) > 1:
+            menu.add_command(label="Add", command=self.add_relationship)
+        # The below check *should* work, but given the state of things, I can't add a relation to test
+            # Until then, as long as there is at least 2 classes, Delete relation will appear.
+        # if len(self.relationshipsList) > 0:
+            menu.add_command(label="Delete", command=self.delete_relationship)
+
+        try:
+            # Display the menu at the current mouse position
+            menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
+        finally:
+            # Make sure the menu is torn down properly
+            menu.grab_release()
+
+#===================================== Diagram Functions =====================================#
+
+    def add_class(self) -> str:
+        class_name = simpledialog.askstring("Input", "REEEE:", parent=self)
 
         # TODO: self.controller
         new_command = 'add class ' + class_name
@@ -349,47 +309,12 @@ class GUI_View(tk.Tk):
         next_x, next_y = self.get_next_position()
         box = Class_Box(self.diagram_canvas, class_name, next_x, next_y)
         self._class_boxes.append(box)
-        # TODO:
-        # This doesn't work, creates a second sidebar instead of replacing original
-        # May not need it depending on what we recreate on load
-        # if len(self.class_boxes) <= 2:
-        #     self.create_sidebar()
-
-        # self.create_class_box(self.diagram_canvas, class_name, fields, methods, next_x,next_y)
+        # TODO: This works, but shifts the sidebar to the right
         if len(self._class_boxes) < 3:
             self.reload_sidebar()
         return class_name
-
-    def get_next_position(self):
-        # TODO: This should probably be more involved as the cards won't just appear in a row
-            # Probably not high priority
-        # For simplicity, let's just arrange them in a horizontal line for now
-        spacing = 10  # Spacing between class boxes
-        box_width = 150  # Assume a fixed width for now
-        x, y = 50, 50  # Starting position for the first class box
-
-        if self._class_boxes:
-            # Get the position of the last class box
-            index = len(self._class_boxes) - 1
-            last_box = self._class_boxes[index]
-            x, y = last_box._x, last_box._y
-
-            # Move to the next position to the right
-            x += box_width + spacing
-
-        return x, y
-
-    def delete_class(self):
-        """
-        Deletes a class
-
-        Parameters:
-            self -- The parent
-            className -- The name of the class to be created
-
-        Returns:
-            successBool -- True if the Delete class was successful, False otherwise
-        """
+    
+    def delete_class(self) -> str:
         class_name = simpledialog.askstring("Delete Class", "Enter a class to delete:", parent=self)
         if class_name is None:
             return
@@ -416,38 +341,8 @@ class GUI_View(tk.Tk):
 
         messagebox.showinfo("Delete Class", f"'{class_name}' has been removed.")
         return class_name
-
-    def redraw_canvas(self):
-        self.diagram_canvas.delete("all")  # Clears the canvas
-        # Draw relationships
-        for relationship in self.relationshipsList:
-            source = next((box for box in self._class_boxes if box['class_name'] == relationship["source"]), None)
-            destination = next((box for box in self._class_boxes if box['class_name'] == relationship["destination"]), None)
-
-            if source and destination:
-                # Calculate center points of source and destination boxes
-                source_center = (source['x'] + 75, source['y'] + (20 * (2 + len(source.get('fields', [])) + len(source.get('methods', []))) / 2))
-                destination_center = (destination['x'] + 75, destination['y'] + (20 * (2 + len(destination.get('fields', [])) + len(destination.get('methods', []))) / 2))
-
-                # Draw a line between them
-                self.diagram_canvas.create_line(source_center, destination_center, arrow=tk.LAST)
-
-        # Re-draw each class box
-        # for class_box in self.class_boxes:
-        #     self.create_class_box(self.diagram_canvas, class_box['class_name'], class_box.get('fields', []), class_box.get('methods', []), class_box['x'], class_box['y'])
-
-    def rename_class(self):
-        """
-        Renames a class
-
-        Parameters:
-            self -- The parent
-            className -- The name of the class to be renamed
-            newClassName -- the new name of the class
-
-        Returns:
-            successBool -- True if the rename class was successful, False otherwise
-        """
+    
+    def rename_class(self) -> None:
         dialog = Rename_Class_Dialog(self,"Rename Class")
         if dialog.result:
             old_name, new_name = dialog.result
@@ -750,38 +645,47 @@ class GUI_View(tk.Tk):
                             return
             messagebox.showinfo("Error", "Parameter not found.")
 
-    def help(self):
-        """
-        Displays the classes help page
+#===================================== Helper Functions =====================================#
+            
+    def get_next_position(self):
+        # TODO: This should probably be more involved as the cards won't just appear in a row
+            # Probably not high priority
+        # For simplicity, let's just arrange them in a horizontal line for now
+        spacing = 10  # Spacing between class boxes
+        box_width = 150  # Assume a fixed width for now
+        x, y = 50, 50  # Starting position for the first class box
 
-        Parameters:
-            self -- The parent
+        if self._class_boxes:
+            # Get the position of the last class box
+            index = len(self._class_boxes) - 1
+            last_box = self._class_boxes[index]
+            x, y = last_box._x, last_box._y
 
-        Returns:
-            None
-        """
-        url = "https://github.com/mucsci-students/2024sp-420-LambdaLegion?tab=readme-ov-file#readme"
-        new = 1
-        webbrowser.open(url, new = new)
+            # Move to the next position to the right
+            x += box_width + spacing
 
-    # TODO: This is effectively just a proof f concept, it does not work quite right
-        # commented out because it pops up on load.
-    # def help_input(self):
-    #     """
-    #     Displays valid input options
-    #     """
-    #     display = (
-    #         "Valid inputs must start with a letter."
-    #         "\nOther characters can be alphanumeric, -, or _."
-    #     )
-    #     popup = tk.Tk()
-    #     popup.wm_title("!")
-    #     label = ttk.Label(popup, text = display)
-    #     label.pack(side="top", fill="x", pady=10)
-    #     tk.messagebox.showinfo(display)
-    #     B1 = ttk.Button(popup, text="Okay", command = popup.destroy)
-    #     B1.pack()
+        return x, y
 
+    def redraw_canvas(self):
+        self.diagram_canvas.delete("all")  # Clears the canvas
+        # Draw relationships
+        for relationship in self.relationshipsList:
+            source = next((box for box in self._class_boxes if box['class_name'] == relationship["source"]), None)
+            destination = next((box for box in self._class_boxes if box['class_name'] == relationship["destination"]), None)
+
+            if source and destination:
+                # Calculate center points of source and destination boxes
+                source_center = (source['x'] + 75, source['y'] + (20 * (2 + len(source.get('fields', [])) + len(source.get('methods', []))) / 2))
+                destination_center = (destination['x'] + 75, destination['y'] + (20 * (2 + len(destination.get('fields', [])) + len(destination.get('methods', []))) / 2))
+
+                # Draw a line between them
+                self.diagram_canvas.create_line(source_center, destination_center, arrow=tk.LAST)
+
+        # Re-draw each class box
+        # for class_box in self.class_boxes:
+        #     self.create_class_box(self.diagram_canvas, class_box['class_name'], class_box.get('fields', []), class_box.get('methods', []), class_box['x'], class_box['y'])
+        
+#===================================== Dialog Classes =====================================#
 # These classes are for Dialog/Input boxes.
 class Rename_Class_Dialog(simpledialog.Dialog):
     def __init__(self, parent, title=None):
@@ -989,7 +893,7 @@ class Delete_Relationship_Dialog(simpledialog.Dialog):
         selected_relationship_str = self.relationship_var.get()
         self.result = next((r for r in self.relationshipsList if f"{r['source']} - {r['type']} - {r['destination']}" == selected_relationship_str), None)
 
-# The rectangle that represents a class and its information.
+#===================================== Class Cards =====================================#
 class Class_Box():
     def __init__(self, canvas, name:str, x, y) -> None:
         self._name = name
