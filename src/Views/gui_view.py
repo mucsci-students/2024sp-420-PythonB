@@ -14,12 +14,13 @@ class GUI_View(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("LambdaLegion UML Program (CWorld Edition) V1.1")
-        # Calculate the center position and set the geometry
+        # Center the window on the screen
         window_width, window_height = 1000, 800
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
         center_x = int(screen_width/2 - window_width / 2)
         center_y = int(screen_height/2 - window_height / 2)
+        # Set the window size and position
         self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
 
         self.class_boxes = []
