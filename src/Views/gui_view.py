@@ -1,7 +1,7 @@
 from tkinter import ttk
 from Models.uml_diagram import UML_Diagram
+from Models.uml_class import UML_Class
 
-import json
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import *
@@ -33,25 +33,36 @@ class GUI_View(tk.Tk):
         self.update_relationship_tracker()
         self._commands = []
 
+        self._user_command = tk.StringVar()
+        self.protocol("WM_DELETE_WINDOW", self.on_close)
+
+    def on_close(self) -> None:
+        print("Window is closing")
+        self._user_command.set('quit')
+        self.clear()
+
     def draw(self, diagram: UML_Diagram) -> None:
-        # TODO: draw the whole diagram
-        print('Draw this diagram')
-        pass
+        for cls in diagram.get_all_classes():
+            self.draw_class(cls)
+
+    def draw_class(self, cls: UML_Class) -> None:
+        Class_Box(self.diagram_canvas, cls.get_name(), cls.get_position_x(), cls.get_position_y())
 
     def clear(self) -> None:
-        # TODO: remove everything of the diagram that was drawn
-        print('clear this diagram')
-        pass
+        self.diagram_canvas.delete("all")
 
     def listen(self) -> str:
         '''
         Wait for user action and return as a command
         '''
-        # TODO: change this to an command received from user action
-        #       Or do this in gui controller
-        cmd = input('GUI is listening...')
-        print('input received')
-        cmd = 'undo'
+        # self.create_menu()
+        self.create_sidebar()
+
+        print('Wait for user action')
+        self.wait_variable(self._user_command)
+        cmd = self._user_command.get()
+        self._user_command.set('')
+        print('Return cmd')
         return cmd
 
     def create_menu(self):
@@ -296,6 +307,8 @@ class GUI_View(tk.Tk):
     def add_class(self) -> str:
         class_name = simpledialog.askstring("Input", "Enter Class Name:", parent = self)
         new_command = 'add class ' + class_name
+        print('Add new class cmd')
+        self._user_command.set(new_command)
         self._commands.append(new_command)
 
         next_x, next_y = self.get_next_position()
@@ -317,6 +330,7 @@ class GUI_View(tk.Tk):
             class_name = dialog.result
             
             new_command = "delete class " + class_name
+            self._user_command.set(new_command)
             self._commands.add(new_command)
 
         messagebox.showinfo("Delete Class", f"'{class_name}' has been removed.")
