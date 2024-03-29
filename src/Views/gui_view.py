@@ -56,7 +56,7 @@ class GUI_View(tk.Tk):
         Wait for user action and return as a command
         '''
         # self.create_menu()
-        self.create_sidebar()
+        self.reload_sidebar()
 
         print('Wait for user action')
         self.wait_variable(self._user_command)
@@ -796,7 +796,8 @@ class Delete_Class_Dialog(simpledialog.Dialog):
         self._class_delete = tk.StringVar(master)
         tk.OptionMenu(master, self._class_delete, *self._class_options).grid(row = 0, column = 1)
 
-        return self._class_delete
+        # return self._class_delete
+        return master
 
     def apply(self):
         class_name = self._class_delete.get()
