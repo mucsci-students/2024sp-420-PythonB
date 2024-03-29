@@ -6,7 +6,6 @@ import tkinter as tk
 from tkinter import filedialog
 import webbrowser
 from tkinter import *
-import tkinter.font as tkFont
 from tkinter import messagebox
 from tkinter import simpledialog
 
@@ -64,7 +63,6 @@ class GUI_View(tk.Tk):
         file_menu.add_command(label="Exit", command=self.quit)
         menu_bar.add_cascade(label="File", menu=file_menu)
 
-
         # We may want Undo/Redo in here
             # Will probably try to make buttons for this though
         # Edit
@@ -91,25 +89,24 @@ class GUI_View(tk.Tk):
         pass
 
     def create_sidebar(self):
-        self._sidebar = tk.Frame(self, width=200, bg='lightgray')
-        self._sidebar.pack(side = tk.LEFT, fill = tk.Y, padx = (5, 0), pady = (13, 12))
+        self._sidebar = tk.Frame(self, width = 200, bg = 'lightgray')
+        self._sidebar.pack(side = LEFT, fill = tk.Y, padx = (5, 0), pady = (13, 12))
 
-        # Example button with dropdown for "Add Class"
-        self._btn_class = tk.Button(self._sidebar, text="Classes", command = self.class_options_menu)
+        self._btn_class = tk.Button(self._sidebar, text = "Classes", command = self.class_options_menu)
         self._btn_class.pack(fill = tk.X, padx = (5, 5), pady = (10, 5))
 
-        if True:
-        # if len(self.class_boxes) > 1:
+        # if True:
+        if len(self._class_boxes) > 1:
             self._btn_relationships = tk.Button(self._sidebar, text="Relationships", command = self.relationship_options_menu)
             self._btn_relationships.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
 
-        if True:
-        # if len(self._class_boxes) > 0:
+        # if True:
+        if len(self._class_boxes) > 0:
             self._btn_fields = tk.Button(self._sidebar, text = "Fields", command = self.fields_options_menu)
             self._btn_fields.pack(fill = tk.X, padx=(5, 5), pady = (5, 5))
 
-        if True:
-        # if len(self._class_boxes) > 0:
+        # if True:
+        if len(self._class_boxes) > 0:
             self._btn_methods = tk.Button(self._sidebar, text = "Methods", command = self.methods_options_menu)
             self._btn_methods.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
 
@@ -117,7 +114,11 @@ class GUI_View(tk.Tk):
 
         # Relationship Tracker Listbox
         self.relationship_tracker = tk.Listbox(self._sidebar, height = 10)
-        self.relationship_tracker.pack(padx=5, pady=5, fill=tk.BOTH, expand=True)
+        self.relationship_tracker.pack(padx = 5, pady = 5, fill = tk.BOTH, expand = True)
+
+    def reload_sidebar(self):
+        self._sidebar.pack_forget()
+        self.create_sidebar()
 
     def update_relationship_tracker(self):
         self.relationship_tracker.delete(0, tk.END)  # Clear existing entries
@@ -134,12 +135,12 @@ class GUI_View(tk.Tk):
     def class_options_menu(self):
         # Create a menu that will appear at the current mouse position
         menu = tk.Menu(self, tearoff=0)
-        menu.add_command(label="Add Class", command=self.add_class)
+        menu.add_command(label = "Add Class", command = self.add_class)
         # This will show Delete Class and Rename Class only when there is
             # at least one class card.
         if len(self._class_boxes) > 0:
-            menu.add_command(label="Delete Class", command=self.delete_class)
-            menu.add_command(label="Rename Class", command=self.rename_class)
+            menu.add_command(label = "Delete Class", command = self.delete_class)
+            menu.add_command(label = "Rename Class", command = self.rename_class)
 
         try:
             # Display the menu at the current mouse position
@@ -327,7 +328,8 @@ class GUI_View(tk.Tk):
         #     self.create_sidebar()
 
         # self.create_class_box(self.diagram_canvas, class_name, fields, methods, next_x,next_y)
-
+        if len(self._class_boxes) < 3:
+            self.reload_sidebar()
         return class_name
 
     def get_next_position(self):
@@ -546,7 +548,6 @@ class GUI_View(tk.Tk):
                 "destination": dest,
                 "type": rel
             })
-
             self.update_relationship_tracker()
 
             self.redraw_canvas()
@@ -582,11 +583,9 @@ class GUI_View(tk.Tk):
     # TODO: Either needs broken apart, or needs to be told if it's method or field
             # Should not assume there is not a method and a field with the same name
     def rename_field(self):
-        class_name = simpledialog.askstring("Rename Attribute", "Enter the name of the class:", parent=self)
-
-        old_name = simpledialog.askstring("Rename Attribute", "Enter the name of the attribute to rename:", parent=self)
-
-        new_name = simpledialog.askstring("Rename Attribute", "Enter the new name for the attribute:", parent=self)
+        class_name = simpledialog.askstring("Rename Field", "Enter the name of the class:", parent=self)
+        old_name = simpledialog.askstring("Rename Field", "Enter the name of the field to rename:", parent=self)
+        new_name = simpledialog.askstring("Rename Field", "Enter the new name for the field:", parent=self)
 
         for class_box in self._class_boxes:
             if class_box['class_name'] == class_name:
@@ -755,7 +754,7 @@ class GUI_View(tk.Tk):
     #     B1 = ttk.Button(popup, text="Okay", command = popup.destroy)
     #     B1.pack()
 
-
+# These classes are for Dialog/Input boxes.
 class Rename_Class_Dialog(simpledialog.Dialog):
     def __init__(self, parent, title=None):
         super().__init__(parent, title=title)
@@ -962,6 +961,7 @@ class Delete_Relationship_Dialog(simpledialog.Dialog):
         selected_relationship_str = self.relationship_var.get()
         self.result = next((r for r in self.relationshipsList if f"{r['source']} - {r['type']} - {r['destination']}" == selected_relationship_str), None)
 
+# The rectangle that represents a class and its information.
 class Class_Box():
     def __init__(self, canvas, name:str, x, y) -> None:
         self._name = name
