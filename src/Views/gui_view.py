@@ -151,27 +151,27 @@ class GUI_View(tk.Tk):
     def fields_options_menu(self):
         menu = Menu(self, tearoff = 0)
         if len(self._class_boxes) > 0:
-            # TODO: Implement this logic once new backend hooked in:
+            # TODO: Replace this menu with all available classes, then when you click one of those give a dialog?
+                # Potentially a second menu for these three related to that class?
             menu.add_command(label = "Add Field", command = self.add_field)
-            ## If attributes > 0. For next 2 lines ##
             menu.add_command(label = "Delete Field", command = self.delete_field)
             menu.add_command(label = "Rename Field", command = self.rename_field)
-            ## if Methods > 0. Indent next 4 ##
-            # menu.add_separator()
-            # menu.add_command(label="Add Parameter", command=self.add_param)
-            # ## if Parameters > 0. Indent next 2 ##
-            # menu.add_command(label="Delete Parameter", command=self.delete_param)
-            # menu.add_command(label="Rename Parameter", command=self.rename_param)
-
         try:
-            # Display the menu at the current mouse position
             menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
         finally:
-            # Make sure the menu is torn down properly
             menu.grab_release()
 
     def methods_options_menu(self):
         menu = Menu(self, tearoff = 0)
+        if len(self._class_boxes) > 0:
+            # TODO: See field_options_menu above
+            menu.add_command(label = "Add Method", command = self.add_method)
+            # menu.add_command(label = "Delete Method", command = self.delete_method)
+            # menu.add_command(label = "Rename Method", command = self.rename_method)
+        try:
+            menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
+        finally:
+            menu.grab_release()
 
     def relationship_options_menu(self):
         menu = Menu(self, tearoff=0)
@@ -444,8 +444,6 @@ class GUI_View(tk.Tk):
     def add_field_to_class(self):
         Add_Field_Dialog(self, title="Add Field")
 
-    # TODO: This either needs broken into add_field and add_method
-        # Or needs a conditional for if field do x if method do x
     def add_field(self):
         class_options = []
         for cb in self._class_boxes:
@@ -485,6 +483,18 @@ class GUI_View(tk.Tk):
         #         self.redraw_canvas()  # Refresh the canvas to show the updated class box
         #         success_message = f"Field '{attribute_name}' added to class '{class_name}'." if attribute_type == 'field' else f"Method '{attribute_name}' added with parameters {parameters} to class '{class_name}'."
         #         messagebox.showinfo("Success", success_message)
+
+    def add_method(self):
+        class_options = []
+        for cb in self._class_boxes:
+            class_options.append(cb._name)
+
+        dialog = Add_Method_Dialog(self, class_options, "Add Method")
+
+        if dialog.result:
+            class_name, method = dialog.result
+            new_command = "add method " + class_name + " " + method
+            self._commands.add(new_command)
 
     def delete_relationship(self):
         dialog = Delete_Relationship_Dialog(self, "Delete Relationship", self.relationshipsList)
@@ -783,8 +793,28 @@ class Add_Field_Dialog(simpledialog.Dialog):
     def apply(self):
         class_name = self._class.get()
         field_name = self._field_entry.get()
-        # Now, we can call the main method to add the attribute with all required information
         self.result = class_name, field_name
+
+class Add_Method_Dialog(simpledialog.Dialog):
+    def __init__(self, parent, class_options = None, title=None):
+        self._class_options = class_options
+        super().__init__(parent, title=title)
+
+    def body(self, master):
+        tk.Label(master, text="Class:").grid(row=0)
+        self._class = tk.StringVar(master)
+        tk.OptionMenu(master, self._class, *self._class_options).grid(row = 0, column = 1)
+
+        tk.Label(master, text="Method Name:").grid(row=1)
+        self._method_entry = tk.Entry(master)
+        self._method_entry.grid(row = 1, column = 1)
+
+        return self._class, self._method_entry # initial focus
+
+    def apply(self):
+        class_name = self._class.get()
+        method_name = self._method_entry.get()
+        self.result = class_name, method_name
 
 class Delete_Field_Dialog(simpledialog.Dialog):
     def __init__(self, parent, title=None):
