@@ -15,7 +15,7 @@ class GUI_View(tk.Tk):
         super().__init__()
         self.title("LambdaLegion UML Program (CWorld Edition) V1.1")
         self.geometry("800x600")
-        self.class_boxes = []
+        self._class_boxes = []
         self.relationshipsList = []
         self.create_menu()
         self.create_sidebar()
@@ -75,7 +75,7 @@ class GUI_View(tk.Tk):
         help_menu = Menu(menu_bar, tearoff=0)
         # help_menu.add_command(label="Input", command = self.help_input())
         menu_bar.add_cascade(label="Help", menu=help_menu)
-        
+
         menu_bar.add_separator()
         menu_bar.add_separator()
 
@@ -91,27 +91,32 @@ class GUI_View(tk.Tk):
         pass
 
     def create_sidebar(self):
-        self.sidebar = tk.Frame(self, width=200, bg='lightgray')
-        self.sidebar.pack(side=tk.LEFT, fill=tk.Y, padx=(5, 0), pady=(13, 12))
+        self._sidebar = tk.Frame(self, width=200, bg='lightgray')
+        self._sidebar.pack(side = tk.LEFT, fill = tk.Y, padx = (5, 0), pady = (13, 12))
 
         # Example button with dropdown for "Add Class"
-        self.btn_class = tk.Button(self.sidebar, text="Classes", command=self.class_options_menu)
-        self.btn_class.pack(fill=tk.X, padx=(5, 5), pady=(10, 5))
+        self._btn_class = tk.Button(self._sidebar, text="Classes", command = self.class_options_menu)
+        self._btn_class.pack(fill = tk.X, padx = (5, 5), pady = (10, 5))
 
         if True:
         # if len(self.class_boxes) > 1:
-            self.btn_relationships = tk.Button(self.sidebar, text="Relationships", command=self.relationship_options_menu)
-            self.btn_relationships.pack(fill=tk.X, padx=(5, 5), pady=(5, 5))
+            self._btn_relationships = tk.Button(self._sidebar, text="Relationships", command = self.relationship_options_menu)
+            self._btn_relationships.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
 
-        # if True:
-        if len(self.class_boxes) > 0:
-            self.btn_methods = tk.Button(self.sidebar, text="Attributes", command=self.attributes_options_menu)
-            self.btn_methods.pack(fill=tk.X, padx=(5, 5), pady=(5, 5))
+        if True:
+        # if len(self._class_boxes) > 0:
+            self._btn_fields = tk.Button(self._sidebar, text = "Fields", command = self.fields_options_menu)
+            self._btn_fields.pack(fill = tk.X, padx=(5, 5), pady = (5, 5))
 
-        tk.Label(self.sidebar, text="Relationships Tracker", bg='lightgray', font=('TkDefaultFont', 10, 'bold')).pack(pady=(10, 0))
+        if True:
+        # if len(self._class_boxes) > 0:
+            self._btn_methods = tk.Button(self._sidebar, text = "Methods", command = self.methods_options_menu)
+            self._btn_methods.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
+
+        tk.Label(self._sidebar, text="Relationships Tracker", bg = 'lightgray', font = ('TkDefaultFont', 10, 'bold')).pack(pady = (10, 0))
 
         # Relationship Tracker Listbox
-        self.relationship_tracker = tk.Listbox(self.sidebar, height=10)
+        self.relationship_tracker = tk.Listbox(self._sidebar, height = 10)
         self.relationship_tracker.pack(padx=5, pady=5, fill=tk.BOTH, expand=True)
 
     def update_relationship_tracker(self):
@@ -132,43 +137,46 @@ class GUI_View(tk.Tk):
         menu.add_command(label="Add Class", command=self.add_class)
         # This will show Delete Class and Rename Class only when there is
             # at least one class card.
-        if len(self.class_boxes) > 0:
+        if len(self._class_boxes) > 0:
             menu.add_command(label="Delete Class", command=self.delete_class)
             menu.add_command(label="Rename Class", command=self.rename_class)
 
         try:
             # Display the menu at the current mouse position
-            menu.tk_popup(x=self.sidebar.winfo_pointerx(), y=self.sidebar.winfo_pointery())
+            menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
         finally:
             # Make sure the menu is torn down properly
             menu.grab_release()
 
-    def attributes_options_menu(self):
-        menu = Menu(self, tearoff=0)
-        if len(self.class_boxes) > 0:
+    def fields_options_menu(self):
+        menu = Menu(self, tearoff = 0)
+        if len(self._class_boxes) > 0:
             # TODO: Implement this logic once new backend hooked in:
-            menu.add_command(label="Add Attribute", command=self.add_attribute_to_class)
+            menu.add_command(label = "Add Field", command = self.add_field_to_class)
             ## If attributes > 0. For next 2 lines ##
-            menu.add_command(label="Delete Attribute", command=self.delete_attribute)
-            menu.add_command(label="Rename Rename", command=self.rename_attribute)
+            menu.add_command(label = "Delete Field", command = self.delete_field)
+            menu.add_command(label = "Rename Field", command = self.rename_field)
             ## if Methods > 0. Indent next 4 ##
-            menu.add_separator()
-            menu.add_command(label="Add Parameter", command=self.add_param)
-            ## if Parameters > 0. Indent next 2 ##
-            menu.add_command(label="Delete Parameter", command=self.delete_param)
-            menu.add_command(label="Rename Parameter", command=self.rename_param)
+            # menu.add_separator()
+            # menu.add_command(label="Add Parameter", command=self.add_param)
+            # ## if Parameters > 0. Indent next 2 ##
+            # menu.add_command(label="Delete Parameter", command=self.delete_param)
+            # menu.add_command(label="Rename Parameter", command=self.rename_param)
 
         try:
             # Display the menu at the current mouse position
-            menu.tk_popup(x=self.sidebar.winfo_pointerx(), y=self.sidebar.winfo_pointery())
+            menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
         finally:
             # Make sure the menu is torn down properly
             menu.grab_release()
+
+    def methods_options_menu(self):
+        menu = Menu(self, tearoff = 0)
 
     def relationship_options_menu(self):
         menu = Menu(self, tearoff=0)
         menu = Menu(self, tearoff=0)
-        if len(self.class_boxes) > 1:
+        if len(self._class_boxes) > 1:
             menu.add_command(label="Add", command=self.add_relationship)
         # The below check *should* work, but given the state of things, I can't add a relation to test
             # Until then, as long as there is at least 2 classes, Delete relation will appear.
@@ -177,7 +185,7 @@ class GUI_View(tk.Tk):
 
         try:
             # Display the menu at the current mouse position
-            menu.tk_popup(x=self.sidebar.winfo_pointerx(), y=self.sidebar.winfo_pointery())
+            menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
         finally:
             # Make sure the menu is torn down properly
             menu.grab_release()
@@ -192,7 +200,7 @@ class GUI_View(tk.Tk):
 
         try:
             # Display the menu at the current mouse position
-            file_menu.tk_popup(x=self.sidebar.winfo_pointerx(), y=self.sidebar.winfo_pointery())
+            file_menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
         finally:
             # Make sure the menu is torn down properly
             file_menu.grab_release()
@@ -202,7 +210,7 @@ class GUI_View(tk.Tk):
 
         try:
             # Display the menu at the current mouse position
-            edit_menu.tk_popup(x=self.sidebar.winfo_pointerx(), y=self.sidebar.winfo_pointery())
+            edit_menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
         finally:
             # Make sure the menu is torn down properly
             edit_menu.grab_release()
@@ -214,7 +222,7 @@ class GUI_View(tk.Tk):
 
         try:
             # Display the menu at the current mouse position
-            help_menu.tk_popup(x=self.sidebar.winfo_pointerx(), y=self.sidebar.winfo_pointery())
+            help_menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
         finally:
             # Make sure the menu is torn down properly
             help_menu.grab_release()
@@ -240,7 +248,7 @@ class GUI_View(tk.Tk):
         file_name = simpledialog.askstring("Load a File","Enter a Valid Filename", parent = self)
         data = self.controller.open_file(file_name)
 
-        self.class_boxes.clear()
+        self._class_boxes.clear()
         self.relationshipsList.clear()
 
         # Assuming classes and relationships are directly stored under the top-level object
@@ -256,7 +264,7 @@ class GUI_View(tk.Tk):
             next_x, next_y = self.get_next_position()
 
             # Append the class along with its fields and methods
-            self.class_boxes.append({
+            self._class_boxes.append({
                 'class_name': class_data['name'],
                 'fields': fields,
                 'methods': methods,
@@ -311,7 +319,7 @@ class GUI_View(tk.Tk):
 
         next_x, next_y = self.get_next_position()
         box = Class_Box(self.diagram_canvas, class_name, next_x, next_y)
-        self.class_boxes.append(box)
+        self._class_boxes.append(box)
         # TODO:
         # This doesn't work, creates a second sidebar instead of replacing original
         # May not need it depending on what we recreate on load
@@ -330,10 +338,10 @@ class GUI_View(tk.Tk):
         box_width = 150  # Assume a fixed width for now
         x, y = 50, 50  # Starting position for the first class box
 
-        if self.class_boxes:
+        if self._class_boxes:
             # Get the position of the last class box
-            index = len(self.class_boxes) - 1
-            last_box = self.class_boxes[index]
+            index = len(self._class_boxes) - 1
+            last_box = self._class_boxes[index]
             x, y = last_box._x, last_box._y
 
             # Move to the next position to the right
@@ -361,9 +369,9 @@ class GUI_View(tk.Tk):
         # self.controller.delete_class(class_name)
 
         class_found = False
-        for i, class_box in enumerate(self.class_boxes):
+        for i, class_box in enumerate(self._class_boxes):
             if class_box['class_name'] == class_name:
-                del self.class_boxes[i]
+                del self._class_boxes[i]
                 class_found = True
                 break  # Correctly placed to break out of the loop when a class is found and deleted
 
@@ -383,8 +391,8 @@ class GUI_View(tk.Tk):
         self.diagram_canvas.delete("all")  # Clears the canvas
         # Draw relationships
         for relationship in self.relationshipsList:
-            source = next((box for box in self.class_boxes if box['class_name'] == relationship["source"]), None)
-            destination = next((box for box in self.class_boxes if box['class_name'] == relationship["destination"]), None)
+            source = next((box for box in self._class_boxes if box['class_name'] == relationship["source"]), None)
+            destination = next((box for box in self._class_boxes if box['class_name'] == relationship["destination"]), None)
 
             if source and destination:
                 # Calculate center points of source and destination boxes
@@ -418,7 +426,7 @@ class GUI_View(tk.Tk):
             self._commands.add(new_command)
             # self.controller.rename_class(old_name,new_name)
 
-            for class_box in self.class_boxes:
+            for class_box in self._class_boxes:
                 if class_box['class_name'] == old_name:
                     class_box['class_name'] = new_name
                     break
@@ -433,12 +441,12 @@ class GUI_View(tk.Tk):
             self.redraw_canvas()
             messagebox.showinfo("Rename Class", f"'{old_name}' has been renamed to '{new_name}'")
 
-    def add_attribute_to_class(self):
-        Add_Attribute_Dialog(self, title="Add Attribute")
+    def add_field_to_class(self):
+        Add_Field_Dialog(self, title="Add Field")
 
     # TODO: This either needs broken into add_field and add_method
         # Or needs a conditional for if field do x if method do x
-    def add_attribute(self, class_name, attribute_name, attribute_type):
+    def add_field(self, class_name, attribute_name, attribute_type):
         if not attribute_name or not class_name or attribute_type not in ['field', 'method']:
             messagebox.showinfo("Error", "Invalid input provided.")
             return
@@ -452,7 +460,7 @@ class GUI_View(tk.Tk):
 
         parameters = []
         # Find the class box with the given class_name
-        for class_box in self.class_boxes:
+        for class_box in self._class_boxes:
             if class_box['class_name'] == class_name:
                 if attribute_type == 'field':
                     class_box.setdefault('fields', []).append(attribute_name)
@@ -477,7 +485,7 @@ class GUI_View(tk.Tk):
             new_command = "delete relationship " + src + " " + dest
             self._commands.add(new_command)
             # self.controller.delete_relationship(source_class, destination_class)
-            
+
             # If successful, update the relationships list and UI accordingly
             self.relationshipsList[:] = [rel for rel in self.relationshipsList if not (rel['source'] == src and rel['destination'] == dest)]
             self.update_relationship_tracker()
@@ -496,10 +504,10 @@ class GUI_View(tk.Tk):
         # TODO: This will break once our back end is in
         # Create list of classes in Diagram
         class_options = []
-        for cb in self.class_boxes:
-            
+        for cb in self._class_boxes:
+
             class_options.append(cb._name)
-        
+
         dialog = Add_Relationship_Dialog(self, class_options, "Add Relationship")
         if dialog.result:
 
@@ -521,17 +529,17 @@ class GUI_View(tk.Tk):
             self.redraw_canvas()
 
     # TODO: This is the same as the above attribute
-    def delete_attribute(self):
+    def delete_field(self):
         # Ask for the class name from which to delete an attribute
-        dialog_result = Delete_Attribute_Dialog(self, title="Delete Attribute").result
+        dialog_result = Delete_Field_Dialog(self, title = "Delete Field").result
         if dialog_result:
             class_name, attribute_name, attribute_type = dialog_result
             # TODO: self.controller
-            new_command = "delete " + attribute_type + " " + class_name + " " + attribute_name
+            new_command = "delete field " + class_name + " " + attribute_name
             self._commands.add(new_command)
             # self.controller.delete_attribute(class_name, attribute_name, attribute_type)
             # Find the class
-            for class_box in self.class_boxes:
+            for class_box in self._class_boxes:
                 if class_box['class_name'] == class_name:
                     # Check the attribute type and delete accordingly
                     if attribute_type == 'field' and 'fields' in class_box and attribute_name in class_box['fields']:
@@ -550,14 +558,14 @@ class GUI_View(tk.Tk):
 
     # TODO: Either needs broken apart, or needs to be told if it's method or field
             # Should not assume there is not a method and a field with the same name
-    def rename_attribute(self):
+    def rename_field(self):
         class_name = simpledialog.askstring("Rename Attribute", "Enter the name of the class:", parent=self)
 
         old_name = simpledialog.askstring("Rename Attribute", "Enter the name of the attribute to rename:", parent=self)
 
         new_name = simpledialog.askstring("Rename Attribute", "Enter the new name for the attribute:", parent=self)
 
-        for class_box in self.class_boxes:
+        for class_box in self._class_boxes:
             if class_box['class_name'] == class_name:
                 # Check and rename in fields
                 if old_name in class_box.get('fields', []):
@@ -607,7 +615,7 @@ class GUI_View(tk.Tk):
                 return
 
             found_class = False
-            for class_box in self.class_boxes:
+            for class_box in self._class_boxes:
                 if class_box['class_name'] == class_name:
                     found_class = True
                     found_method = False
@@ -638,7 +646,7 @@ class GUI_View(tk.Tk):
             # self.controller.delete_param(class_name, method_name, param_name)
 
             found_class = False
-            for class_box in self.class_boxes:
+            for class_box in self._class_boxes:
                 if class_box['class_name'] == class_name:
                     found_class = True
                     found_method = False
@@ -681,7 +689,7 @@ class GUI_View(tk.Tk):
             self._commands.add(new_command)
             self.controller.rename_param(class_name, method_name , old_param_name, new_param_name)
 
-            for class_box in self.class_boxes:
+            for class_box in self._class_boxes:
                 if class_box['class_name'] == class_name:
                     for method in class_box.get('methods', []):
                         if method['name'] == method_name and old_param_name in method.get('parameters', []):
@@ -743,7 +751,7 @@ class Rename_Class_Dialog(simpledialog.Dialog):
     def apply(self):
         self.result = (self.class_name_entry.get(), self.new_name_entry.get())
 
-class Add_Attribute_Dialog(simpledialog.Dialog):
+class Add_Field_Dialog(simpledialog.Dialog):
 
     def __init__(self, parent, title=None):
         super().__init__(parent, title=title)
@@ -752,24 +760,24 @@ class Add_Attribute_Dialog(simpledialog.Dialog):
         tk.Label(master,text="Class Name:").grid(row=0)
         self.entry_class_name = tk.Entry(master)
         self.entry_class_name.grid(row = 0, column = 1)
-        tk.Label(master, text="Attribute Name:").grid(row=1)
+        tk.Label(master, text="Field Name:").grid(row=1)
         self.entry_attribute_name = tk.Entry(master)
         self.entry_attribute_name.grid(row=1, column=1)
 
         self.attribute_type = tk.StringVar(value="field")
-        tk.Radiobutton(master, text="Field", variable=self.attribute_type, value="field").grid(row=2, column=0)
-        tk.Radiobutton(master, text="Method", variable=self.attribute_type, value="method").grid(row=2, column=1)
+        # tk.Radiobutton(master, text="Field", variable=self.attribute_type, value="field").grid(row=2, column=0)
+        # tk.Radiobutton(master, text="Method", variable=self.attribute_type, value="method").grid(row=2, column=1)
 
         return self.entry_attribute_name
 
     def apply(self):
         class_name = self.entry_class_name.get()
-        attribute_name = self.entry_attribute_name.get()
-        attribute_type = self.attribute_type.get()
+        field_name = self.entry_attribute_name.get()
+        field_type = self.attribute_type.get()
         # Now, we can call the main method to add the attribute with all required information
-        self.parent.add_attribute(class_name, attribute_name, attribute_type)
+        self.parent.add_field(class_name, field_name, field_type)
 
-class Delete_Attribute_Dialog(simpledialog.Dialog):
+class Delete_Field_Dialog(simpledialog.Dialog):
     def __init__(self, parent, title=None):
         super().__init__(parent, title=title)
 
@@ -964,7 +972,7 @@ class Class_Box():
         # TODO: We will need to add more info to the Class_Box
             # Removed all of the old functionality as it would never be used again.
         return box, box_text, box_height
-        
+
 if __name__ == "__main__":
     app = GUI_View()
     app.mainloop()
