@@ -106,17 +106,17 @@ class GUI_View(tk.Tk):
         self._btn_class.pack(fill = tk.X, padx = (5, 5), pady = (10, 5))
 
         # if True:
-        if len(self._class_boxes) > 1:
-            self._btn_relationships = tk.Button(self._sidebar, text="Relationships", command = self.relationship_options_menu)
-            self._btn_relationships.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
+        if len(self._class_boxes) >= 2:
+            self._btn_relations = tk.Button(self._sidebar, text = "Relationships", command = self.relations_options_menu)
+            self._btn_relations.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
 
         # if True:
-        if len(self._class_boxes) > 0:
+        if len(self._class_boxes) >= 1:
             self._btn_fields = tk.Button(self._sidebar, text = "Fields", command = self.fields_options_menu)
-            self._btn_fields.pack(fill = tk.X, padx=(5, 5), pady = (5, 5))
+            self._btn_fields.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
 
         # if True:
-        if len(self._class_boxes) > 0:
+        if len(self._class_boxes) >= 1:
             self._btn_methods = tk.Button(self._sidebar, text = "Methods", command = self.methods_options_menu)
             self._btn_methods.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
 
@@ -280,16 +280,16 @@ class GUI_View(tk.Tk):
         finally:
             menu.grab_release()
 
-    def relationship_options_menu(self):
+    def relations_options_menu(self):
         menu = Menu(self, tearoff=0)
         menu = Menu(self, tearoff=0)
-        if len(self._class_boxes) > 1:
-            menu.add_command(label="Add", command=self.add_relationship)
+        if True:
+        # if len(self._class_boxes) > 1:
+            menu.add_command(label = "Add Relationship", command = self.add_relation)
         # The below check *should* work, but given the state of things, I can't add a relation to test
             # Until then, as long as there is at least 2 classes, Delete relation will appear.
         # if len(self.relationshipsList) > 0:
-            menu.add_command(label="Delete", command=self.delete_relationship)
-
+            menu.add_command(label = "Delete Relation", command = self.delete_relation)
 
 #===================================== Diagram Functions =====================================#
 
@@ -302,7 +302,7 @@ class GUI_View(tk.Tk):
         box = Class_Box(self.diagram_canvas, class_name, next_x, next_y)
         self._class_boxes.append(box)
         # TODO: This works, but shifts the sidebar to the right
-        if len(self._class_boxes) < 3:
+        if len(self._class_boxes) <= 3:
             self.reload_sidebar()
         return class_name
       
@@ -357,27 +357,16 @@ class GUI_View(tk.Tk):
             self._commands.add(new_command)
 
     def delete_field(self):
-        dialog_result = Delete_Field_Dialog(self, title = "Delete Field").result
-        if dialog_result:
-            class_name, attribute_name, attribute_type = dialog_result
-            
-            new_command = "delete field " + class_name + " " + attribute_name
-            self._commands.add(new_command)
+        class_options = []
+        for cb in self._class_boxes:
+            class_options.append(cb._name)
 
-            # Find the class
-            for class_box in self._class_boxes:
-                if class_box['class_name'] == class_name:
-                    # Check the attribute type and delete accordingly
-                    if attribute_type == 'field' and 'fields' in class_box and attribute_name in class_box['fields']:
-                        class_box['fields'].remove(attribute_name)
-                    else:
-                        messagebox.showinfo("Error", f"{attribute_type.capitalize()} '{attribute_name}' not found in class '{class_name}'.")
-                        return
-                    self.redraw_canvas()
-                    messagebox.showinfo("Success", f"{attribute_type.capitalize()} '{attribute_name}' deleted from class '{class_name}'.")
-                    return
-            messagebox.showinfo("Error", f"Class '{class_name}' not found.")
-            return [class_name, attribute_name, attribute_type]
+        dialog_result = Delete_Field_Dialog(self, class_options, title = "Delete Field").result
+        if dialog_result:
+            class_name, field_name = dialog_result
+            
+            new_command = "delete field " + class_name + " " + field_name
+            self._commands.add(new_command)
 
     def rename_field(self):
         class_name = simpledialog.askstring("Rename Field", "Enter the name of the class:", parent=self)
@@ -502,14 +491,14 @@ class GUI_View(tk.Tk):
                             return
             messagebox.showinfo("Error", "Parameter not found.")
 
-    def add_relationship(self):
+    def add_relation(self):
         # TODO: This will break once our back end is in
         # Create list of classes in Diagram
         class_options = []
         for cb in self._class_boxes:
             class_options.append(cb._name)
 
-        dialog = Add_Relationship_Dialog(self, class_options, "Add Relationship")
+        dialog = Add_Relation_Dialog(self, class_options, "Add Relationship")
         if dialog.result:
 
             src, dest, rel = dialog.result
@@ -527,8 +516,8 @@ class GUI_View(tk.Tk):
 
             self.redraw_canvas()
 
-    def delete_relationship(self):
-        dialog = Delete_Relationship_Dialog(self, "Delete Relationship", self.relationshipsList)
+    def delete_relation(self):
+        dialog = Delete_Relation_Dialog(self, "Delete Relationship", self.relationshipsList)
         if dialog.result:
             selected_rel = dialog.result
             # Extract the source and destination class names from the dialog's result
@@ -586,6 +575,22 @@ class GUI_View(tk.Tk):
         
 #===================================== Dialog Classes =====================================#
 
+class Delete_Class_Dialog(simpledialog.Dialog):
+    def __init__(self, parent, class_options:list = None, title:str = None):
+        self._class_options = class_options
+        super().__init__(parent, title=title)
+
+    def body(self, master):
+        tk.Label(master, text = "Class:").grid(row = 0)
+        self._class_delete = tk.StringVar(master)
+        tk.OptionMenu(master, self._class_delete, *self._class_options).grid(row = 0, column = 1)
+
+        return self._class_delete
+
+    def apply(self):
+        class_name = self._class_delete.get()
+        self.result = class_name
+
 class Rename_Class_Dialog(simpledialog.Dialog):
     def __init__(self, parent, title=None):
         super().__init__(parent, title=title)
@@ -605,7 +610,7 @@ class Rename_Class_Dialog(simpledialog.Dialog):
         self.result = (self.class_name_entry.get(), self.new_name_entry.get())
 
 class Add_Field_Dialog(simpledialog.Dialog):
-    def __init__(self, parent, class_options = None, title=None):
+    def __init__(self, parent, class_options:list = None, title = None):
         self._class_options = class_options
         super().__init__(parent, title=title)
 
@@ -624,6 +629,32 @@ class Add_Field_Dialog(simpledialog.Dialog):
         class_name = self._class.get()
         field_name = self._field_entry.get()
         self.result = class_name, field_name
+
+class Delete_Field_Dialog(simpledialog.Dialog):
+    def __init__(self, parent, class_options:list = None, title:str = None):
+        self._class_options = class_options
+        super().__init__(parent, title=title)
+
+    def body(self, master):
+        tk.Label(master, text = "Select Class:").grid(row = 0)
+        self._class = tk.StringVar(master)
+        tk.OptionMenu(master, self._class, *self._class_options).grid(row = 0, column = 1)
+
+        # TODO: Get Fields from entered class.
+        self._fields = self._class_options
+        # tk.Label(master, text="Attribute Name:").grid(row=1)
+        # self.attribute_name_entry = tk.Entry(master)
+        # self.attribute_name_entry.grid(row=1, column=1)
+
+        # tk.Label(master, text="Attribute Type:").grid(row=2)
+        # self.attribute_type_var = tk.StringVar(value="field")
+        # tk.Radiobutton(master, text="Field", variable=self.attribute_type_var, value="field").grid(row=2, column=1)
+        # tk.Radiobutton(master, text="Method", variable=self.attribute_type_var, value="method").grid(row=2, column=2)
+
+        return self._class, Select_Attribute_Dialog(self, self._class, "Field:", self._fields, self.title)# initial focus
+
+    def apply(self):
+        self.result = self._class, "banana"
 
 class Add_Method_Dialog(simpledialog.Dialog):
     def __init__(self, parent, class_options = None, title=None):
@@ -646,28 +677,25 @@ class Add_Method_Dialog(simpledialog.Dialog):
         method_name = self._method_entry.get()
         self.result = class_name, method_name
 
-class Delete_Field_Dialog(simpledialog.Dialog):
-    def __init__(self, parent, title=None):
+class Select_Attribute_Dialog(simpledialog.Dialog):
+    def __init__(self, parent, class_name:str, att_type:str, att_list:list = None, title:str = None):
+        self._class = class_name
+        self._att_type = att_type
+        self._att_list = att_list
         super().__init__(parent, title=title)
 
     def body(self, master):
-        tk.Label(master, text="Class Name:").grid(row=0)
-        self.class_name_entry = tk.Entry(master)
-        self.class_name_entry.grid(row=0, column=1)
+        class_display = "Class = " + str(self._class)
+        tk.Label(master, text = "Class: " + class_display).grid(row = 0, column = 0)
+        tk.Label(master, text = self._att_type).grid(row = 0, column = 1)
+        self._att_select = tk.StringVar(master)
+        tk.OptionMenu(master, self._att_select, *self._att_list).grid(row = 0, column = 2)
 
-        tk.Label(master, text="Attribute Name:").grid(row=1)
-        self.attribute_name_entry = tk.Entry(master)
-        self.attribute_name_entry.grid(row=1, column=1)
-
-        tk.Label(master, text="Attribute Type:").grid(row=2)
-        self.attribute_type_var = tk.StringVar(value="field")
-        tk.Radiobutton(master, text="Field", variable=self.attribute_type_var, value="field").grid(row=2, column=1)
-        tk.Radiobutton(master, text="Method", variable=self.attribute_type_var, value="method").grid(row=2, column=2)
-
-        return self.class_name_entry  # initial focus
+        return self._att_select
 
     def apply(self):
-        self.result = (self.class_name_entry.get(), self.attribute_name_entry.get(), self.attribute_type_var.get())
+        att_name = self._att_select.get()
+        self.result = att_name
 
 class Add_Parameter_Dialog(simpledialog.Dialog):
     def __init__(self, parent, title=None):
@@ -745,7 +773,7 @@ class Rename_Parameter_Dialog(simpledialog.Dialog):
     def apply(self):
         self.result = (self.class_name_entry.get(), self.method_name_entry.get(), self.param_name_entry.get(), self.new_param_name_entry.get())
 
-class Add_Relationship_Dialog(simpledialog.Dialog):
+class Add_Relation_Dialog(simpledialog.Dialog):
     def __init__(self, parent, class_options = None, title = None):
         self._class_options = class_options
         super().__init__(parent, title=title)
@@ -772,23 +800,7 @@ class Add_Relationship_Dialog(simpledialog.Dialog):
         rel_type = self._rel_type.get()
         self.result = (src, dest, rel_type)
 
-class Delete_Class_Dialog(simpledialog.Dialog):
-    def __init__(self, parent, class_options:list = None, title:str = None):
-        self._class_options = class_options
-        super().__init__(parent, title=title)
-
-    def body(self, master):
-        tk.Label(master, text = "Class:").grid(row = 0)
-        self._class_delete = tk.StringVar(master)
-        tk.OptionMenu(master, self._class_delete, *self._class_options).grid(row = 0, column = 1)
-
-        return self._class_delete
-
-    def apply(self):
-        class_name = self._class_delete.get()
-        self.result = class_name
-
-class Delete_Relationship_Dialog(simpledialog.Dialog):
+class Delete_Relation_Dialog(simpledialog.Dialog):
     def __init__(self, parent, relations:list, title:str = None):
         self._relations = relations
         super().__init__(parent, title=title)
