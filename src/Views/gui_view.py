@@ -14,7 +14,14 @@ class GUI_View(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("LambdaLegion UML Program (CWorld Edition) V1.1")
-        self.geometry("800x600")
+        # Calculate the center position and set the geometry
+        window_width, window_height = 1000, 800
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        center_x = int(screen_width/2 - window_width / 2)
+        center_y = int(screen_height/2 - window_height / 2)
+        self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
+
         self.class_boxes = []
         self.relationshipsList = []
         self.create_menu()
@@ -71,9 +78,9 @@ class GUI_View(tk.Tk):
         # edit_menu = Menu(menu_bar, tearoff=0)
         # menu_bar.add_cascade(label="Edit", menu=edit_menu)
 
-        # Help
+        # Help Menu
         help_menu = Menu(menu_bar, tearoff=0)
-        # help_menu.add_command(label="Input", command = self.help_input())
+        help_menu.add_command(label="View Help", command=self.show_help_messagebox)
         menu_bar.add_cascade(label="Help", menu=help_menu)
         
         menu_bar.add_separator()
@@ -81,6 +88,25 @@ class GUI_View(tk.Tk):
 
         menu_bar.add_command(label = "Undo", command = self.undo)
         menu_bar.add_command(label = "Redo", command = self.redo)
+    
+    def show_help_messagebox(self):
+        help_content = """
+            Valid Input:
+                - Names must start with a letter
+                - Can include numbers, dashes (-), and underscores (_).
+
+            Requirements:
+                    - To create relationships, you need at least two classes.
+
+            Visuals and Meanings:
+                - Aggregation: An empty diamond to a normal arrow.
+                - Composition: A filled diamond to a normal arrow.
+                - Realization: A dashed line to a hollow arrow.
+                - Inheritance: A solid line to an empty arrow.
+
+            This quick guide helps you understand the basics of interacting with the UML editor.
+                """
+        messagebox.showinfo("Help - CWorld UML Program", help_content, parent=self)
 
     def undo(self):
         pass
