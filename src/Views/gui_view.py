@@ -25,6 +25,7 @@ class GUI_View(tk.Tk):
         self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
         self._class_boxes = []
 
+        # TODO: class_list could be moved here
         self.relationshipsList = []
         self.create_menu()
         self.create_sidebar()
@@ -289,12 +290,6 @@ class GUI_View(tk.Tk):
         # if len(self.relationshipsList) > 0:
             menu.add_command(label="Delete", command=self.delete_relationship)
 
-        try:
-            # Display the menu at the current mouse position
-            menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
-        finally:
-            # Make sure the menu is torn down properly
-            menu.grab_release()
 
 #===================================== Diagram Functions =====================================#
 
@@ -310,29 +305,19 @@ class GUI_View(tk.Tk):
         if len(self._class_boxes) < 3:
             self.reload_sidebar()
         return class_name
-    
+      
     def delete_class(self) -> str:
-        class_name = simpledialog.askstring("Delete Class", "Enter a class to delete:", parent = self)
-        if class_name is None:
-            return
-        new_command = "delete class " + class_name
-        self._commands.add(new_command)
+        class_options = []
+        for cb in self._class_boxes:
+            class_options.append(cb._name)
 
-        class_found = False
-        for i, class_box in enumerate(self._class_boxes):
-            if class_box['class_name'] == class_name:
-                del self._class_boxes[i]
-                class_found = True
-                break  # Correctly placed to break out of the loop when a class is found and deleted
+        dialog = Delete_Class_Dialog(self, class_options, "Delete Class")
 
-        if class_found:
-            self.relationshipsList[:] = [rel for rel in self.relationshipsList if rel['source'] != class_name and rel['destination']!= class_name]
-        self.redraw_canvas()  # Call redraw_canvas outside the loop to refresh the canvas once after any deletion
-        self.update_relationship_tracker()
-
-        if not class_found:
-            messagebox.showinfo("Delete Class", "Class not found!")
-            return
+        if dialog.result:
+            class_name = dialog.result
+            
+            new_command = "delete class " + class_name
+            self._commands.add(new_command)
 
         messagebox.showinfo("Delete Class", f"'{class_name}' has been removed.")
         return class_name
@@ -787,25 +772,37 @@ class Add_Relationship_Dialog(simpledialog.Dialog):
         rel_type = self._rel_type.get()
         self.result = (src, dest, rel_type)
 
-class Delete_Relationship_Dialog(simpledialog.Dialog):
-    def __init__(self, parent, title=None, relationships=[]):
-        self.relationshipsList = relationships
+class Delete_Class_Dialog(simpledialog.Dialog):
+    def __init__(self, parent, class_options:list = None, title:str = None):
+        self._class_options = class_options
         super().__init__(parent, title=title)
 
     def body(self, master):
-        tk.Label(master, text="Select Relationship:").grid(row=0)
-        self.relationship_var = tk.StringVar(master)
-        self.relationship_var.set("Choose a relationship")  # default value
+        tk.Label(master, text = "Class:").grid(row = 0)
+        self._class_delete = tk.StringVar(master)
+        tk.OptionMenu(master, self._class_delete, *self._class_options).grid(row = 0, column = 1)
 
-        relationships_str = [f"{r['source']} - {r['type']} - {r['destination']}" for r in self.relationshipsList]
-        self.relationship_menu = tk.OptionMenu(master, self.relationship_var, *relationships_str)
-        self.relationship_menu.grid(row=0, column=1)
-
-        return self.relationship_menu  # initial focus
+        return self._class_delete
 
     def apply(self):
-        selected_relationship_str = self.relationship_var.get()
-        self.result = next((r for r in self.relationshipsList if f"{r['source']} - {r['type']} - {r['destination']}" == selected_relationship_str), None)
+        class_name = self._class_delete.get()
+        self.result = class_name
+
+class Delete_Relationship_Dialog(simpledialog.Dialog):
+    def __init__(self, parent, relations:list, title:str = None):
+        self._relations = relations
+        super().__init__(parent, title=title)
+
+    def body(self, master):
+        tk.Label(master, text = "Relationship:").grid(row = 0)
+        self._relation_delete = tk.StringVar(master)
+        tk.OptionMenu(master, self._relation_delete, *self._relations).grid(row = 0, column = 1)
+
+        return self._relation_delete
+
+    def apply(self):
+        relation = self._relation_delete
+        self.result = relation
 
 #===================================== Class Cards =====================================#
 class Class_Box():
