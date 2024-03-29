@@ -96,7 +96,7 @@ class GUI_View(tk.Tk):
                 - Can include numbers, dashes (-), and underscores (_).
 
             Requirements:
-                    - To create relationships, you need at least two classes.
+                - To create relationships, you need at least two classes.
 
             Visuals and Meanings:
                 - Aggregation: An empty diamond to a normal arrow.
