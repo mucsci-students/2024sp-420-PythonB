@@ -648,23 +648,33 @@ class Delete_Field_Dialog(simpledialog.Dialog):
     def body(self, master):
         tk.Label(master, text = "Select Class:").grid(row = 0)
         self._class = tk.StringVar(master)
-        tk.OptionMenu(master, self._class, *self._class_options).grid(row = 0, column = 1)
+        self._class.trace("w",self.update_options)
+        self._class_select = tk.OptionMenu(master, self._class, *self._class_options).grid(row = 0, column = 1)
 
         # TODO: Get Fields from entered class.
-        self._fields = self._class_options
-        # tk.Label(master, text="Attribute Name:").grid(row=1)
-        # self.attribute_name_entry = tk.Entry(master)
-        # self.attribute_name_entry.grid(row=1, column=1)
+        self._fields = ['Test1', 'Test2']
+        tk.Label(master, text = "Field Name:").grid(row = 1)
+        self._delete_field = tk.StringVar(master)
+        self._field_options = tk.OptionMenu(master, self._delete_field, self._fields).grid(row = 1, column = 1)
 
-        # tk.Label(master, text="Attribute Type:").grid(row=2)
-        # self.attribute_type_var = tk.StringVar(value="field")
-        # tk.Radiobutton(master, text="Field", variable=self.attribute_type_var, value="field").grid(row=2, column=1)
-        # tk.Radiobutton(master, text="Method", variable=self.attribute_type_var, value="method").grid(row=2, column=2)
+        return self._class, self._delete_field
 
-        return self._class, Select_Attribute_Dialog(self, self._class, "Field:", self._fields, self.title)# initial focus
+    def update_options(self, *args):
+        self._delete_field.set('')
+        class_name = self._class.get()
+        # TODO: This needs to be poplulated with the fields from the class.
+        new_opts = [f'{class_name}1', f'{class_name}2', f'{class_name}3']
+        
+        menu = self._field_options['menu']
+        menu.delete(0,'end')
+
+        for o in new_opts:
+            self._field_options['menu'].add_command(label=o, command=tk._setit(self._delete_field,o))
 
     def apply(self):
-        self.result = self._class, "banana"
+        class_name = self._class.get()
+        field_name = self._delete_field.get()
+        self.result = class_name, field_name
 
 class Add_Method_Dialog(simpledialog.Dialog):
     def __init__(self, parent, class_options = None, title=None):
@@ -686,26 +696,6 @@ class Add_Method_Dialog(simpledialog.Dialog):
         class_name = self._class.get()
         method_name = self._method_entry.get()
         self.result = class_name, method_name
-
-class Select_Attribute_Dialog(simpledialog.Dialog):
-    def __init__(self, parent, class_name:str, att_type:str, att_list:list = None, title:str = None):
-        self._class = class_name
-        self._att_type = att_type
-        self._att_list = att_list
-        super().__init__(parent, title=title)
-
-    def body(self, master):
-        class_display = "Class = " + str(self._class)
-        tk.Label(master, text = "Class: " + class_display).grid(row = 0, column = 0)
-        tk.Label(master, text = self._att_type).grid(row = 0, column = 1)
-        self._att_select = tk.StringVar(master)
-        tk.OptionMenu(master, self._att_select, *self._att_list).grid(row = 0, column = 2)
-
-        return self._att_select
-
-    def apply(self):
-        att_name = self._att_select.get()
-        self.result = att_name
 
 class Add_Parameter_Dialog(simpledialog.Dialog):
     def __init__(self, parent, title=None):
