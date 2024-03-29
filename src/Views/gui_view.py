@@ -56,7 +56,7 @@ class GUI_View(tk.Tk):
         Wait for user action and return as a command
         '''
         # self.create_menu()
-        self.reload_sidebar()
+        # self.create_sidebar()
 
         print('Wait for user action')
         self.wait_variable(self._user_command)
