@@ -1,7 +1,5 @@
 from tkinter import ttk
-from Models.uml_diagram import UML_Diagram
 
-import json
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import *
@@ -35,25 +33,32 @@ class GUI_View(tk.Tk):
         self.update_relationship_tracker()
         self._commands = []
 
-    def draw(self, diagram: UML_Diagram) -> None:
-        # TODO: draw the whole diagram
-        print('Draw this diagram')
-        pass
+        self._user_command = tk.StringVar()
+        self.protocol("WM_DELETE_WINDOW", self.on_close)
+
+    def on_close(self) -> None:
+        print("Window is closing")
+        self._user_command.set('quit')
+        self.clear()
+
+    def draw_class(self, name, x, y) -> None:
+        Class_Box(self.diagram_canvas, name, x, y)
 
     def clear(self) -> None:
-        # TODO: remove everything of the diagram that was drawn
-        print('clear this diagram')
-        pass
+        self.diagram_canvas.delete("all")
 
     def listen(self) -> str:
         '''
         Wait for user action and return as a command
         '''
-        # TODO: change this to an command received from user action
-        #       Or do this in gui controller
-        cmd = input('GUI is listening...')
-        print('input received')
-        cmd = 'undo'
+        # self.create_menu()
+        # self.create_sidebar()
+
+        print('Wait for user action')
+        self.wait_variable(self._user_command)
+        cmd = self._user_command.get()
+        self._user_command.set('')
+        print('Return cmd')
         return cmd
 
     def create_menu(self):
@@ -307,6 +312,8 @@ class GUI_View(tk.Tk):
     def add_class(self) -> str:
         class_name = simpledialog.askstring("Input", "Enter Class Name:", parent = self)
         new_command = 'add class ' + class_name
+        print('Add new class cmd')
+        self._user_command.set(new_command)
         self._commands.append(new_command)
 
         next_x, next_y = self.get_next_position()
@@ -327,6 +334,7 @@ class GUI_View(tk.Tk):
             class_name = dialog.result
             
             new_command = "delete class " + class_name
+            self._user_command.set(new_command)
             self._commands.add(new_command)
 
         self.update_button_state()
@@ -853,7 +861,6 @@ class Add_Relation_Dialog(simpledialog.Dialog):
         rel_type = self._rel_type.get()
         self.result = (src, dest, rel_type)
 
-class Delete_Relation_Dialog(simpledialog.Dialog):
     def __init__(self, parent, relations:list, title:str = None):
         self._relations = relations
         super().__init__(parent, title=title)
