@@ -1,6 +1,7 @@
 from prompt_toolkit.completion import NestedCompleter
 from Models.uml_diagram import UML_Diagram
 from Models.uml_list import UML_List_Visitor
+from Views.relation_completer import RelationCompleter
 
 class CLI_View:
     
@@ -87,7 +88,7 @@ class CLI_View:
         """
         return NestedCompleter.from_nested_dict({
         'add': {
-            'relation': None,
+            'relation': RelationCompleter(),
             'class': None,
             'field': None,
             'method': None,
