@@ -153,7 +153,7 @@ def test_save_load_class():
     cls7.add_method('Method1', 'string')
     cls7.add_method('Method2', 'void', 'Param1')
     cls7.add_method('Method3', 'int', 'Param1', 'Param2')
-    cls7.set_position([1, -1])
+    cls7.set_position_with_delta([1, -1])
     #save 'Class7'
     obj = cls7.accept(save_visitor)
     json = encode_json_without_validate(obj)
