@@ -322,7 +322,7 @@ class GUI_View(tk.Tk):
         # The below check *should* work, but given the state of things, I can't add a relation to test
             # Until then, as long as there is at least 2 classes, Delete relation will appear.
         # if len(self.relationshipsList) > 0:
-            menu.add_command(label = "Delete Relation", command = self.delete_relation)
+            menu.add_command(label = "Delete Relationship", command = self.delete_relation)
         try:
             menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
         finally:
@@ -464,18 +464,14 @@ class GUI_View(tk.Tk):
             self._user_command.set(new_command)
 
     def delete_relation(self):
-        dialog = Delete_Relation_Dialog(self, "Delete Relationship", self.relationshipsList)
-        if dialog.result:
-            selected_rel = dialog.result
-            # Extract the source and destination class names from the dialog's result
-            src = selected_rel['source']
-            dest = selected_rel['destination']
+        class_options = [cb._name for cb in self._class_boxes]
 
-            new_command = "delete relationship " + src + " " + dest
+        dialog = Delete_Relation_Dialog(self, class_options, "Delete Relationship")
+        if dialog.result:
+            src, dst = dialog.result
+            new_command = "delete relation " + src + " " + dst
             self._user_command.set(new_command)
 
-            # If successful, update the relationships list and UI accordingly
-            self.relationshipsList[:] = [rel for rel in self.relationshipsList if not (rel['source'] == src and rel['destination'] == dest)]
             # messagebox.showinfo("Success", "Relationship deleted successfully.")
 
 #===================================== Helper Functions =====================================#
@@ -806,6 +802,27 @@ class Add_Relation_Dialog(simpledialog.Dialog):
     # def apply(self):
     #     relation = self._relation_delete
     #     self.result = relation
+
+class Delete_Relation_Dialog(simpledialog.Dialog):
+    def __init__(self, parent, class_options = None, title = None):
+        self._class_options = class_options
+        super().__init__(parent, title=title)
+
+    def body(self, master):
+        tk.Label(master, text="Source Class:").grid(row=0)
+        self._src = tk.StringVar(master)
+        tk.OptionMenu(master, self._src, *self._class_options).grid(row = 0, column = 1)
+
+        tk.Label(master, text="Destination Class:").grid(row=1)
+        self._dest = tk.StringVar(master)
+        tk.OptionMenu(master, self._dest, *self._class_options).grid(row = 1, column = 1)
+
+        return master
+
+    def apply(self):
+        src = self._src.get()
+        dest = self._dest.get()
+        self.result = src, dest
 
 #===================================== Class Cards =====================================#
 class Class_Box():
