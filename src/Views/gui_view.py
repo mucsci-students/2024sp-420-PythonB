@@ -53,6 +53,7 @@ class GUI_View(tk.Tk):
         Wait for user action and return as a command
         '''
         self.update_button_state()
+        self.update_relationship_tracker()
 
         self.wait_variable(self._user_command)
         cmd = self._user_command.get()
@@ -322,6 +323,10 @@ class GUI_View(tk.Tk):
             # Until then, as long as there is at least 2 classes, Delete relation will appear.
         # if len(self.relationshipsList) > 0:
             menu.add_command(label = "Delete Relation", command = self.delete_relation)
+        try:
+            menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
+        finally:
+            menu.grab_release()
 
 #===================================== Diagram Functions =====================================#
 
@@ -449,27 +454,14 @@ class GUI_View(tk.Tk):
     def add_relation(self):
         # TODO: This will break once our back end is in
         # Create list of classes in Diagram
-        class_options = []
-        for cb in self._class_boxes:
-            class_options.append(cb._name)
+        class_options = [cb._name for cb in self._class_boxes]
 
         dialog = Add_Relation_Dialog(self, class_options, "Add Relationship")
         if dialog.result:
-
             src, dest, rel = dialog.result
 
             new_command = "add relation " + src + " " + dest + " " + rel
             self._user_command.set(new_command)
-
-            # Add the relationship
-            self.relationshipsList.append({
-                "source": src,
-                "destination": dest,
-                "type": rel
-            })
-            self.update_relationship_tracker()
-
-            self.redraw_canvas()
 
     def delete_relation(self):
         dialog = Delete_Relation_Dialog(self, "Delete Relationship", self.relationshipsList)
@@ -484,9 +476,7 @@ class GUI_View(tk.Tk):
 
             # If successful, update the relationships list and UI accordingly
             self.relationshipsList[:] = [rel for rel in self.relationshipsList if not (rel['source'] == src and rel['destination'] == dest)]
-            self.update_relationship_tracker()
-            self.redraw_canvas()
-            messagebox.showinfo("Success", "Relationship deleted successfully.")
+            # messagebox.showinfo("Success", "Relationship deleted successfully.")
 
 #===================================== Helper Functions =====================================#
             
@@ -792,7 +782,8 @@ class Add_Relation_Dialog(simpledialog.Dialog):
         rel_options = ["Aggregation", "Composition", "Inheritance", "Realization"]
         tk.OptionMenu(master, self._rel_type, *rel_options).grid(row=2, column=1)
 
-        return self._src # initial focus
+        # return self._src # initial focus
+        return master
 
     def apply(self):
         src = self._src.get()
@@ -800,20 +791,21 @@ class Add_Relation_Dialog(simpledialog.Dialog):
         rel_type = self._rel_type.get()
         self.result = (src, dest, rel_type)
 
-    def __init__(self, parent, relations:list, title:str = None):
-        self._relations = relations
-        super().__init__(parent, title=title)
+    # def __init__(self, parent, relations:list, title:str = None):
+    #     self._relations = relations
+    #     super().__init__(parent, title=title)
 
-    def body(self, master):
-        tk.Label(master, text = "Relationship:").grid(row = 0)
-        self._relation_delete = tk.StringVar(master)
-        tk.OptionMenu(master, self._relation_delete, *self._relations).grid(row = 0, column = 1)
+    # def body(self, master):
+    #     tk.Label(master, text = "Relationship:").grid(row = 0)
+    #     self._relation_delete = tk.StringVar(master)
+    #     tk.OptionMenu(master, self._relation_delete, *self._relations).grid(row = 0, column = 1)
 
-        return self._relation_delete
+    #     # return self._relation_delete
+    #     return master
 
-    def apply(self):
-        relation = self._relation_delete
-        self.result = relation
+    # def apply(self):
+    #     relation = self._relation_delete
+    #     self.result = relation
 
 #===================================== Class Cards =====================================#
 class Class_Box():
