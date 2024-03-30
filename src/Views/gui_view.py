@@ -39,19 +39,25 @@ class GUI_View(tk.Tk):
         self._user_command.set('quit')
         self.clear()
 
-    def draw_class(self, name, x, y) -> None:
-        Class_Box(self.diagram_canvas, name, x, y)
+    def draw_class(self, name, x=None, y=None) -> None:
+        if not x or not y:
+            x, y = self.get_next_position()
+        self._class_boxes.append(Class_Box(self.diagram_canvas, name, x, y))
 
     def clear(self) -> None:
         self.diagram_canvas.delete("all")
+        self._class_boxes.clear()
 
     def listen(self) -> str:
         '''
         Wait for user action and return as a command
         '''
+        self.update_button_state()
+
         self.wait_variable(self._user_command)
         cmd = self._user_command.get()
         self._user_command.set('')
+        print('Debugging: {}'.format(cmd))
         return cmd
 
     def create_menu(self):
@@ -306,29 +312,16 @@ class GUI_View(tk.Tk):
         class_name = simpledialog.askstring("Input", "Enter Class Name:", parent = self)
         new_command = 'add class ' + class_name
         self._user_command.set(new_command)
-
-        next_x, next_y = self.get_next_position()
-        box = Class_Box(self.diagram_canvas, class_name, next_x, next_y)
-        self._class_boxes.append(box)
-        # TODO: This works, but shifts the sidebar to the right
-        self.update_button_state()
-        return class_name
       
     def delete_class(self) -> str:
-        class_options = []
-        for cb in self._class_boxes:
-            class_options.append(cb._name)
+        class_options = [cb._name for cb in self._class_boxes]
 
         dialog = Delete_Class_Dialog(self, class_options, "Delete Class")
-
         if dialog.result:
             class_name = dialog.result
             
             new_command = "delete class " + class_name
             self._user_command.set(new_command)
-
-        self.update_button_state()
-        return class_name
     
     def rename_class(self) -> None:
         dialog = Rename_Class_Dialog(self,"Rename Class")
@@ -337,31 +330,15 @@ class GUI_View(tk.Tk):
             new_command = "rename class " + old_name + " " + new_name
             self._user_command.set(new_command)
 
-            for class_box in self._class_boxes:
-                if class_box['class_name'] == old_name:
-                    class_box['class_name'] = new_name
-                    break
-            #TODO
-            for relationship in self.relationshipsList:
-                if relationship['source'] == old_name:
-                    relationship['source'] = new_name
-                elif relationship['destination'] == old_name:
-                    relationship['destination'] = new_name
-
-            self.update_relationship_tracker()
-            self.redraw_canvas()
-            messagebox.showinfo("Rename Class", f"'{old_name}' has been renamed to '{new_name}'")
+            # messagebox.showinfo("Rename Class", f"'{old_name}' has been renamed to '{new_name}'")
 
     def add_field(self) -> None:
-        class_options = []
-        for cb in self._class_boxes:
-            class_options.append(cb._name)
+        class_options = [cb._name for cb in self._class_boxes]
 
         dialog = Add_Field_Dialog(self, class_options, "Add Field")
-
         if dialog.result:
-            class_name, field = dialog.result
-            new_command = "add field " + class_name + " " + field
+            class_name, field_name, field_type = dialog.result
+            new_command = "add field " + class_name + " " + field_name + " " + field_type
             self._user_command.set(new_command)
 
     def delete_field(self):
@@ -606,7 +583,8 @@ class Delete_Class_Dialog(simpledialog.Dialog):
         self._class_delete = tk.StringVar(master)
         tk.OptionMenu(master, self._class_delete, *self._class_options).grid(row = 0, column = 1)
 
-        return self._class_delete
+        # return self._class_delete
+        return master
 
     def apply(self):
         class_name = self._class_delete.get()
@@ -641,15 +619,21 @@ class Add_Field_Dialog(simpledialog.Dialog):
         tk.OptionMenu(master, self._class, *self._class_options).grid(row = 0, column = 1)
 
         tk.Label(master, text="Field Name:").grid(row=1)
-        self._field_entry = tk.Entry(master)
-        self._field_entry.grid(row = 1, column = 1)
+        self._field_name_entry = tk.Entry(master)
+        self._field_name_entry.grid(row = 1, column = 1)
 
-        return self._class, self._field_entry # initial focus
+        tk.Label(master, text="Field Type:").grid(row=2)
+        self._field_type_entry = tk.Entry(master)
+        self._field_type_entry.grid(row = 2, column = 1)
+
+        # return self._class, self._field_entry # initial focus
+        return master # initial focus
 
     def apply(self):
         class_name = self._class.get()
-        field_name = self._field_entry.get()
-        self.result = class_name, field_name
+        field_name = self._field_name_entry.get()
+        field_type = self._field_type_entry.get()
+        self.result = class_name, field_name, field_type
 
 class Delete_Field_Dialog(simpledialog.Dialog):
     def __init__(self, parent, class_options:list = None, title:str = None):
@@ -703,7 +687,8 @@ class Add_Method_Dialog(simpledialog.Dialog):
         self._method_entry = tk.Entry(master)
         self._method_entry.grid(row = 1, column = 1)
 
-        return self._class, self._method_entry # initial focus
+        # return self._class, self._method_entry # initial focus
+        return master # initial focus
 
     def apply(self):
         class_name = self._class.get()
