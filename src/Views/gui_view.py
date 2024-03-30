@@ -372,9 +372,7 @@ class GUI_View(tk.Tk):
             self._user_command.set(new_command)
 
     def delete_method(self):
-        class_options = []
-        for cb in self._class_boxes:
-            class_options.append(cb._name)
+        class_options = [cb._name for cb in self._class_boxes]
 
         dialog_result = Delete_Method_Dialog(self, class_options, title = "Delete Method").result
         if dialog_result:
@@ -705,7 +703,8 @@ class Delete_Method_Dialog(simpledialog.Dialog):
         self._method_options = tk.OptionMenu(master, self._delete_method, self._methods)
         self._method_options.grid(row = 1, column = 1)
 
-        return self._class, self._delete_method
+        # return self._class, self._delete_method
+        return master
 
     def update_options(self, *args):
         self._delete_method.set('')
