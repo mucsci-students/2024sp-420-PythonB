@@ -39,10 +39,10 @@ class GUI_View(tk.Tk):
         self._user_command.set('quit')
         self.clear()
 
-    def draw_class(self, name, x=None, y=None) -> None:
+    def draw_class(self, name, x=None, y=None, methods=[], fields=[], width=0) -> None:
         if not x or not y:
             x, y = self.get_next_position()
-        self._class_boxes.append(Class_Box(self.diagram_canvas, name, x, y))
+        self._class_boxes.append(Class_Box(self.diagram_canvas, name, x, y, methods, fields, width))
 
     def clear(self) -> None:
         self.diagram_canvas.delete("all")
@@ -826,12 +826,12 @@ class Delete_Relation_Dialog(simpledialog.Dialog):
 
 #===================================== Class Cards =====================================#
 class Class_Box():
-    def __init__(self, canvas, name:str, x, y) -> None:
+    def __init__(self, canvas: tk.Canvas, name:str, x, y, methods: list[list[list[str]]], fields: list[list[str]], width: int) -> None:
         self._name = name
         self._canvas = canvas
-        self._methods = []
-        self._fields = []
-        self._width = 150
+        self._methods = methods
+        self._fields = fields
+        self._width = 150 + width * 10
         self._text_spacing = 20
         self._indent_spacing = 10
         self._x = x
@@ -840,7 +840,16 @@ class Class_Box():
         self._click_y = y
         self._last_x = 0
         self._last_y = 0
+
+        self._line_count = 0
+        self._line_count += 1 # class_name
+        self._line_count += 1 # separator
+        self._line_count += len(self._fields) # fields
+        self._line_count += 1 # separator
+        self._line_count += len(self._methods) # methods
+
         self._box, self._box_text, self._height = self.create_class_box(canvas)
+
 
         canvas.tag_bind(self._box, '<Button-1>', self.on_click)
         canvas.tag_bind(self._box, '<B1-Motion>', self.on_move)
@@ -852,6 +861,10 @@ class Class_Box():
         offset_y = e.y - self._last_y
         self._canvas.move(self._box, offset_x, offset_y)
         self._canvas.move(self._box_text, offset_x, offset_y)
+        self._canvas.move(self._separator1, offset_x, offset_y)
+        self._canvas.move(self._separator2, offset_x, offset_y)
+        for x in self._moveable_text:
+            self._canvas.move(x, offset_x, offset_y)
         self._last_x = self._last_x + offset_x
         self._last_y = self._last_y + offset_y
         self._x = self._last_x
@@ -861,15 +874,46 @@ class Class_Box():
         self._last_x = e.x
         self._last_y = e.y
 
-    def create_class_box(self, canvas):
+    def create_class_box(self, canvas: tk.Canvas):
         # TODO: This value is just hard coded (obviously)
             # It should could the number of lines in the class box
-        num_text_lines = 2
+        num_text_lines = self._line_count + 2
         # Calculate box height dynamically based on contents
         box_height = self._text_spacing * num_text_lines
 
+        ################################################# 0
+        #                                               # 1
+        #                  class_name                   # 2
+        #------------------separater--------------------# 3
+        #                  fields                       # 4
+        #------------------separater--------------------# 5
+        #                  methods                      # 6
+        #                                               # 7
+        ################################################# 8
+
         box = canvas.create_rectangle(self._x, self._y, self._x + self._width, self._y + box_height, fill='lightgray', outline='black')
-        box_text = canvas.create_text(self._x + self._width / 2, self._y + self._text_spacing, text=self._name, font=('TkDefaultFont', 10, 'bold'))
+        current_line = 1
+        box_text = canvas.create_text(self._x + self._width / 2, self._y + self._text_spacing * current_line,\
+                                      text=self._name,\
+                                        font=('TkDefaultFont', 10, 'bold'))
+        current_line += 1
+        self._separator1 = canvas.create_line([self._x, self._y + self._text_spacing * current_line],\
+                                              [self._x + self._width, self._y + self._text_spacing * current_line])
+        current_line += 1
+        self._moveable_text = []
+        for lst in self._fields:
+            self._moveable_text.append(canvas.create_text(self._x + self._width / 2, self._y + self._text_spacing * current_line,\
+                                                          text=' '.join(lst),\
+                                                            font=('TkDefaultFont', 10, 'bold')))
+            current_line += 1
+        self._separator2 = canvas.create_line([self._x, self._y + self._text_spacing * current_line],\
+                                              [self._x + self._width, self._y + self._text_spacing * current_line])
+        current_line += 1
+        for lst in self._methods:
+            self._moveable_text.append(canvas.create_text(self._x + self._width / 2, self._y + self._text_spacing * current_line,\
+                                                          text=' '.join(lst[0]) + '(' + ', '.join(' '.join(x) for x in lst[1:]) + ')',\
+                                                            font=('TkDefaultFont', 10, 'bold')))
+            current_line += 1
 
         # TODO: We will need to add more info to the Class_Box
             # Removed all of the old functionality as it would never be used again.
