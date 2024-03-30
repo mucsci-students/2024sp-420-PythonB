@@ -126,7 +126,7 @@ def test_eq():
     c3 = UML_Class("attribute")
     c4 = UML_Field("hi")
     c5 = UML_Class("class")
-    c5.set_position([1, 2])
+    c5.set_position_with_delta([1, 2])
 
     assert c1 == c1
     assert c1 == c2
