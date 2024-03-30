@@ -4,7 +4,13 @@ from Models.uml_visitor import UML_Visitable, UML_Visitor
 import datetime #for default filename
 
 class UML_Diagram(UML_Visitable): 
-    
+    _self = None
+
+    def __new__(cls):
+        if not cls._self: 
+            cls._self = UML_Diagram()
+        return cls._self
+
     def __init__(self):
         self._classes:list[UML_Class] = []
         self._relations:list[UML_Relation] = []
