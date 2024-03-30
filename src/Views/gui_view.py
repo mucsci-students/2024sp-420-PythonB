@@ -442,18 +442,9 @@ class GUI_View(tk.Tk):
 
             new_command = "rename param " + class_name + " " + method_name + " " + old_name + " " + new_name
             self._user_command.set(new_command)
-            self.controller.rename_param(class_name, method_name , old_param_name, new_param_name)
 
-            for class_box in self._class_boxes:
-                if class_box['class_name'] == class_name:
-                    for method in class_box.get('methods', []):
-                        if method['name'] == method_name and old_param_name in method.get('parameters', []):
-                            index = method['parameters'].index(old_param_name)
-                            method['parameters'][index] = new_param_name
-                            self.redraw_canvas()
-                            messagebox.showinfo("Success", "Parameter renamed successfully.")
-                            return
-            messagebox.showinfo("Error", "Parameter not found.")
+            # messagebox.showinfo("Success", "Parameter renamed successfully.")
+            # messagebox.showinfo("Error", "Parameter not found.")
 
     def add_relation(self):
         # TODO: This will break once our back end is in
