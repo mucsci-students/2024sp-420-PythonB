@@ -71,9 +71,9 @@ class UML_Class(UML_Named_Object, UML_Visitable):
             raise ValueError("Method %s does not exist" % m_name)
         self._methods.remove(item)
 
-    def set_position(self, position: list[int]) -> None:
-        self._position[0] = position[0]
-        self._position[1] = position[1]
+    def set_position_with_delta(self, position: list[int]) -> None:
+        self._position[0] += position[0]
+        self._position[1] += position[1]
 
 #===================================== Helpers =====================================#
 
