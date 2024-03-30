@@ -1,80 +1,83 @@
-# 2024sp-420-PythonB
+# LambdaLegion UML Program (CLI Edition) V1.0
+The UML Diagram (CLI Edition) is a command-line tool
+designed to help users create, manage, and visualize
+UML (Unified Modeling Language) diagrams directly from the terminal.
+Primary functionalities include adding, renaming,
+and deleting classes, relationships and attributes 
+within a UML diagram.
 
-This readme contains the steps to launch the **CWorld UML Editor**. This is a terminal based program that allows users to create a Class Diagram with Relations, Classes, and Attributes. Once the program is running, type 'help' for a list of commands.
+## Features
+* Class Management: Add, rename, and delete classes within your UML Diagram.
+* Attribute Handling: Manage attributes for each class, including adding, renaming, and deletion.
+* Relationship Management: Define and modify relationships between classes, such as association, inheritance, and composition.
+* Visualization: Although the current version focuses on the management aspect, future updates aim to include visualization capabilities.
+* Save/Load Functionality: Save your current diagram state to a JSON file and load it back into the application for continued management.
 
-# Setup Your Environment
-<B>The minimum required version of Python to run this program is 3.6. If your version of python, found in the section below, is less than that, please follow [this](https://www.python.org/downloads/) link to install a newer version. </B>
+# Installation and Running the Program
 
-## Check that Python is Installed
+## Pre-Requisites
+* Have Python 3.6 or newer.
+* Have Pytest 6.2 or newer. 
+## Installation
+* Clone the Repository: First, clone the project repository to your local machine using Git. Open a terminal and run the following command<br> `git clone https://github.com/mucsci-students/2024sp-420-LambdaLegion.git`
+* Navigate to the project directory `cd 2024sp-420-LambdaLegion`
+## Running
+* For MacOS/Linux `python3 controller.py`
+* For Windows `python -m poetry run uml.py`
+## Testing
+* For MacOS/Linux `FILL OUT`
+* For Windows `python -m pytest`
 
-### MacOS
-<ol>
-<li> In the top right corner of your screen, there will be a search bar, a magnifying glass, or both (depending on your version of Mac). Click that.
-<li> Type 'terminal', then hit enter.
-<li> Type 'python3 --version' and hit enter. If you don't have developer tools installed, accept the install and wait for it to complete before retyping this command.
-<li> The terminal will print out "Python x.x.x", where x is a number, if python is installed.
-</ol>
+## Usage
+To interact with the UML Diagram CLI Manager, start the application and use the following commands:
+* `help`: Display a list of available commands. 
+* `help <class>`: Displays commands related to classes
+* `help <attribute>`: Displays commands related to attributes
+* `help <relationship>`: Displays commands related to relationships
+* `add class <class_name>`: Adds a class named <class_name>
+* `delete class <class_name`: Deletes class named <class_name> and all of its attributes/relationships
+* `"rename class <current_name> <new_name>`: Renames class <current_name> to <new_name>
+* `list class <class_name>`: Lists all attributes/relationships pertaining to <class_name>
+* `list classes`: Lists all classes in the diagram.
+* `add field <class_name> <field_name>` : Adds field named <field_name> 
+* `add method <class_name> <method_name>`: Adds method named <method_name>  
+* `add parameter <class_name> <method_name> <param_name>`: Adds param named <param_name> to method <method_name>            
+* `delete method <class_name> <method_name>`: Deletes method named <method_name>
+* `delete field <class_name> <field_name>`: Deletes field named <field_name>
+* `delete parameter <class_name> <method_name> <param_name>`: Deletes param named <param_name> from <method_name>
+* `rename field <class_name> <current_name> <new_name>`: Renames field <current_name> to <new_name>
+* `rename method <class_name> <current_name> <new_name>`: Renames method <current_name> to <new_name>
+* `rename parameter <class_name> <method_name> <current_name> <new_name>`: Renames param <current_name> in method <method_name> to <new_name>
+* `add relationship <src_class> <destination_class> <relation_type>`: Adds a relationship between <src_class> and <des_class> of <relation_type> 
+  * `Relationship types:` (Aggregation, Composition, Generalization, Inheritance)
+* `delete relationship <src_class> <destination_class>`: Deletes the relationship between <src_class> <des_class>
+* `list relationships`: Lists all relationships in UML
+* `list relationship <class_name>`: Lists all relationships to <class_name>
+* `save <file_name>`: Saves your UML Diagram as a JSON file.
+* `load <filename>`: Loads a UML diagram from a JSON file.
+* `exit` Exits the program.
 
-### Windows
-<ol>
-<li> Hold the windows key and click R.
-<li> Type 'cmd' and hit enter
-<li> Type 'py -V' and hit enter
-<li> "Python x.x.x" will print if python is installed.
-</ol>
+## Updates
+* Release 1.1 (March 10, 2024) **CURRENT**
+  * + Expaned attributes to have fields and methods (which contain parameters)
+  * + Added the ability to run tests using Pytest
+  * + Added the ability to list all relationships pertaining to a class (CLI)
+  * + Improved visualization of UML (CLI)
+  * + Added a GUI
+  * - Removed bug which allowed duplicate attributes to be added 
+  * - Removed a bug which would allow users to attempt to save a file without editing it
 
-### Linux
-<ol>
-<li> Open a terminal on your preferred Linux distro.
-<li> Type 'python --version'
-<li> "Python x.x.x" will print if python is installed.
-</ol>
+* Release 1.0 (February 11, 2024) 
+  * + Added basic functionality for classes
+  * + Added basic functionality for attributes
+  * + Added basic functionality for relationships
+  * + Added basic functionality for Save/Load
+  * + Added a CLI interface
+  * - Removed Herobrine
 
-## Install Python
-If you do not have python installed, install the latest version for your operating system [here](https://www.python.org/downloads/).
-
-# Download the Project
-
-### In a Terminal
-To dowload the project directly into a terminal, git tools will be required. Follow the instructions [here](https://github.com/git-guides/install-git) to install git if it is not already installed.
-
-### In a Desktop Environment
-Download the zip [here](https://github.com/mucsci-students/2024sp-420-PythonB/archive/refs/heads/main.zip) and extract it.
-
-
-# Build the Project
-
-Regardless of operating system, this project will install dependencies when it is built. If the build script is run outside a virtual environment, it may modify files on your computer unpredictably. To setup a virtual environment, follow [this link](https://docs.python.org/3/library/venv.html).
-
-**The command to execute a python program varies with operating system. On Mac, it is python3. On Windows both py and python work. On Linux it is python. Through the duration of these build instructions, py will be used. Substitute the command appropriate for your operating system in its place.**
-
-<ol>
-<li> Open a terminal and navigate to the folder that the project was cloned/extracted into. Basics of terminal navigation can be found at the links listed below this list. 
-<li> Once you are in the source directory of the project (its name should be 2024sp-420-PythonB), type 'pip install .' If you get a warning about not being in a virtual environment, hit enter to exit the script then follow the instructions at the top of this section to setup and enter a virtual environment before running 'py build.py' again.
-<li> Type 'py main.py' to run the program in its GUI mode, or 'py main.py CLI' for terminal mode.
-</ol>
-
-[Mac Terminal Navigation](https://www.macworld.com/article/221277/command-line-navigating-files-folders-mac-terminal.html) \
-[Windows PowerShell Navigation](https://wiki.communitydata.science/Windows_terminal_navigation) \
-[Windows Command Prompt Navigation](https://www.digitalcitizen.life/command-prompt-how-use-basic-commands/) \
-[Linux Terminal Navigation](https://www.linode.com/docs/guides/linux-navigation-commands/)
-
-### Operation modes
-- `'py main.py'       - default operation mode, opens a GUI.
-- `'py main.py CLI'   - runs the program in CLI mode instead of creating a gui.
-
-**If you are in the CLI mode, type 'help' for a list of commands.**
-**In the gui, use the menu options available at the top of the screen and/or by right clicking to manipulate the diagram to your needs**
-
-### Test the project
-'pip install pytest'
-    'pytest'         - from the source directory of the project, automatically finds and executes all test files.
-
-# Design Patterns
-    #TODO
-
-
-## Authors
-March 10th - Present: Adam Glick-Lynch, Ganga Acharya, Marshall Feng, Peter Freedman, Tim Moser
-Past - March 10th:    Danish Zubari, Katie Downlin, Jillian Daggs, Patrick McCullough, Zhang Chen
-
+## Members
+* Danish Zubari 
+* Katie Downlin
+* Jillian Daggs
+* Patrick McCullough
+* Zhang Chen
