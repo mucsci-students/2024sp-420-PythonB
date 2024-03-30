@@ -141,9 +141,14 @@ class UML_Controller:
         cmd = tokens.pop(0)
         cmd_target_name = tokens.pop(0)
         
+        # GUI use only
+        if cmd == 'move':
+            object = getattr(self._diagram.get_class(cmd_target_name), 'set_position_with_delta')
+            return [object, list(map(lambda x: int(x[1:].replace('_', '-')), tokens))]
+        
         if not cmd.islower() or not cmd_target_name.islower():
             raise ValueError("Commands should be lowercase.")
-        
+
         if cmd == 'rename':
             return self.__handle_rename([cmd_target_name] + tokens)
 
