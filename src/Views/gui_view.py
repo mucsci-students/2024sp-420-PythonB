@@ -356,21 +356,11 @@ class GUI_View(tk.Tk):
         old_name = simpledialog.askstring("Rename Field", "Enter the name of the field to rename:", parent=self)
         new_name = simpledialog.askstring("Rename Field", "Enter the new name for the field:", parent=self)
 
-        for class_box in self._class_boxes:
-            if class_box['class_name'] == class_name:
-                # Check and rename in fields
-                if old_name in class_box.get('fields', []):
+        new_command = "rename field " + class_name + " " + old_name + " " + new_name
+        self._user_command.set(new_command)
 
-                    new_command = "rename field " + class_name + " " + old_name + " " + new_name
-                    self._user_command.set(new_command)
-
-                    index = class_box['fields'].index(old_name)
-                    class_box['fields'][index] = new_name
-                    self.redraw_canvas()
-                    messagebox.showinfo("Success", f"Field '{old_name}' renamed to '{new_name}' in class '{class_name}'.")
-                    return
-        messagebox.showinfo("Error", "Attribute not found.")
-        return [class_name, old_name, new_name]
+        # messagebox.showinfo("Success", f"Field '{old_name}' renamed to '{new_name}' in class '{class_name}'.")
+        # messagebox.showinfo("Error", "Attribute not found.")
 
     def add_method(self):
         class_options = []
