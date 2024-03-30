@@ -363,15 +363,12 @@ class GUI_View(tk.Tk):
         # messagebox.showinfo("Error", "Attribute not found.")
 
     def add_method(self):
-        class_options = []
-        for cb in self._class_boxes:
-            class_options.append(cb._name)
+        class_options = [cb._name for cb in self._class_boxes]
 
         dialog = Add_Method_Dialog(self, class_options, "Add Method")
-
         if dialog.result:
-            class_name, method = dialog.result
-            new_command = "add method " + class_name + " " + method
+            class_name, method_name, return_type = dialog.result
+            new_command = "add method " + class_name + " " + method_name + " " + return_type
             self._user_command.set(new_command)
 
     def delete_method(self):
@@ -673,16 +670,21 @@ class Add_Method_Dialog(simpledialog.Dialog):
         tk.OptionMenu(master, self._class, *self._class_options).grid(row = 0, column = 1)
 
         tk.Label(master, text="Method Name:").grid(row=1)
-        self._method_entry = tk.Entry(master)
-        self._method_entry.grid(row = 1, column = 1)
+        self._method_name_entry = tk.Entry(master)
+        self._method_name_entry.grid(row = 1, column = 1)
+
+        tk.Label(master, text="Return Name:").grid(row=2)
+        self._return_type_entry = tk.Entry(master)
+        self._return_type_entry.grid(row = 2, column = 1)
 
         # return self._class, self._method_entry # initial focus
         return master # initial focus
 
     def apply(self):
         class_name = self._class.get()
-        method_name = self._method_entry.get()
-        self.result = class_name, method_name
+        method_name = self._method_name_entry.get()
+        return_type = self._return_type_entry.get()
+        self.result = class_name, method_name, return_type
 
 class Delete_Method_Dialog(simpledialog.Dialog):
     def __init__(self, parent, class_options:list = None, title:str = None):
