@@ -111,11 +111,14 @@ class GUI_View(tk.Tk):
         self._btn_class = tk.Button(self._sidebar, text = "Classes", command = self.class_options_menu)
         self._btn_class.pack(fill = tk.X, padx = (5, 5), pady = (10, 5))
 
+        self._btn_fields = tk.Button(self._sidebar, text = "Fields", command = self.fields_options_menu)
+        self._btn_fields.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
+
         self._btn_methods = tk.Button(self._sidebar, text = "Methods", command = self.methods_options_menu)
         self._btn_methods.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
 
-        self._btn_fields = tk.Button(self._sidebar, text = "Fields", command = self.fields_options_menu)
-        self._btn_fields.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
+        self._btn_params = tk.Button(self._sidebar, text = "Parameters", command = self.params_options_menu)
+        self._btn_params.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
 
         self._btn_relations = tk.Button(self._sidebar, text = "Relationships", command = self.relations_options_menu)
         self._btn_relations.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
@@ -130,6 +133,7 @@ class GUI_View(tk.Tk):
         self._btn_class.config(state="disabled")
         self._btn_fields.config(state="disabled")
         self._btn_methods.config(state="disabled")
+        self._btn_params.config(state="disabled")
         self._btn_relations.config(state="disabled")
 
         class_count = len(self._class_boxes)
@@ -139,6 +143,7 @@ class GUI_View(tk.Tk):
             self._btn_class.config(state="active")
             self._btn_fields.config(state="active")
             self._btn_methods.config(state="active")
+            self._btn_params.config(state="active")
         elif class_count > 1:
             self._btn_class.config(state="active")
             self._btn_fields.config(state="active")
@@ -295,6 +300,18 @@ class GUI_View(tk.Tk):
         finally:
             menu.grab_release()
 
+    def params_options_menu(self):
+        menu = Menu(self, tearoff = 0)
+        if len(self._class_boxes) > 0:
+            # TODO: See methods_options_menu above
+            menu.add_command(label = "Add Parameter", command = self.add_param)
+            menu.add_command(label = "Delete Parameter", command = self.delete_param)
+            menu.add_command(label = "Rename Parameter", command = self.rename_param)
+        try:
+            menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
+        finally:
+            menu.grab_release()
+
     def relations_options_menu(self):
         menu = Menu(self, tearoff=0)
         menu = Menu(self, tearoff=0)
@@ -394,34 +411,13 @@ class GUI_View(tk.Tk):
         if dialog_result:
             class_name, method_name, param_name = dialog_result
 
-            new_command = "add param " + " " + class_name + " " + param_name
+            new_command = "add param " + class_name + " " + method_name + " " + param_name
             self._user_command.set(new_command)
 
-            if not class_name or not method_name or not param_name:
-                messagebox.showinfo("Error","All fields are required.")
-                return
-
-            found_class = False
-            for class_box in self._class_boxes:
-                if class_box['class_name'] == class_name:
-                    found_class = True
-                    found_method = False
-                    for method in class_box.get('methods',[]):
-                        if method['name'] == method_name:
-                            found_method = True
-                            method.setdefault('parameters',[]).append(param_name)
-                            break
-                        if not found_method:
-                            messagebox.showinfo("Add Parameter", f"Method '{method_name}' not found.")
-                            return
-                        break
-            if not found_class:
-                messagebox.showinfo("Add Parameter", f"Class '{class_name}' not found.")
-                return
-
-            self.redraw_canvas()
-            messagebox.showinfo("Success", f"Parameter '{param_name}' added to '{class_name}")
-            return [class_name, method_name, param_name]
+            # messagebox.showinfo("Error","All fields are required.")
+            # messagebox.showinfo("Add Parameter", f"Method '{method_name}' not found.")
+            # messagebox.showinfo("Add Parameter", f"Class '{class_name}' not found.")
+            # messagebox.showinfo("Success", f"Parameter '{param_name}' added to '{class_name}")
 
     def delete_param(self):
         dialog_result = Delete_Parameter_Dialog(self, "Delete Parameter").result
