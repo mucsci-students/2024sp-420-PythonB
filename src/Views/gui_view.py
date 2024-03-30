@@ -184,58 +184,20 @@ class GUI_View(tk.Tk):
     # TODO: self.controller
     def open_file(self):
         file_name = simpledialog.askstring("Load a File","Enter a Valid Filename", parent = self)
-        data = self.controller.open_file(file_name)
+        new_command = 'load ' + file_name
+        self._user_command.set(new_command)
 
-        self._class_boxes.clear()
-        self.relationshipsList.clear()
-
-        # Assuming classes and relationships are directly stored under the top-level object
-        for class_data in data['classes']:
-            fields = [{'name': f['name'], 'type': f.get('type', 'Unknown')} for f in class_data.get('fields', [])]
-            methods = [{
-                'name': m['name'],
-                'return_type': m.get('return_type', 'void'),
-                'params': [{'name': p['name'], 'type': p.get('type', 'Unknown')} for p in m.get('params', [])]
-            } for m in class_data.get('methods', [])]
-
-            # Use your existing logic to calculate the next position
-            next_x, next_y = self.get_next_position()
-
-            # Append the class along with its fields and methods
-            self._class_boxes.append({
-                'class_name': class_data['name'],
-                'fields': fields,
-                'methods': methods,
-                'x': next_x,
-                'y': next_y
-            })
-
-    # Handling relationships
-        for relationship in data['relationships']:
-            self.relationshipsList.append({
-                'source': relationship['source'],
-                'destination': relationship['destination'],
-                'type': relationship['type']
-            })
-
-        # Refreshing GUI elements
-        self.update_relationship_tracker()
-        self.redraw_canvas()
-        messagebox.showinfo("Open Diagram", f"Diagram loaded successfully from {file_name}.")
+        # messagebox.showinfo("Open Diagram", f"Diagram loaded successfully from {file_name}.")
 
 
     def save_file(self):
         # Open a dialog asking for the filename to save to
-        filename = filedialog.asksaveasfilename(defaultextension=".json",
+        file_name = filedialog.asksaveasfilename(initialfile='untitled.json', initialdir='saves/',defaultextension=".json",
                                                 filetypes=[("JSON files", "*.json"), ("All files", "*.*")])
-        if not filename:
-            # User cancelled the save
-            return
+        new_command = 'save ' + file_name[file_name.rfind('/') + 1:].removesuffix('.json')
+        self._user_command.set(new_command)
 
-        # TODO: Hook save in here
-
-        # Notify the user of success
-        messagebox.showinfo("Save File", "The diagram has been saved successfully.")
+        # messagebox.showinfo("Save File", "The diagram has been saved successfully.")
 
     
     def show_help_messagebox(self):
