@@ -342,9 +342,7 @@ class GUI_View(tk.Tk):
             self._user_command.set(new_command)
 
     def delete_field(self):
-        class_options = []
-        for cb in self._class_boxes:
-            class_options.append(cb._name)
+        class_options = [cb._name for cb in self._class_boxes]
 
         dialog_result = Delete_Field_Dialog(self, class_options, title = "Delete Field").result
         if dialog_result:
@@ -654,7 +652,8 @@ class Delete_Field_Dialog(simpledialog.Dialog):
         self._field_options = tk.OptionMenu(master, self._delete_field, self._fields)
         self._field_options.grid(row = 1, column = 1)
 
-        return self._class, self._delete_field
+        # return self._class, self._delete_field
+        return master
 
     def update_options(self, *args):
         self._delete_field.set('')
