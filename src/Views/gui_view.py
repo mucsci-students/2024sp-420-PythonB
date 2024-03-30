@@ -427,28 +427,10 @@ class GUI_View(tk.Tk):
             new_command = "delete param " + class_name + " " + method_name + " " + param_name
             self._user_command.set(new_command)
 
-            found_class = False
-            for class_box in self._class_boxes:
-                if class_box['class_name'] == class_name:
-                    found_class = True
-                    found_method = False
-                    for method in class_box.get('methods', []):
-                        if method['name'] == method_name:
-                            found_method = True
-                            if param_name in method.get('parameters', []):
-                                method['parameters'].remove(param_name)
-                                self.redraw_canvas()
-                                messagebox.showinfo("Success", f"Parameter '{param_name}' removed from method '{method_name}' in class '{class_name}'.")
-                                return
-                            else:
-                                messagebox.showinfo("Error", f"Parameter '{param_name}' not found in method '{method_name}'.")
-                                return
-                    if not found_method:
-                        messagebox.showinfo("Error", f"Method '{method_name}' not found in class '{class_name}'.")
-                        return
-            if not found_class:
-                messagebox.showinfo("Error", f"Class '{class_name}' not found.")
-            return [class_name, method_name, param_name]
+            # messagebox.showinfo("Success", f"Parameter '{param_name}' removed from method '{method_name}' in class '{class_name}'.")
+            # messagebox.showinfo("Error", f"Parameter '{param_name}' not found in method '{method_name}'.")
+            # messagebox.showinfo("Error", f"Method '{method_name}' not found in class '{class_name}'.")
+            # messagebox.showinfo("Error", f"Class '{class_name}' not found.")
 
     def rename_param(self):
         # This is all yellow because these paramaters don't exist anymore
