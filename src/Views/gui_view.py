@@ -289,7 +289,7 @@ class GUI_View(tk.Tk):
             # TODO: See field_options_menu above
             menu.add_command(label = "Add Method", command = self.add_method)
             menu.add_command(label = "Delete Method", command = self.delete_method)
-            # menu.add_command(label = "Rename Method", command = self.rename_method)
+            menu.add_command(label = "Rename Method", command = self.rename_method)
         try:
             menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
         finally:
@@ -382,7 +382,12 @@ class GUI_View(tk.Tk):
             self._user_command.set(new_command)
 
     def rename_method(self):
-        pass
+            class_name = simpledialog.askstring("Rename Method", "Enter the name of the class:", parent=self)
+            old_name = simpledialog.askstring("Rename Method", "Enter the name of the method to rename:", parent=self)
+            new_name = simpledialog.askstring("Rename Method", "Enter the new name for the method:", parent=self)
+            
+            new_command = "rename method " + class_name + " " + old_name + " " + new_name
+            self._user_command.set(new_command)
 
     def add_param(self):
         dialog_result = Add_Parameter_Dialog(self, title="Add Parameter").result
