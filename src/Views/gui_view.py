@@ -1,6 +1,4 @@
 from tkinter import ttk
-from Models.uml_diagram import UML_Diagram
-from Models.uml_class import UML_Class
 
 import tkinter as tk
 from tkinter import filedialog
@@ -43,12 +41,8 @@ class GUI_View(tk.Tk):
         self._user_command.set('quit')
         self.clear()
 
-    def draw(self, diagram: UML_Diagram) -> None:
-        for cls in diagram.get_all_classes():
-            self.draw_class(cls)
-
-    def draw_class(self, cls: UML_Class) -> None:
-        Class_Box(self.diagram_canvas, cls.get_name(), cls.get_position_x(), cls.get_position_y())
+    def draw_class(self, name, x, y) -> None:
+        Class_Box(self.diagram_canvas, name, x, y)
 
     def clear(self) -> None:
         self.diagram_canvas.delete("all")
