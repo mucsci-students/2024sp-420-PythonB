@@ -21,7 +21,7 @@ class GUI_View(tk.Tk):
         center_y = int(screen_height/2 - window_height / 2)
         # Set the window size and position
         self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
-        self._class_boxes = []
+        self._class_boxes: list[Class_Box] = []
         self._sidebar_buttons = []
 
         # TODO: class_list could be moved here
@@ -34,6 +34,9 @@ class GUI_View(tk.Tk):
 
         self._user_command = tk.StringVar()
         self.protocol("WM_DELETE_WINDOW", self.on_close)
+
+    def on_move(self):
+        pass
 
     def on_close(self) -> None:
         self._user_command.set('quit')
@@ -60,6 +63,9 @@ class GUI_View(tk.Tk):
         self._user_command.set('')
         print('Debugging: {}'.format(cmd))
         return cmd
+    
+    def get_all_positions(self):
+        return [[cb._name, cb._last_x, cb._last_y] for cb in self._class_boxes]
 
     def create_menu(self):
         """
@@ -78,7 +84,7 @@ class GUI_View(tk.Tk):
         file_menu.add_command(label="Load", command=self.open_file)
         file_menu.add_command(label="Save", command=self.save_file)
         file_menu.add_separator()
-        file_menu.add_command(label="Exit", command=self.quit)
+        file_menu.add_command(label="Exit", command=self.on_close)
         menu_bar.add_cascade(label="File", menu=file_menu)
 
         # We may want Undo/Redo in here
@@ -98,12 +104,10 @@ class GUI_View(tk.Tk):
         menu_bar.add_command(label = "Redo", command = self.redo)
 
     def undo(self):
-        # TODO: Hook Undo in here
-        pass
+        self._user_command.set('undo')
 
     def redo(self):
-        # TODO: Hook Redo in here
-        pass
+        self._user_command.set('redo')
 
     def create_sidebar(self):
         self._sidebar = tk.Frame(self, width = 200, bg = 'lightgray')
@@ -160,6 +164,7 @@ class GUI_View(tk.Tk):
 
     def create_diagram_space(self):
         self.diagram_canvas = tk.Canvas(self, bg = 'white')
+        # self.diagram_canvas.tag_bind('all', '<B1-Motion>', self.on_move)
         # Pack the canvas to fill the remaining space after the sidebar
         self.diagram_canvas.pack(side=tk.LEFT, padx=10, pady=10, fill=tk.BOTH, expand=True)
 
@@ -800,8 +805,8 @@ class Class_Box():
         self._y = y
         self._click_x = x
         self._click_y = y
-        self._last_x = 0
-        self._last_y = 0
+        self._last_x = x
+        self._last_y = y
 
         self._line_count = 0
         self._line_count += 1 # class_name
