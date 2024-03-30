@@ -55,6 +55,9 @@ class UML_Controller:
         """
         Handles the quit action for the controller offering to save before closing
         """
+        if isinstance(self._controller, GUI_Controller):
+            self._should_quit = True
+            return
         output = ''
         while output.lower() != 'n':
             output = input("Do you want to save? [y/n]: ")
