@@ -31,13 +31,11 @@ class GUI_View(tk.Tk):
         self.update_button_state()
         self.create_diagram_space()
         self.update_relationship_tracker()
-        self._commands = []
 
         self._user_command = tk.StringVar()
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
     def on_close(self) -> None:
-        print("Window is closing")
         self._user_command.set('quit')
         self.clear()
 
@@ -51,14 +49,9 @@ class GUI_View(tk.Tk):
         '''
         Wait for user action and return as a command
         '''
-        # self.create_menu()
-        # self.create_sidebar()
-
-        print('Wait for user action')
         self.wait_variable(self._user_command)
         cmd = self._user_command.get()
         self._user_command.set('')
-        print('Return cmd')
         return cmd
 
     def create_menu(self):
@@ -312,9 +305,7 @@ class GUI_View(tk.Tk):
     def add_class(self) -> str:
         class_name = simpledialog.askstring("Input", "Enter Class Name:", parent = self)
         new_command = 'add class ' + class_name
-        print('Add new class cmd')
         self._user_command.set(new_command)
-        self._commands.append(new_command)
 
         next_x, next_y = self.get_next_position()
         box = Class_Box(self.diagram_canvas, class_name, next_x, next_y)
@@ -335,7 +326,6 @@ class GUI_View(tk.Tk):
             
             new_command = "delete class " + class_name
             self._user_command.set(new_command)
-            self._commands.add(new_command)
 
         self.update_button_state()
         return class_name
@@ -345,7 +335,7 @@ class GUI_View(tk.Tk):
         if dialog.result:
             old_name, new_name = dialog.result
             new_command = "rename class " + old_name + " " + new_name
-            self._commands.add(new_command)
+            self._user_command.set(new_command)
 
             for class_box in self._class_boxes:
                 if class_box['class_name'] == old_name:
@@ -372,7 +362,7 @@ class GUI_View(tk.Tk):
         if dialog.result:
             class_name, field = dialog.result
             new_command = "add field " + class_name + " " + field
-            self._commands.add(new_command)
+            self._user_command.set(new_command)
 
     def delete_field(self):
         class_options = []
@@ -384,7 +374,7 @@ class GUI_View(tk.Tk):
             class_name, field_name = dialog_result
             
             new_command = "delete field " + class_name + " " + field_name
-            self._commands.add(new_command)
+            self._user_command.set(new_command)
 
     def rename_field(self):
         class_name = simpledialog.askstring("Rename Field", "Enter the name of the class:", parent=self)
@@ -397,7 +387,7 @@ class GUI_View(tk.Tk):
                 if old_name in class_box.get('fields', []):
 
                     new_command = "rename field " + class_name + " " + old_name + " " + new_name
-                    self._commands.add(new_command)
+                    self._user_command.set(new_command)
 
                     index = class_box['fields'].index(old_name)
                     class_box['fields'][index] = new_name
@@ -417,7 +407,7 @@ class GUI_View(tk.Tk):
         if dialog.result:
             class_name, method = dialog.result
             new_command = "add method " + class_name + " " + method
-            self._commands.add(new_command)
+            self._user_command.set(new_command)
 
     def delete_method(self):
         class_options = []
@@ -429,7 +419,7 @@ class GUI_View(tk.Tk):
             class_name, method_name = dialog_result
             
             new_command = "delete method " + class_name + " " + method_name
-            self._commands.add(new_command)
+            self._user_command.set(new_command)
 
     def rename_method(self):
         pass
@@ -440,7 +430,7 @@ class GUI_View(tk.Tk):
             class_name, method_name, param_name = dialog_result
 
             new_command = "add param " + " " + class_name + " " + param_name
-            self._commands.add(new_command)
+            self._user_command.set(new_command)
 
             if not class_name or not method_name or not param_name:
                 messagebox.showinfo("Error","All fields are required.")
@@ -474,7 +464,7 @@ class GUI_View(tk.Tk):
             class_name, method_name, param_name = dialog_result
 
             new_command = "delete param " + class_name + " " + method_name + " " + param_name
-            self._commands(new_command)
+            self._user_command.set(new_command)
 
             found_class = False
             for class_box in self._class_boxes:
@@ -508,7 +498,7 @@ class GUI_View(tk.Tk):
             class_name, method_name, old_name, new_name = dialog_result
 
             new_command = "rename param " + class_name + " " + method_name + " " + old_name + " " + new_name
-            self._commands.add(new_command)
+            self._user_command.set(new_command)
             self.controller.rename_param(class_name, method_name , old_param_name, new_param_name)
 
             for class_box in self._class_boxes:
@@ -535,7 +525,7 @@ class GUI_View(tk.Tk):
             src, dest, rel = dialog.result
 
             new_command = "add relation " + src + " " + dest + " " + rel
-            self._commands.add(new_command)
+            self._user_command.set(new_command)
 
             # Add the relationship
             self.relationshipsList.append({
@@ -556,7 +546,7 @@ class GUI_View(tk.Tk):
             dest = selected_rel['destination']
 
             new_command = "delete relationship " + src + " " + dest
-            self._commands.add(new_command)
+            self._user_command.set(new_command)
 
             # If successful, update the relationships list and UI accordingly
             self.relationshipsList[:] = [rel for rel in self.relationshipsList if not (rel['source'] == src and rel['destination'] == dest)]
