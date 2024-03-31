@@ -6,6 +6,8 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter import simpledialog
 
+import math
+
 #===================================== View Setup =====================================#
 
 class GUI_View(tk.Tk):
@@ -23,6 +25,8 @@ class GUI_View(tk.Tk):
         self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
         self._class_boxes: list[Class_Box] = []
         self._sidebar_buttons = []
+
+        self._relation_points = {}
 
         # TODO: class_list could be moved here
         self.relationshipsList = []
@@ -44,9 +48,55 @@ class GUI_View(tk.Tk):
             x, y = self.get_next_position()
         self._class_boxes.append(Class_Box(self.diagram_canvas, self._user_command, name, x, y, methods, fields, width))
 
+    def draw_relations(self, relations: list[list[str]]) -> None:
+        for src, dst, type in relations:
+            if src == dst:
+                # What to do for self assigned relationship?
+                return 
+            if src in self._relation_points:
+                src_points = self._relation_points[src]
+            else:
+                src_class = next(x for x in self._class_boxes if x._name == src)
+                src_points = []; self._relation_points[src] = src_points
+                src_points.append([src_class._x + src_class._width / 2, src_class._y]                        ) # top
+                src_points.append([src_class._x + src_class._width / 2, src_class._y + src_class._height]    ) # bot
+                src_points.append([src_class._x,                        src_class._y + src_class._height / 2]) # left
+                src_points.append([src_class._x + src_class._width,     src_class._y + src_class._height / 2]) # right
+            if dst in self._relation_points:
+                dst_points = self._relation_points[dst]
+            else:
+                dst_class = next(x for x in self._class_boxes if x._name == dst)
+                dst_points = []; self._relation_points[dst] = dst_points
+                dst_points.append([dst_class._x + dst_class._width / 2, dst_class._y]                        ) # top
+                dst_points.append([dst_class._x + dst_class._width / 2, dst_class._y + dst_class._height]    ) # bot
+                dst_points.append([dst_class._x,                        dst_class._y + dst_class._height / 2]) # left
+                dst_points.append([dst_class._x + dst_class._width,     dst_class._y + dst_class._height / 2]) # right
+            self.draw_relation(src_points, dst_points, type)
+
+    def draw_relation(self, src: list[list[int]], dst: list[list[int]], type: str) -> None:
+        a, b = -1, -1
+        dist = float('inf')
+        for i in range(len(src)):
+            for j in range(len(dst)):
+                d = math.dist(src[i], dst[j])
+                if d < dist:
+                    dist = d
+                    a, b = i, j
+        start = src.pop(a)
+        end = dst.pop(b)
+        if type == 'Aggregation':
+            self.draw_aggregation(start, end)
+        elif type == 'Composition':
+            self.draw_composition(start, end)
+        elif type == 'Inheritance':
+            self.draw_inheritance(start, end)
+        elif type == 'Realization':
+            self.draw_realization(start, end)
+
     def clear(self) -> None:
         self.diagram_canvas.delete("all")
         self._class_boxes.clear()
+        self._relation_points.clear()
 
     def listen(self) -> str:
         '''
@@ -414,6 +464,55 @@ class GUI_View(tk.Tk):
 
             # messagebox.showinfo("Success", "Parameter renamed successfully.")
             # messagebox.showinfo("Error", "Parameter not found.")
+
+    def vec(self, p1: list[int], p2: list[int]):
+        return p2[0] - p1[0], p2[1] - p1[1]
+    
+    def rotate(self, v: tuple[int], rad: float):
+        return v[0] * math.cos(rad) - v[1] * math.sin(rad), v[0] * math.sin(rad) + v[1] * math.cos(rad)
+    
+    def normalized(self, v: tuple[int]):
+        ac = 1e-11 + (v[0]**2 + v[1]**2)**0.5
+        return v[0] / ac, v[1] / ac
+
+    def draw_diamond(self, start: list[int], end: list[int], color: str, side_length: int=30) -> None:
+        orgin = self.vec(start, end)
+        left = self.normalized(self.rotate(orgin, -5 * math.pi / 6))
+        right = self.normalized(self.rotate(orgin, 5 * math.pi / 6))
+        p1 = end[0] + left[0] * side_length, end[1] + left[1] * side_length
+        p2 = end[0] + right[0] * side_length, end[1] + right[1] * side_length
+        v = self.normalized(self.vec(end, start))
+        to = end[0] + v[0] * side_length * 3**0.5, end[1] + v[1] * side_length * 3**0.5
+        self.diagram_canvas.create_polygon(*end, *p1, *to, *p2, outline="black", fill=color)
+
+    def draw_triangle(self, start: list[int], end: list[int], color: str, side_length: int=40) -> None:
+
+        orgin = self.vec(start, end)
+        left = self.normalized(self.rotate(orgin, -5 * math.pi / 6))
+        right = self.normalized(self.rotate(orgin, 5 * math.pi / 6))
+        p1 = end[0] + left[0] * side_length, end[1] + left[1] * side_length
+        p2 = end[0] + right[0] * side_length, end[1] + right[1] * side_length
+        self.diagram_canvas.create_polygon(*end, *p1, *p2, outline="black", fill=color)
+
+    def draw_aggregation(self, start: list[int], end: list[int]) -> None:
+        # line with white diamond
+        self.diagram_canvas.create_line(start[0], start[1], end[0], end[1], width=5)
+        self.draw_diamond(start, end, 'white')
+
+    def draw_composition(self, start: list[int], end: list[int]) -> None:
+        # line with solid diamond
+        self.diagram_canvas.create_line(start[0], start[1], end[0], end[1], width=5)
+        self.draw_diamond(start, end, 'black')
+
+    def draw_inheritance(self, start: list[int], end: list[int]) -> None:
+        # line with white triangle
+        self.diagram_canvas.create_line(start[0], start[1], end[0], end[1], width=5)
+        self.draw_triangle(start, end, 'white')
+
+    def draw_realization(self, start: list[int], end: list[int]) -> None:
+        # dash line with white triangle
+        self.diagram_canvas.create_line(start[0], start[1], end[0], end[1], width=5, dash=(100, 10))
+        self.draw_triangle(start, end, 'white')
 
     def add_relation(self):
         # TODO: This will break once our back end is in
