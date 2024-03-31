@@ -439,8 +439,14 @@ class GUI_View(tk.Tk):
 
     def rename_method(self):
             class_name = simpledialog.askstring("Rename Method", "Enter the name of the class:", parent=self)
+            if not class_name:
+                return
             old_name = simpledialog.askstring("Rename Method", "Enter the name of the method to rename:", parent=self)
+            if not old_name:
+                return
             new_name = simpledialog.askstring("Rename Method", "Enter the new name for the method:", parent=self)
+            if not new_name:
+                return
             
             new_command = "rename method " + class_name + " " + old_name + " " + new_name
             self._user_command.set(new_command)
