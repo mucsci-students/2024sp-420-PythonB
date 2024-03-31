@@ -41,8 +41,15 @@ class UML_Controller:
             except EOFError:
                 self.quit()
             except Exception as e:
-                print(str(e))
-                self._states.undo()   
+                if isinstance(self._controller, CLI_Controller):
+                    print(str(e))
+                else:
+                    self._controller.error_message(str(e))
+                # This undo is unnecessary for most cases
+                # since the Diagram is not changed if Exception is thrown in most cases
+                # For example: if cmd contains invalid arguments, the diagram is not touched at all,
+                #               but this undo will undo to last state, which is not expected.
+                # self._states.undo()
                 continue
             self._controller.draw(self._diagram)
 

@@ -40,6 +40,9 @@ class GUI_View(tk.Tk):
         self._user_command = tk.StringVar()
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
+    def error_message(self, message: str) -> None:
+        messagebox.showinfo("Error - CWorld UML", message, parent=self)
+
     def on_close(self) -> None:
         self._user_command.set('quit')
         self.clear()
