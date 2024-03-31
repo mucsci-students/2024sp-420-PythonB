@@ -203,6 +203,7 @@ class GUI_View(tk.Tk):
             self._btn_fields.config(state="active")
             self._btn_methods.config(state="active")
             self._btn_relations.config(state="active")
+            self._btn_params.config(state="active")
 
     def update_relationship_tracker(self):
         self.relationship_tracker.delete(0, tk.END)  # Clear existing entries
