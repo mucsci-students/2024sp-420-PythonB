@@ -25,12 +25,14 @@ class GUI_View(tk.Tk):
         self.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
         self._class_boxes: list[Class_Box] = []
         self._sidebar_buttons = []
-
         self._relation_points = {}
+
         self._self_relations = []
 
         # TODO: class_list could be moved here
+
         self.relationshipsList = []
+
         self.create_menu()
         self.create_sidebar()
         self.update_button_state()
@@ -104,9 +106,9 @@ class GUI_View(tk.Tk):
         self._self_relations.clear()
 
     def listen(self) -> str:
-        '''
+        """
         Wait for user action and return as a command
-        '''
+        """
         self.update_button_state()
         self.update_relationship_tracker()
 
@@ -120,17 +122,9 @@ class GUI_View(tk.Tk):
         return [[cb._name, cb._last_x, cb._last_y] for cb in self._class_boxes]
 
     def create_menu(self):
-        """
-        Initializes the menu bar with cascading menus for File and Help.
-        Parameters:
-            self - The parent
-
-        Returns:
-            None
-        """
         menu_bar = Menu(self)
         self.config(menu=menu_bar)
-        # File
+        # File Menu
         file_menu = Menu(menu_bar, tearoff=0)
         # file_menu.add_command(label="New", command=self.new_file)
         file_menu.add_command(label="Load", command=self.open_file)
@@ -138,11 +132,6 @@ class GUI_View(tk.Tk):
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.on_close)
         menu_bar.add_cascade(label="File", menu=file_menu)
-
-        # We may want Undo/Redo in here
-        # Edit
-        # edit_menu = Menu(menu_bar, tearoff=0)
-        # menu_bar.add_cascade(label="Edit", menu=edit_menu)
 
         # Help Menu
         help_menu = Menu(menu_bar, tearoff=0)
@@ -187,26 +176,28 @@ class GUI_View(tk.Tk):
         self.relationship_tracker.pack(padx = 5, pady = 5, fill = tk.BOTH, expand = True)
 
     def update_button_state(self):
-        self._btn_class.config(state="disabled")
-        self._btn_fields.config(state="disabled")
-        self._btn_methods.config(state="disabled")
-        self._btn_params.config(state="disabled")
-        self._btn_relations.config(state="disabled")
+        self._btn_class.config(state = "disabled")
+        self._btn_fields.config(state = "disabled")
+        self._btn_methods.config(state = "disabled")
+        self._btn_params.config(state = "disabled")
+        self._btn_relations.config(state = "disabled")
 
         class_count = len(self._class_boxes)
         if class_count == 0:
-            self._btn_class.config(state="active")
+            self._btn_class.config(state = "active")
         elif class_count == 1:
-            self._btn_class.config(state="active")
-            self._btn_fields.config(state="active")
-            self._btn_methods.config(state="active")
-            self._btn_params.config(state="active")
+            self._btn_class.config(state = "active")
+            self._btn_fields.config(state = "active")
+            self._btn_methods.config(state = "active")
+            self._btn_params.config(state = "active")
         elif class_count > 1:
-            self._btn_class.config(state="active")
-            self._btn_fields.config(state="active")
-            self._btn_methods.config(state="active")
-            self._btn_relations.config(state="active")
-            self._btn_params.config(state="active")
+
+            self._btn_class.config(state = "active")
+            self._btn_fields.config(state = "active")
+            self._btn_methods.config(state = "active")
+            self._btn_params.config(state = "active")
+            self._btn_relations.config(state = "active")
+
 
     def update_relationship_tracker(self):
         self.relationship_tracker.delete(0, tk.END)  # Clear existing entries
@@ -218,22 +209,11 @@ class GUI_View(tk.Tk):
 
     def create_diagram_space(self):
         self.diagram_canvas = tk.Canvas(self, bg = 'white')
-        # self.diagram_canvas.tag_bind('all', '<B1-Motion>', self.on_move)
-        # Pack the canvas to fill the remaining space after the sidebar
-        self.diagram_canvas.pack(side=tk.LEFT, padx=10, pady=10, fill=tk.BOTH, expand=True)
+        self.diagram_canvas.pack(side = tk.LEFT, padx = 10, pady = 10, fill = tk.BOTH, expand = True)
 
 #===================================== Menu Methods =====================================#
 
     def new_file(self):
-        """
-        Creates a new file.
-
-        Parameters:
-            self -- The parent
-
-        Returns:
-            newFile -- The new file
-        """
         # TODO: This either needs removed or needs to ask if you want to save, then restart the program
             # new Diagram and everything
             # If removed, this needs to be removed from the file menu
@@ -249,8 +229,6 @@ class GUI_View(tk.Tk):
         new_command = 'load ' + file_name[file_name.rfind('/') + 1:].removesuffix('.json')
         self._user_command.set(new_command)
 
-        # messagebox.showinfo("Open Diagram", f"Diagram loaded successfully from {file_name}.")
-
 
     def save_file(self):
         # Open a dialog asking for the filename to save to
@@ -260,9 +238,6 @@ class GUI_View(tk.Tk):
             return
         new_command = 'save ' + file_name[file_name.rfind('/') + 1:].removesuffix('.json')
         self._user_command.set(new_command)
-
-        # messagebox.showinfo("Save File", "The diagram has been saved successfully.")
-
     
     def show_help_messagebox(self):
         help_content = """
@@ -289,8 +264,7 @@ class GUI_View(tk.Tk):
         # Create a menu that will appear at the current mouse position
         menu = tk.Menu(self, tearoff=0)
         menu.add_command(label = "Add Class", command = self.add_class)
-        # This will show Delete Class and Rename Class only when there is
-            # at least one class card.
+        
         if len(self._class_boxes) > 0:
             menu.add_command(label = "Delete Class", command = self.delete_class)
             menu.add_command(label = "Rename Class", command = self.rename_class)
@@ -774,18 +748,20 @@ class Rename_Field_Dialog(simpledialog.Dialog):
 class Add_Method_Dialog(simpledialog.Dialog):
     def __init__(self, parent, class_options = None, title=None):
         self._class_options = class_options
-        super().__init__(parent, title=title)
+        super().__init__(parent, title = title)
 
     def body(self, master):
-        tk.Label(master, text="Class:").grid(row=0)
+        tk.Label(master, text = "Class:").grid(row=0)
         self._class = tk.StringVar(master)
         tk.OptionMenu(master, self._class, *self._class_options).grid(row = 0, column = 1)
 
-        tk.Label(master, text="Method Name:").grid(row=1)
+        tk.Label(master, text = "Method Name:").grid(row = 1)
         self._method_name_entry = tk.Entry(master)
         self._method_name_entry.grid(row = 1, column = 1)
 
+
         tk.Label(master, text="Return Type:").grid(row=2)
+
         self._return_type_entry = tk.Entry(master)
         self._return_type_entry.grid(row = 2, column = 1)
 
@@ -802,7 +778,7 @@ class Delete_Method_Dialog(simpledialog.Dialog):
     def __init__(self, parent, class_options:list = None, title:str = None):
         self.parent = parent
         self._class_options = class_options
-        super().__init__(parent, title=title)
+        super().__init__(parent, title = title)
 
     def body(self, master):
         tk.Label(master, text = "Select Class:").grid(row = 0)
@@ -890,6 +866,7 @@ class Add_Parameter_Dialog(simpledialog.Dialog):
         super().__init__(parent, title)
 
     def body(self, master):
+
         tk.Label(master, text = "Select Class:").grid(row = 0)
         self._class = tk.StringVar(master)
         self._class.trace_add("write",self.update_options)
@@ -901,9 +878,10 @@ class Add_Parameter_Dialog(simpledialog.Dialog):
         self._method_options = tk.OptionMenu(master, self._method_select, ())
         self._method_options.grid(row = 1, column = 1)
 
-        tk.Label(master, text="Parameter Name:").grid(row=2)
+
+        tk.Label(master, text = "Parameter Name:").grid(row = 2)
         self.param_name_entry = tk.Entry(master)
-        self.param_name_entry.grid(row=2, column=1)
+        self.param_name_entry.grid(row = 2, column = 1)
 
         # return self.class_name_entry  # initial focus
         return master
@@ -929,6 +907,7 @@ class Add_Parameter_Dialog(simpledialog.Dialog):
         self.result = class_name, method_name, param_name
 
 class Delete_Parameter_Dialog(simpledialog.Dialog):
+
     def __init__(self, parent, class_options:list = None, title=None):
         self.parent = parent
         self._class_options = class_options
@@ -951,6 +930,7 @@ class Delete_Parameter_Dialog(simpledialog.Dialog):
         self._param_select = tk.StringVar(master)
         self._param_options = tk.OptionMenu(master, self._param_select, ())
         self._param_options.grid(row = 2, column = 1)
+
 
         # return self.class_name_entry  # Set focus on the first entry widget
         return master
@@ -994,6 +974,7 @@ class Delete_Parameter_Dialog(simpledialog.Dialog):
         self.result = class_name, method_name, param_name
 
 class Rename_Parameter_Dialog(simpledialog.Dialog):
+
     def __init__(self, parent, class_options:list = None, title=None):
         self.parent = parent
         self._class_options = class_options
@@ -1034,6 +1015,7 @@ class Rename_Parameter_Dialog(simpledialog.Dialog):
         menu = self._method_options['menu']
         menu.delete(0,'end')
 
+
         for o in options:
             self._method_options['menu'].add_command(label = o, command = tk._setit(self._method_select,o))
 
@@ -1065,21 +1047,21 @@ class Rename_Parameter_Dialog(simpledialog.Dialog):
 class Add_Relation_Dialog(simpledialog.Dialog):
     def __init__(self, parent, class_options = None, title = None):
         self._class_options = class_options
-        super().__init__(parent, title=title)
+        super().__init__(parent, title = title)
 
     def body(self, master):
-        tk.Label(master, text="Source Class:").grid(row=0)
+        tk.Label(master, text="Source Class:").grid(row = 0)
         self._src = tk.StringVar(master)
         tk.OptionMenu(master, self._src, *self._class_options).grid(row = 0, column = 1)
 
-        tk.Label(master, text="Destination Class:").grid(row=1)
+        tk.Label(master, text="Destination Class:").grid(row = 1)
         self._dest = tk.StringVar(master)
         tk.OptionMenu(master, self._dest, *self._class_options).grid(row = 1, column = 1)
 
-        tk.Label(master, text="Relationship Type:").grid(row=2)
+        tk.Label(master, text="Relationship Type:").grid(row = 2)
         self._rel_type = tk.StringVar(master)
         rel_options = ["Aggregation", "Composition", "Inheritance", "Realization"]
-        tk.OptionMenu(master, self._rel_type, *rel_options).grid(row=2, column=1)
+        tk.OptionMenu(master, self._rel_type, *rel_options).grid(row = 2, column = 1)
 
         # return self._src # initial focus
         return master
@@ -1093,14 +1075,14 @@ class Add_Relation_Dialog(simpledialog.Dialog):
 class Delete_Relation_Dialog(simpledialog.Dialog):
     def __init__(self, parent, class_options = None, title = None):
         self._class_options = class_options
-        super().__init__(parent, title=title)
+        super().__init__(parent, title = title)
 
     def body(self, master):
-        tk.Label(master, text="Source Class:").grid(row=0)
+        tk.Label(master, text="Source Class:").grid(row = 0)
         self._src = tk.StringVar(master)
         tk.OptionMenu(master, self._src, *self._class_options).grid(row = 0, column = 1)
 
-        tk.Label(master, text="Destination Class:").grid(row=1)
+        tk.Label(master, text="Destination Class:").grid(row = 1)
         self._dest = tk.StringVar(master)
         tk.OptionMenu(master, self._dest, *self._class_options).grid(row = 1, column = 1)
 
@@ -1199,11 +1181,11 @@ class Class_Box():
         #                                               # 7
         ################################################# 8
 
-        box = canvas.create_rectangle(self._x, self._y, self._x + self._width, self._y + box_height, fill='lightgray', outline='black')
+        box = canvas.create_rectangle(self._x, self._y, self._x + self._width, self._y + box_height, fill = 'lightgray', outline = 'black')
         current_line = 1
         box_text = canvas.create_text(self._x + self._width / 2, self._y + self._text_spacing * current_line,\
-                                      text=self._name,\
-                                        font=('TkDefaultFont', 10, 'bold'))
+                                      text = self._name,\
+                                        font = ('TkDefaultFont', 10, 'bold'))
         current_line += 1
         self._separator1 = canvas.create_line([self._x, self._y + self._text_spacing * current_line],\
                                               [self._x + self._width, self._y + self._text_spacing * current_line])
@@ -1211,8 +1193,8 @@ class Class_Box():
         self._moveable_text = []
         for lst in self._fields:
             self._moveable_text.append(canvas.create_text(self._x + self._width / 2, self._y + self._text_spacing * current_line,\
-                                                          text=' '.join(lst),\
-                                                            font=('TkDefaultFont', 10, 'bold')))
+                                                          text = ' '.join(lst),\
+                                                            font = ('TkDefaultFont', 10, 'bold')))
             current_line += 1
         self._separator2 = canvas.create_line([self._x, self._y + self._text_spacing * current_line],\
                                               [self._x + self._width, self._y + self._text_spacing * current_line])
