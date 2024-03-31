@@ -81,4 +81,3 @@ To interact with the UML Diagram CLI Manager, start the application and use the 
 * Jillian Daggs
 * Patrick McCullough
 * Zhang Chen
-               
