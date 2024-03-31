@@ -48,36 +48,36 @@ It is recommended you use a virtual environment when running this program. Instr
 **If you are in the CLI mode, type 'help' for a the help menu.**
 **In the gui, use the menu options available at the top of the screen and along the left side of the window.**
 ### Commands for CLI
-`` 'help class' - Prints a help menu for class. `` <br>
-`` 'add class <class_name>' - Adds a class.`` <br>
-`` 'delete class <class_name>' - Deletes a class. `` <br>
-`` 'rename class <old_name> <new_name> - Renames a class from its old name to a new name. `` <br>
-`` 'list class <class_name>' - Lists information about the given class. `` <br>
-`` 'list classes' - Lists all classes in the diagram. `` <br>
+`` help class `` - Prints a help menu for class. <br>
+`` add class <class_name> `` - Adds a class. <br>
+`` delete class <class_name> `` - Deletes a class. <br>
+`` rename class <old_name> <new_name> ``- Renames a class from its old name to a new name.  <br>
+`` list class <class_name> `` - Lists information about the given class. <br>
+`` list classes `` - Lists all classes in the diagram. <br>
 
-`` 'help relations' - Prints a help menu for relations. `` <br>
-`` 'add relation <source> <dest> <type>' - Adds a relation between a source class and destination class of a specified type. `` <br>
-`` 'delete relation <source> <dest>' - Deletes the given relation `` <br>
-`` 'list relations' - List all relations in diagram. `` <br>
-`` 'list relation <class_name>' - List all relations containing the given class. `` <br>
+`` help relations `` - Prints a help menu for relations. <br>
+`` add relation <source> <dest> <type> `` - Adds a relation between a source class and destination class of a specified type. <br>
+`` delete relation <source> <dest> `` - Deletes the relation between source and dest  <br>
+`` list relations `` - List all relations in diagram. <br>
+`` list relation <class_name> `` - List all relations containing the given class. <br>
 
-`` 'add field <class_name> <fld_name>' - Adds a field to given class. `` <br>
-`` 'delete field <class_name> <fld_name>' - Deletes a field from class. `` <br>
-`` 'rename field <class_name> <old_name> <new_name>' - Renames a field `` <br>
+`` add field <class_name> <fld_name> `` - Adds a field to given class. <br>
+`` delete field <class_name> <fld_name> `` - Deletes a field from class. <br>
+`` rename field <class_name> <old_name> <new_name> `` - Renames a field  <br>
 
-`` 'add method <class_name> <mthd_name>' - Adds a method to a class. `` <br>
-`` 'delete method <class_name> <mthd_name>' - Deletes a method from a class. `` <br>
-`` 'rename method <cls_name> <mth_name> <new_name>' - Renames a method `` <br>
+`` add method <class_name> <mthd_name> `` - Adds a method to a class. <br>
+`` delete method <class_name> <mthd_name> `` - Deletes a method from a class. <br>
+`` rename method <cls_name> <mth_name> <new_name> `` - Renames a method <br>
 
-`` 'add param <cls_name> <mthd_name> <param>' - Adds a param to a method within a class. `` <br>
-`` 'delete param <cls_name> <mthd_name> <param>' - Deletes a param from a method within a class. `` <br>
-`` 'rename param <cls_name> <mthd_name> <param_name> <new_name>' - Renames a methods parameter within a class. `` <br>
+`` add param <cls_name> <mthd_name> <param> `` - Adds a param to a method within a class. <br>
+`` delete param <cls_name> <mthd_name> <param> `` - Deletes a param from a method within a class. <br>
+`` rename param <cls_name> <mthd_name> <param_name> <new_name> `` - Renames a methods parameter within a class. <br>
 
-`` 'save <file_name>' - Saves the diagram. `` <br>
-`` 'load <file_name>' - Loads a diagram. `` <br>
-`` 'undo' - Undoes the last command. `` <br>
-`` 'redo' - Undoes an undo. `` <br>
-`` 'quit' - Quits the program. `` <br>
+`` save <file_name> `` - Saves the diagram. <br>
+`` load <file_name> `` - Loads a diagram.  <br>
+`` undo `` - Undoes the last command.  <br>
+`` redo `` - Undoes an undo.  <br>
+`` quit `` - Quits the program. <br>
 
 ### Test the project
 'pytest'  - from the source directory of the project, automatically finds and executes all test files.
