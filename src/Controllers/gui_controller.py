@@ -8,6 +8,9 @@ class GUI_Controller:
     def __init__(self):
         self._gui_view = GUI_View()
 
+    def error_message(self, message: str) -> None:
+        self._gui_view.error_message(message)
+
     def request_update(self):
         return self._gui_view.listen()
     

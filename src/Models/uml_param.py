@@ -27,7 +27,6 @@ class UML_Param(UML_Named_Object, UML_Visitable):
     def __eq__(self, o):
         """Equality operator override for UML_Param"""
 
-        #guard against error where o doesn't have _name as a field
         if not isinstance(o, UML_Param):
             return False 
         
