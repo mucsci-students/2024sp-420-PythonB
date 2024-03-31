@@ -530,7 +530,7 @@ class GUI_View(tk.Tk):
 
     def draw_realization(self, start: list[int], end: list[int]) -> None:
         # dash line with white triangle
-        self.diagram_canvas.create_line(start[0], start[1], end[0], end[1], width=5, dash=(100, 10))
+        self.diagram_canvas.create_line(start[0], start[1], end[0], end[1], width=5, dash=(4, 4))
         self.draw_triangle(start, end, 'white')
 
     def add_relation(self):
