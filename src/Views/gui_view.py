@@ -374,7 +374,9 @@ class GUI_View(tk.Tk):
             self._user_command.set(new_command)
     
     def rename_class(self) -> None:
-        dialog = Rename_Class_Dialog(self,"Rename Class")
+        class_options = [cb._name for cb in self._class_boxes]
+
+        dialog = Rename_Class_Dialog(self, class_options, "Rename Class")
         if dialog.result:
             old_name, new_name = dialog.result
             new_command = "rename class " + old_name + " " + new_name
@@ -623,19 +625,21 @@ class Delete_Class_Dialog(simpledialog.Dialog):
         self.result = class_name
 
 class Rename_Class_Dialog(simpledialog.Dialog):
-    def __init__(self, parent, title=None):
+    def __init__(self, parent, class_options:list = None, title=None):
+        self._class_options = class_options
         super().__init__(parent, title=title)
 
     def body(self, master):
-        tk.Label(master, text="Old Class Name:").grid(row=0)
-        self.class_name_entry = tk.Entry(master)
-        self.class_name_entry.grid(row=0, column=1)
+        tk.Label(master, text = "Old Class Name:").grid(row = 0)
+        self.class_name_entry = tk.StringVar(master)
+        tk.OptionMenu(master, self.class_name_entry, *self._class_options).grid(row = 0, column = 1)
 
         tk.Label(master, text="New Class Name:").grid(row=1)
         self.new_name_entry = tk.Entry(master)
         self.new_name_entry.grid(row=1, column=1)
 
-        return self.class_name_entry  # Set focus on the first entry widget
+        # return self.class_name_entry  # Set focus on the first entry widget
+        return master
 
     def apply(self):
         self.result = (self.class_name_entry.get(), self.new_name_entry.get())
