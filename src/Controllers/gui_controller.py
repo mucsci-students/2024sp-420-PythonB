@@ -1,5 +1,6 @@
 from Models.uml_diagram import UML_Diagram
 from Models.uml_class import UML_Class
+from Models.uml_relation import UML_Relation
 from Views.gui_view import GUI_View
 
 class GUI_Controller:
@@ -14,6 +15,7 @@ class GUI_Controller:
         self._gui_view.clear()
         for cls in diagram.get_all_classes():
             self.draw_class(cls)
+        self.draw_relations(diagram.get_all_relations())
 
     def draw_class(self, cls: UML_Class):
         width = len(cls.get_name())
@@ -32,3 +34,6 @@ class GUI_Controller:
                 ac += len(param.get_name())
             width = max(width, ac)
         self._gui_view.draw_class(cls.get_name(), cls.get_position_x(), cls.get_position_y(), text_methods, text_fields, width)
+
+    def draw_relations(self, relations: list[UML_Relation]) -> None:
+        self._gui_view.draw_relations([[relation.get_src_name(), relation.get_dst_name(), relation.get_type()] for relation in relations])
