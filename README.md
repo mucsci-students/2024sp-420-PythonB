@@ -42,8 +42,8 @@ It is recommended you use a virtual environment when running this program. Instr
 </ol>
 
 ### Operation modes
-- `'python main.py'       - default operation mode, opens a GUI.
-- `'python main.py cli'   - runs the program in CLI mode.
+- ``python main.py ``      - default operation mode, opens a GUI.
+- ``python main.py cli``   - runs the program in CLI mode.
 
 **If you are in the CLI mode, type 'help' for a the help menu.**
 **In the gui, use the menu options available at the top of the screen and along the left side of the window.**
