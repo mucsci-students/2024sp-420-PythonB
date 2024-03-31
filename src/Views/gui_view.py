@@ -404,15 +404,21 @@ class GUI_View(tk.Tk):
             self._user_command.set(new_command)
 
     def rename_field(self):
-        class_name = simpledialog.askstring("Rename Field", "Enter the name of the class:", parent=self)
-        if not class_name:
-            return
-        old_name = simpledialog.askstring("Rename Field", "Enter the name of the field to rename:", parent=self)
-        if not old_name:
-            return
-        new_name = simpledialog.askstring("Rename Field", "Enter the new name for the field:", parent=self)
-        if not new_name:
-            return
+        # class_name = simpledialog.askstring("Rename Field", "Enter the name of the class:", parent=self)
+        # if not class_name:
+        #     return
+        # old_name = simpledialog.askstring("Rename Field", "Enter the name of the field to rename:", parent=self)
+        # if not old_name:
+        #     return
+        # new_name = simpledialog.askstring("Rename Field", "Enter the new name for the field:", parent=self)
+        # if not new_name:
+        #     return
+
+        class_options = [cb._name for cb in self._class_boxes]
+
+        dialog_result = Rename_Field_Dialog(self, class_options, title = "Rename Field").result
+        if dialog_result:
+            class_name, old_name, new_name = dialog_result
 
         new_command = "rename field " + class_name + " " + old_name + " " + new_name
         self._user_command.set(new_command)
@@ -711,6 +717,51 @@ class Delete_Field_Dialog(simpledialog.Dialog):
         field_name = self._delete_field.get()
         self.result = class_name, field_name
 
+class Rename_Field_Dialog(simpledialog.Dialog):
+    def __init__(self, parent, class_options:list = None, title:str = None):
+        self.parent = parent
+        self._class_options = class_options
+        super().__init__(parent, title=title)
+
+    def body(self, master):
+        tk.Label(master, text = "Select Class:").grid(row = 0)
+        self._class = tk.StringVar(master)
+        self._class.trace_add("write",self.update_options)
+        self._class_select = tk.OptionMenu(master, self._class, *self._class_options)
+        self._class_select.grid(row = 0, column = 1)
+
+        tk.Label(master, text = "Field Name:").grid(row = 1)
+        self._delete_field = tk.StringVar(master)
+        self._field_options = tk.OptionMenu(master, self._delete_field, ())
+        self._field_options.grid(row = 1, column = 1)
+
+        tk.Label(master, text="New Field Name:").grid(row = 2)
+        self._new_field = tk.Entry(master)
+        self._new_field.grid(row = 2, column = 1)
+
+        # return self._class, self._delete_field
+        return master
+
+    def update_options(self, *args):
+        self._delete_field.set('')
+        class_name = self._class.get()
+        for cb in self.parent._class_boxes:
+            if cb._name == class_name:
+                options = [x for _, x in cb._fields]
+                break
+        
+        menu = self._field_options['menu']
+        menu.delete(0,'end')
+
+        for o in options:
+            self._field_options['menu'].add_command(label = o, command = tk._setit(self._delete_field,o))
+
+    def apply(self):
+        class_name = self._class.get()
+        field_name = self._delete_field.get()
+        new_field = self._new_field.get()
+        self.result = class_name, field_name, new_field
+
 class Add_Method_Dialog(simpledialog.Dialog):
     def __init__(self, parent, class_options = None, title=None):
         self._class_options = class_options
@@ -881,22 +932,6 @@ class Add_Relation_Dialog(simpledialog.Dialog):
         dest = self._dest.get()
         rel_type = self._rel_type.get()
         self.result = (src, dest, rel_type)
-
-    # def __init__(self, parent, relations:list, title:str = None):
-    #     self._relations = relations
-    #     super().__init__(parent, title=title)
-
-    # def body(self, master):
-    #     tk.Label(master, text = "Relationship:").grid(row = 0)
-    #     self._relation_delete = tk.StringVar(master)
-    #     tk.OptionMenu(master, self._relation_delete, *self._relations).grid(row = 0, column = 1)
-
-    #     # return self._relation_delete
-    #     return master
-
-    # def apply(self):
-    #     relation = self._relation_delete
-    #     self.result = relation
 
 class Delete_Relation_Dialog(simpledialog.Dialog):
     def __init__(self, parent, class_options = None, title = None):
