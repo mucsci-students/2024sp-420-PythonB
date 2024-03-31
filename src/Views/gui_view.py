@@ -48,7 +48,7 @@ class GUI_View(tk.Tk):
         self.clear()
 
     def draw_class(self, name, x=None, y=None, methods=[], fields=[], width=0) -> None:
-        if not x or not y:
+        if x is None or y is None:
             x, y = self.get_next_position()
         self._class_boxes.append(Class_Box(self.diagram_canvas, self._user_command, name, x, y, methods, fields, width))
 
