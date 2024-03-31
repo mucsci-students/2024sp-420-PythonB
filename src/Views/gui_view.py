@@ -235,8 +235,11 @@ class GUI_View(tk.Tk):
 
     # TODO: self.controller
     def open_file(self):
-        file_name = simpledialog.askstring("Load a File","Enter a Valid Filename", parent = self)
-        new_command = 'load ' + file_name
+        file_name = filedialog.askopenfilename(initialdir='saves/', defaultextension=".json",
+                                                filetypes=[("JSON files", "*.json"), ("All files", "*.*")])
+        # file_name = simpledialog.askstring("Load a File","Enter a Valid Filename", parent = self)
+        # new_command = 'load ' + file_name
+        new_command = 'load ' + file_name[file_name.rfind('/') + 1:].removesuffix('.json')
         self._user_command.set(new_command)
 
         # messagebox.showinfo("Open Diagram", f"Diagram loaded successfully from {file_name}.")
@@ -244,7 +247,7 @@ class GUI_View(tk.Tk):
 
     def save_file(self):
         # Open a dialog asking for the filename to save to
-        file_name = filedialog.asksaveasfilename(initialfile='untitled.json', initialdir='saves/',defaultextension=".json",
+        file_name = filedialog.asksaveasfilename(initialfile='untitled.json', initialdir='saves/', defaultextension=".json",
                                                 filetypes=[("JSON files", "*.json"), ("All files", "*.*")])
         new_command = 'save ' + file_name[file_name.rfind('/') + 1:].removesuffix('.json')
         self._user_command.set(new_command)
