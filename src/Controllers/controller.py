@@ -71,11 +71,10 @@ class UML_Controller:
             if output.lower() == "y":
                 file_name = input("Please enter a save file name: ")
                 while not re.match(r'^[a-zA-Z0-9_.-]+$', file_name ):
-                    print("\nAllowed characters (alphanumeric, hyphen, underscore, period)")
+                    print("\nAllowed characters: alphanumeric, hyphen, underscore, period")
                     file_name = input("Please enter a valid file name: ")
                 self.save(file_name)
                 break
-        print("Exiting...")
         self._should_quit = True
 
     def save(self, filename:str):
