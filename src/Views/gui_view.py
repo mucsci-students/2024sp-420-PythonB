@@ -127,7 +127,7 @@ class GUI_View(tk.Tk):
         self.config(menu=menu_bar)
         # File
         file_menu = Menu(menu_bar, tearoff=0)
-        file_menu.add_command(label="New", command=self.new_file)
+        # file_menu.add_command(label="New", command=self.new_file)
         file_menu.add_command(label="Load", command=self.open_file)
         file_menu.add_command(label="Save", command=self.save_file)
         file_menu.add_separator()
