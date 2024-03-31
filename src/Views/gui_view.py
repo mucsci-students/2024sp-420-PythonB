@@ -56,9 +56,8 @@ class GUI_View(tk.Tk):
 
     def draw_relations(self, relations: list[list[str]]) -> None:
         for src, dst, type in relations:
-            if src == dst:
-                self._self_relations.append([src, dst, type])
-                return 
+            self._self_relations.append([src, dst, type])
+
             if src in self._relation_points:
                 src_points = self._relation_points[src]
             else:
@@ -168,7 +167,7 @@ class GUI_View(tk.Tk):
         self._btn_relations = tk.Button(self._sidebar, text = "Relationships", command = self.relations_options_menu)
         self._btn_relations.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
         
-        tk.Label(self._sidebar, text="Untracked Relationships", bg = 'lightgray', font = ('TkDefaultFont', 10, 'bold')).pack(pady = (10, 0))
+        tk.Label(self._sidebar, text="Relationships Tracker", bg = 'lightgray', font = ('TkDefaultFont', 10, 'bold')).pack(pady = (10, 0))
 
         # Relationship Tracker Listbox
         self.relationship_tracker = tk.Listbox(self._sidebar, height = 10)
@@ -181,20 +180,15 @@ class GUI_View(tk.Tk):
         self._btn_params.config(state = "disabled")
         self._btn_relations.config(state = "disabled")
 
+        self._btn_class.config(state = "active")
         class_count = len(self._class_boxes)
-        if class_count == 0:
-            self._btn_class.config(state = "active")
-        elif class_count == 1:
-            self._btn_class.config(state = "active")
+        if class_count > 0:
             self._btn_fields.config(state = "active")
             self._btn_methods.config(state = "active")
-            self._btn_params.config(state = "active")
-        elif class_count > 1:
-
-            self._btn_class.config(state = "active")
-            self._btn_fields.config(state = "active")
-            self._btn_methods.config(state = "active")
-            self._btn_params.config(state = "active")
+            method_count = sum(len(cb._methods) for cb in self._class_boxes)
+            if method_count > 0:
+                self._btn_params.config(state = "active")
+        if class_count >= 2:
             self._btn_relations.config(state = "active")
 
 
