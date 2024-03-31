@@ -7,36 +7,36 @@ and deleting classes, relationships and attributes
 within a UML diagram.
 
 ## Features
+* GUI: Program features a graphical user interface in additon to a CLI to interact with diagrams. 
 * Class Management: Add, rename, and delete classes within your UML Diagram.
 * Attribute Handling: Manage attributes for each class, including adding, renaming, and deletion.
 * Relationship Management: Define and modify relationships between classes, such as association, inheritance, and composition.
-* Visualization: Although the current version focuses on the management aspect, future updates aim to include visualization capabilities.
 * Save/Load Functionality: Save your current diagram state to a JSON file and load it back into the application for continued management.
 
 # Setup and Installation
 
 ## Pre-Requisites
-<B>Python 3.8 or higher. You can download Python here: [this](https://www.python.org/downloads/)</B>
+<B>Python 3.8 or higher. You can download Python [here](https://www.python.org/downloads/)</B>
 
 # Download the Project
 
 ### In a Terminal
 To download the project directly into a terminal:
-'git clone https://github.com/mucsci-students/2024sp-420-PythonB/releases/tag/v2.0.0'
+'git clone https://github.com/mucsci-students/2024sp-420-PythonB/releases/tag/v3.0.0'
 
 ### In a Desktop Environment
-Download the zip [here](https://github.com/mucsci-students/2024sp-420-PythonB/releases/tag/v2.0.0) and extract it.
+Download the zip [here](https://github.com/mucsci-students/2024sp-420-PythonB/releases/tag/v3.0.0) and extract it.
 
 # Build the Project
 
-It is recommended you use a virtual environment when running this program. Instructions for this can be found here: [this link](https://docs.python.org/3/library/venv.html).
+It is recommended you use a virtual environment when running this program. Instructions for this can be found [here](https://docs.python.org/3/library/venv.html).
 
-**The command to execute a python program varies with operating system. On Mac: python3. On Linux and Windows: python. Python will be used below, substitute the command appropriate for your operating system in its place.**
+**The command to execute a python program varies with operating system. On Mac: python3. On Linux: on Windows: py. Python will be used below, substitute the command appropriate for your operating system in its place.**
 
 <ol>
 <li> Open a terminal and navigate to the folder that the project was cloned to. 
-<li> Navigate to the source directory of the project (its name should be 2024sp-420-CWorld)
-<li> Enter your virtual environment if you want to use one (link above)
+<li> Navigate to the source directory of the project (its name should be 2024sp-420-PythonB)
+<li> Enter your virtual environment (create one if you don't have one, instructions above)
 <li> Type 'pip install -e .'.
 <li> Type 'python main.py' to run the program in its default mode (Additional modes below).
 </ol>
@@ -44,21 +44,20 @@ It is recommended you use a virtual environment when running this program. Instr
 ### Operation modes
 - `'python main.py'       - default operation mode, opens a GUI.
 - `'python main.py cli'   - runs the program in CLI mode.
-- `'python main.py debug' - runs the program in CLI debug mode. This mode is similar to the CLI mode, supresses some error handling. Use at your own risk.
 
 **If you are in the CLI mode, type 'help' for a the help menu.**
-**In the gui, use the menu options available at the top of the screen.**
+**In the gui, use the menu options available at the top of the screen and along the left side of the window.**
 ### Commands for CLI
 * 'help class' - Prints a help menu for class.
-* 'class add <class_name>' - Adds a class.
-* 'class delete <class_name>' - Deletes a class.
-* 'class rename <old_name> <new_name> - Renames a class from its old name to a new name.
+* 'add class <class_name>' - Adds a class.
+* 'delete class <class_name>' - Deletes a class.
+* 'rename class <old_name> <new_name> - Renames a class from its old name to a new name.
 * 'list class <class_name>' - Lists information about the given class.
 * 'list classes' - Lists all classes in the diagram.
 
 * 'help relations' - Prints a help menu for relations.
-* 'relation add <source> <dest> <type>' - Adds a relation between a source class and destination class of a specified type.
-* 'relation delete <source> <dest>' - Deletes the given relation
+* 'add relation <source> <dest> <type>' - Adds a relation between a source class and destination class of a specified type.
+* 'delete relation <source> <dest>' - Deletes the given relation
 * 'list relations' - List all relations in diagram.
 * 'list relation <class_name>' - List all relations containing the given class.
 
@@ -83,13 +82,14 @@ It is recommended you use a virtual environment when running this program. Instr
 ### Test the project
 'pytest'  - from the source directory of the project, automatically finds and executes all test files.
 
-### Design Structures
-- MVC       - This is the main structure of the program. Each part is contained in its own folder.
-- Singleton - Controller?
-- Visitor   - Help Menu?
-
+### Design Patterns
+- MVC       - MVC is used as an organizational structure for the program. It can be seen in the names of the folders that contain controllers, the model, and the different views. 
+- Singleton - The file uml_undo_redo.py contains a definition for a UML_States class; only one of these can ever exist in the program. The definition of ``__new__ `` only creates a new instance of the object if one is not already created. 
+- Visitor   - There are two examples of visitor in the program; uml_save_load.py and uml_list.py are both implementations of the uml_visitor.py interface, which in turn relies on accept methods defined in each other object in the model. This structure allows recursive descent through the diagram while storing extra location data (tab depth in the case of listing), which helps to keep listing and converting to json clean and maintainable. 
+- Memento   - The file uml_undo_redo.py contains a definition for a UML_States class; this class is an example of a memento for the diagram. Upon successful execution of a command, around line 38 of the file controller.py, the diagram is converted to JSON and stored as a state in that list. From there, undo and redo can be used to restore past or future diagram states. If a command or GUI action fails, the diagram will automatically revert to the last valid state (as can be seen around line 45 of the controller) if a valid state exists. 
+- Decorator - The file controller.py is a decorator for the cli_controller.py and gui_controller.py files. controller.py has a method beginning around line 49 titled __pick_controller that decides which controller needs to be instantiated for the current instance of the program. That controller is then decorated with the functionality of controller.py, enabling it to run the program. 
 ## Authors
 January 2024 to March 2024:
 - Zhang Chen, Jillian Daggs, Katie Downlin, Patrick McCullough, Danish Zubari 
-March 2024 to Preset: 
+March 2024 to Present: 
 - Ganga Acharya, Marshall Feng, Peter Freedman, Adam Glick-Lynch, Tim Moser
