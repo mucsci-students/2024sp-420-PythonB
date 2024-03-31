@@ -131,16 +131,23 @@ class GUI_View(tk.Tk):
         file_menu.add_command(label="Exit", command=self.on_close)
         menu_bar.add_cascade(label="File", menu=file_menu)
 
+        #Edit Menu (Undo/Redo)
+        edit_menu = Menu(menu_bar, tearoff=0)
+        edit_menu.add_command(label="Undo", command=self.undo)
+        edit_menu.add_command(label="Redo", command=self.redo)
+        menu_bar.add_cascade(label="Edit", menu=edit_menu)
+
         # Help Menu
         help_menu = Menu(menu_bar, tearoff=0)
         help_menu.add_command(label="View Help", command=self.show_help_messagebox)
         menu_bar.add_cascade(label="Help", menu=help_menu)
 
-        menu_bar.add_separator()
-        menu_bar.add_separator()
 
-        menu_bar.add_command(label = "Undo", command = self.undo)
-        menu_bar.add_command(label = "Redo", command = self.redo)
+        #menu_bar.add_separator()
+        #menu_bar.add_separator()
+
+        #menu_bar.add_command(label = "Undo", command = self.undo)
+        #menu_bar.add_command(label = "Redo", command = self.redo)
 
     def undo(self):
         self._user_command.set('undo')
