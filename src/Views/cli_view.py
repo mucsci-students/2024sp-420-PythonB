@@ -1,6 +1,7 @@
 from prompt_toolkit.completion import NestedCompleter
 from Models.uml_diagram import UML_Diagram
 from Models.uml_list import UML_List_Visitor
+from Views.relation_completer import RelationCompleter
 
 class CLI_View:
     
@@ -49,7 +50,7 @@ class CLI_View:
         return (
                 "help relations                                         Displays this menu\n"
                 "add relation <src_class> <des_class> <relation_type>   Adds a relation between <src_class> and <des_class> of\n"
-                "   <relation_type>: (Aggregation, Composition, Generalization, Inheritance)\n"
+                "   <relation_type>: (Aggregation, Composition, Realization, Inheritance)\n"
                 "delete relation <src_class> <des_class>                Deletes the relation between <src_class> <des_class>\n"
                 "list relations                                         Lists all relations\n"
                 "list relation <class>                                  Lists all relations <class> is a part of"
@@ -87,7 +88,7 @@ class CLI_View:
         """
         return NestedCompleter.from_nested_dict({
         'add': {
-            'relation': None,
+            'relation': RelationCompleter(),
             'class': None,
             'field': None,
             'method': None,
