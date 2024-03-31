@@ -358,6 +358,8 @@ class GUI_View(tk.Tk):
 
     def add_class(self) -> str:
         class_name = simpledialog.askstring("Input", "Enter Class Name:", parent = self)
+        if not class_name:
+            return
         new_command = 'add class ' + class_name
         self._user_command.set(new_command)
       
