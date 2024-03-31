@@ -82,8 +82,8 @@ class GUI_View(tk.Tk):
                 if d < dist:
                     dist = d
                     a, b = i, j
-        start = src.pop(a)
-        end = dst.pop(b)
+        start = src[a]
+        end = dst[b]
         if type == 'Aggregation':
             self.draw_aggregation(start, end)
         elif type == 'Composition':
