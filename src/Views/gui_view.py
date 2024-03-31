@@ -403,8 +403,14 @@ class GUI_View(tk.Tk):
 
     def rename_field(self):
         class_name = simpledialog.askstring("Rename Field", "Enter the name of the class:", parent=self)
+        if not class_name:
+            return
         old_name = simpledialog.askstring("Rename Field", "Enter the name of the field to rename:", parent=self)
+        if not old_name:
+            return
         new_name = simpledialog.askstring("Rename Field", "Enter the new name for the field:", parent=self)
+        if not new_name:
+            return
 
         new_command = "rename field " + class_name + " " + old_name + " " + new_name
         self._user_command.set(new_command)
