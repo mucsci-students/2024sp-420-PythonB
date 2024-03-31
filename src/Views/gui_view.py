@@ -776,7 +776,7 @@ class Add_Method_Dialog(simpledialog.Dialog):
         self._method_name_entry = tk.Entry(master)
         self._method_name_entry.grid(row = 1, column = 1)
 
-        tk.Label(master, text="Return Name:").grid(row=2)
+        tk.Label(master, text="Return Type:").grid(row=2)
         self._return_type_entry = tk.Entry(master)
         self._return_type_entry.grid(row = 2, column = 1)
 
