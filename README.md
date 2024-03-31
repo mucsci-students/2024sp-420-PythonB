@@ -56,7 +56,7 @@ It is recommended you use a virtual environment when running this program. Instr
 `` 'list classes' - Lists all classes in the diagram. `` <br>
 
 `` 'help relations' - Prints a help menu for relations. `` <br>
-`` 'add relation <source> <dest> <type>' - Adds a relation between a source class and destination class of a      specified type. `` <br>
+`` 'add relation <source> <dest> <type>' - Adds a relation between a source class and destination class of a specified type. `` <br>
 `` 'delete relation <source> <dest>' - Deletes the given relation `` <br>
 `` 'list relations' - List all relations in diagram. `` <br>
 `` 'list relation <class_name>' - List all relations containing the given class. `` <br>
