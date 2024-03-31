@@ -142,7 +142,6 @@ class GUI_View(tk.Tk):
         help_menu.add_command(label="View Help", command=self.show_help_messagebox)
         menu_bar.add_cascade(label="Help", menu=help_menu)
 
-
         #menu_bar.add_separator()
         #menu_bar.add_separator()
 
