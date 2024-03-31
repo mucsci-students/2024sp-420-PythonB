@@ -253,6 +253,9 @@ class GUI_View(tk.Tk):
                 - Realization: A dashed line to a hollow arrow.
                 - Inheritance: A solid line to an empty arrow.
 
+            Undo/Redo:
+                - Use the Edit menu to undo or redo your last action.
+
             This quick guide helps you understand the basics of interacting with the UML editor.
                 """
         messagebox.showinfo("Help - CWorld UML Program", help_content, parent=self)
