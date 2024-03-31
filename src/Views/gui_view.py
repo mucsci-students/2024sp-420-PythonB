@@ -420,8 +420,8 @@ class GUI_View(tk.Tk):
         if dialog_result:
             class_name, old_name, new_name = dialog_result
 
-        new_command = "rename field " + class_name + " " + old_name + " " + new_name
-        self._user_command.set(new_command)
+            new_command = "rename field " + class_name + " " + old_name + " " + new_name
+            self._user_command.set(new_command)
 
         # messagebox.showinfo("Success", f"Field '{old_name}' renamed to '{new_name}' in class '{class_name}'.")
         # messagebox.showinfo("Error", "Attribute not found.")
