@@ -115,7 +115,6 @@ class GUI_View(tk.Tk):
         self.wait_variable(self._user_command)
         cmd = self._user_command.get()
         self._user_command.set('')
-        print('Debugging: {}'.format(cmd))
         return cmd
     
     def get_all_positions(self):
