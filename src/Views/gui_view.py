@@ -481,7 +481,9 @@ class GUI_View(tk.Tk):
             # messagebox.showinfo("Success", f"Parameter '{param_name}' added to '{class_name}")
 
     def delete_param(self):
-        dialog_result = Delete_Parameter_Dialog(self, "Delete Parameter").result
+        class_options = [cb._name for cb in self._class_boxes]
+
+        dialog_result = Delete_Parameter_Dialog(self, class_options, "Delete Parameter").result
         if dialog_result:
             class_name, method_name, param_name = dialog_result
 
@@ -928,29 +930,69 @@ class Add_Parameter_Dialog(simpledialog.Dialog):
         self.result = class_name, method_name, param_name
 
 class Delete_Parameter_Dialog(simpledialog.Dialog):
-    def __init__(self, parent, title=None):
+    def __init__(self, parent, class_options:list = None, title=None):
+        self.parent = parent
+        self._class_options = class_options
         super().__init__(parent, title=title)
 
     def body(self, master):
-        tk.Label(master, text="Class Name:").grid(row=0)
-        self.class_name_entry = tk.Entry(master)
-        self.class_name_entry.grid(row=0, column=1)
+        tk.Label(master, text = "Select Class:").grid(row = 0)
+        self._class = tk.StringVar(master)
+        self._class.trace_add("write",self.update_options)
+        self._class_select = tk.OptionMenu(master, self._class, *self._class_options)
+        self._class_select.grid(row = 0, column = 1)
 
-        tk.Label(master, text="Method Name:").grid(row=1)
-        self.method_name_entry = tk.Entry(master)
-        self.method_name_entry.grid(row=1, column=1)
+        tk.Label(master, text = "Method Name:").grid(row = 1)
+        self._method_select = tk.StringVar(master)
+        self._method_select.trace_add("write",self.update_options2)
+        self._method_options = tk.OptionMenu(master, self._method_select, ())
+        self._method_options.grid(row = 1, column = 1)
 
-        tk.Label(master, text="Parameter Name:").grid(row=2)
-        self.param_name_entry = tk.Entry(master)
-        self.param_name_entry.grid(row=2, column=1)
+        tk.Label(master, text = "Parameter Name:").grid(row = 2)
+        self._param_select = tk.StringVar(master)
+        self._param_options = tk.OptionMenu(master, self._param_select, ())
+        self._param_options.grid(row = 2, column = 1)
 
-        return self.class_name_entry  # Set focus on the first entry widget
+        # return self.class_name_entry  # Set focus on the first entry widget
+        return master
+
+    def update_options(self, *args):
+        self._method_select.set('')
+        class_name = self._class.get()
+        for cb in self.parent._class_boxes:
+            if cb._name == class_name:
+                options = [lst[0][1] for lst in cb._methods]
+                break
+        
+        menu = self._method_options['menu']
+        menu.delete(0,'end')
+
+        for o in options:
+            self._method_options['menu'].add_command(label = o, command = tk._setit(self._method_select,o))
+
+    def update_options2(self, *args):
+        self._param_select.set('')
+        class_name = self._class.get()
+        if not self._method_select.get():
+            options = []
+        else:
+            for cb in self.parent._class_boxes:
+                if cb._name == class_name:
+                    options = next(lst[1:] for lst in cb._methods if lst[0][1] == self._method_select.get())
+                    options = [x[0] for x in options]
+                    break
+        
+        menu = self._param_options['menu']
+        menu.delete(0,'end')
+
+        for o in options:
+            self._param_options['menu'].add_command(label = o, command = tk._setit(self._param_select,o))
 
     def apply(self):
-        class_name = self.class_name_entry.get()
-        method_name = self.method_name_entry.get()
-        param_name = self.param_name_entry.get()
-        self.result = (class_name, method_name, param_name)
+        class_name = self._class.get()
+        method_name = self._method_select.get()
+        param_name = self._param_select.get()
+        self.result = class_name, method_name, param_name
 
 class Rename_Parameter_Dialog(simpledialog.Dialog):
     def __init__(self, parent, title=None):
