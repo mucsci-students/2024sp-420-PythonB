@@ -1,3 +1,11 @@
 save_folder
+poetry.lock
 __pycache__
 dist
+.vscode
+.pytest_cache
+
+#virtual environment directory name
+.venv
+.DS_Store
+venv
