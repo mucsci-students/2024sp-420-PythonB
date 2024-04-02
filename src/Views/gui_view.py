@@ -26,18 +26,11 @@ class GUI_View(tk.Tk):
         self._class_boxes: list[Class_Box] = []
         self._sidebar_buttons = []
         self._relation_points = {}
-
         self._self_relations = []
-
-        # TODO: class_list could be moved here
-
-        self.relationshipsList = []
-
         self.create_menu()
         self.create_sidebar()
         self.update_button_state()
         self.create_diagram_space()
-        self.update_relationship_tracker()
 
         self._user_command = tk.StringVar()
         self.protocol("WM_DELETE_WINDOW", self.on_close)
@@ -109,7 +102,6 @@ class GUI_View(tk.Tk):
         Wait for user action and return as a command
         """
         self.update_button_state()
-        self.update_relationship_tracker()
 
         self.wait_variable(self._user_command)
         cmd = self._user_command.get()
@@ -154,6 +146,8 @@ class GUI_View(tk.Tk):
     def redo(self):
         self._user_command.set('redo')
 
+    # TODO: Reformat this now that the relation tracker isn't there.
+        # I'll do this later in the sprint when I have time
     def create_sidebar(self):
         self._sidebar = tk.Frame(self, width = 200, bg = 'lightgray')
         self._sidebar.pack(side = LEFT, fill = tk.Y, padx = (5, 0), pady = (13, 12))
@@ -172,12 +166,6 @@ class GUI_View(tk.Tk):
 
         self._btn_relations = tk.Button(self._sidebar, text = "Relationships", command = self.relations_options_menu)
         self._btn_relations.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
-        
-        tk.Label(self._sidebar, text="Relationships Tracker", bg = 'lightgray', font = ('TkDefaultFont', 10, 'bold')).pack(pady = (10, 0))
-
-        # Relationship Tracker Listbox
-        self.relationship_tracker = tk.Listbox(self._sidebar, height = 10)
-        self.relationship_tracker.pack(padx = 5, pady = 5, fill = tk.BOTH, expand = True)
 
     def update_button_state(self):
         self._btn_class.config(state = "disabled")
@@ -196,15 +184,6 @@ class GUI_View(tk.Tk):
                 self._btn_params.config(state = "active")
         if class_count >= 2:
             self._btn_relations.config(state = "active")
-
-
-    def update_relationship_tracker(self):
-        self.relationship_tracker.delete(0, tk.END)  # Clear existing entries
-        for src, dst, type in self._self_relations:
-            self.relationship_tracker.insert(tk.END, 'From: {}'.format(src))
-            self.relationship_tracker.insert(tk.END, 'To    : {}'.format(dst))
-            self.relationship_tracker.insert(tk.END, 'Type : {}'.format(type))
-            self.relationship_tracker.insert(tk.END, '')
 
     def create_diagram_space(self):
         self.diagram_canvas = tk.Canvas(self, bg = 'white')
