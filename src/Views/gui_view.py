@@ -1127,7 +1127,7 @@ class Class_Box():
         self._canvas = canvas
         self._methods = methods
         self._fields = fields
-        self._width = 150 + width * 10
+        self._width = 150 + width * 4
         self._text_spacing = 20
         self._indent_spacing = 10
         self._x = x
@@ -1145,7 +1145,9 @@ class Class_Box():
     def create_class_box(self, canvas: tk.Canvas):
         # TODO: This value is just hard coded (obviously)
             # It should could the number of lines in the class box
-        num_text_lines = self._line_count + 2
+            
+        # Calculate the height of the box
+        num_text_lines = 2 + 2 + len(self._fields) + len(self._methods) # class_name + fields + methods
         # Calculate box height dynamically based on contents
         box_height = self._text_spacing * num_text_lines
 
