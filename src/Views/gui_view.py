@@ -32,6 +32,9 @@ class GUI_View(tk.Tk):
         self.update_button_state()
         self.create_diagram_space()
 
+        self._camera_x = 0
+        self._camera_y = 0
+
         self._mouse_left_button_pressed = False
         self._cursor_x = 0
         self._cursor_y = 0
@@ -51,7 +54,6 @@ class GUI_View(tk.Tk):
         self.clear()
 
     def on_click(self, event: tk.Event) -> None:
-        self._mouse_left_button_pressed = True
         self._cursor_x = event.x
         self._cursor_y = event.y
         for cb in self._class_boxes:
@@ -60,7 +62,6 @@ class GUI_View(tk.Tk):
                 break
 
     def on_release(self, event: tk.Event) -> None:
-        self._mouse_left_button_pressed = False
         self._dragged_class_box = None
 
     def on_move(self, event: tk.Event) -> None:
@@ -72,11 +73,15 @@ class GUI_View(tk.Tk):
             x = 'x' + str(delta_x).replace('-', '_')
             y = 'y' + str(delta_y).replace('-', '_')
             self._user_command.set(' '.join(['move', self._dragged_class_box._name, x, y]))
+        else:
+            self._camera_x -= delta_x
+            self._camera_y -= delta_y
+            self._user_command.set('redraw')
 
     def draw_class(self, name, x=None, y=None, methods=[], fields=[], width=0) -> None:
         if x is None or y is None:
             x, y = self.get_next_position()
-        self._class_boxes.append(Class_Box(self.diagram_canvas, name, x, y, methods, fields, width))
+        self._class_boxes.append(Class_Box(self.diagram_canvas, name, x - self._camera_x, y - self._camera_y, methods, fields, width))
 
     def draw_relations(self, relations: list[list[str]]) -> None:
         for src, dst, type in relations:
