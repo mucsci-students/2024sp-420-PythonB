@@ -32,6 +32,14 @@ class GUI_View(tk.Tk):
         self.update_button_state()
         self.create_diagram_space()
 
+        self._mouse_left_button_pressed = False
+        self._cursor_x = 0
+        self._cursor_y = 0
+        self._dragged_class_box = None
+        self.diagram_canvas.bind('<Button-1>', self.on_click)
+        self.diagram_canvas.bind("<ButtonRelease-1>", self.on_release)
+        self.diagram_canvas.bind('<B1-Motion>', self.on_move)
+
         self._user_command = tk.StringVar()
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
@@ -42,10 +50,33 @@ class GUI_View(tk.Tk):
         self._user_command.set('quit')
         self.clear()
 
+    def on_click(self, event: tk.Event) -> None:
+        self._mouse_left_button_pressed = True
+        self._cursor_x = event.x
+        self._cursor_y = event.y
+        for cb in self._class_boxes:
+            if cb._x <= self._cursor_x <= cb._x + cb._width and cb._y <= self._cursor_y <= cb._y + cb._height:
+                self._dragged_class_box = cb
+                break
+
+    def on_release(self, event: tk.Event) -> None:
+        self._mouse_left_button_pressed = False
+        self._dragged_class_box = None
+
+    def on_move(self, event: tk.Event) -> None:
+        delta_x = event.x - self._cursor_x
+        delta_y = event.y - self._cursor_y
+        self._cursor_x = event.x
+        self._cursor_y = event.y
+        if self._dragged_class_box:
+            x = 'x' + str(delta_x).replace('-', '_')
+            y = 'y' + str(delta_y).replace('-', '_')
+            self._user_command.set(' '.join(['move', self._dragged_class_box._name, x, y]))
+
     def draw_class(self, name, x=None, y=None, methods=[], fields=[], width=0) -> None:
         if x is None or y is None:
             x, y = self.get_next_position()
-        self._class_boxes.append(Class_Box(self.diagram_canvas, self._user_command, name, x, y, methods, fields, width))
+        self._class_boxes.append(Class_Box(self.diagram_canvas, name, x, y, methods, fields, width))
 
     def draw_relations(self, relations: list[list[str]]) -> None:
         for src, dst, type in relations:
@@ -1076,7 +1107,7 @@ class Delete_Relation_Dialog(simpledialog.Dialog):
 
 #===================================== Class Cards =====================================#
 class Class_Box():
-    def __init__(self, canvas: tk.Canvas, user_command_ref: tk.StringVar, name:str, x, y, methods: list[list[list[str]]], fields: list[list[str]], width: int) -> None:
+    def __init__(self, canvas: tk.Canvas, name:str, x: int, y: int, methods: list[list[list[str]]], fields: list[list[str]], width: int) -> None:
         self._name = name
         self._canvas = canvas
         self._methods = methods
@@ -1086,10 +1117,6 @@ class Class_Box():
         self._indent_spacing = 10
         self._x = x
         self._y = y
-        self._click_x = x
-        self._click_y = y
-        self._last_x = x
-        self._last_y = y
 
         self._line_count = 0
         self._line_count += 1 # class_name
@@ -1098,52 +1125,7 @@ class Class_Box():
         self._line_count += 1 # separator
         self._line_count += len(self._methods) # methods
 
-        self._user_command_ref = user_command_ref
-
-        self._offset_ac_x = 0
-        self._offset_ac_y = 0
-
         self._box, self._box_text, self._height = self.create_class_box(canvas)
-
-        canvas.tag_bind(self._box, '<Button-1>', self.on_click)
-        canvas.tag_bind(self._box_text, '<Button-1>', self.on_click)
-        for x in self._moveable_text:
-            canvas.tag_bind(x, '<Button-1>', self.on_click)
-
-        canvas.tag_bind(self._box, '<B1-Motion>', self.on_move)
-        canvas.tag_bind(self._box_text, '<B1-Motion>', self.on_move)
-        for x in self._moveable_text:
-            canvas.tag_bind(x, '<B1-Motion>', self.on_move)
-
-        canvas.tag_bind(self._box, "<ButtonRelease-1>", self.on_release)
-        canvas.tag_bind(self._box_text, "<ButtonRelease-1>", self.on_release)
-        for x in self._moveable_text:
-            canvas.tag_bind(x, "<ButtonRelease-1>", self.on_release)
-
-    def on_move(self, e):
-        offset_x = e.x - self._last_x
-        offset_y = e.y - self._last_y
-        self._offset_ac_x += offset_x
-        self._offset_ac_y += offset_y
-        self._canvas.move(self._box, offset_x, offset_y)
-        self._canvas.move(self._box_text, offset_x, offset_y)
-        self._canvas.move(self._separator1, offset_x, offset_y)
-        self._canvas.move(self._separator2, offset_x, offset_y)
-        for x in self._moveable_text:
-            self._canvas.move(x, offset_x, offset_y)
-        self._last_x = self._last_x + offset_x
-        self._last_y = self._last_y + offset_y
-        self._x = self._last_x
-        self._y = self._last_y
-
-    def on_click(self, e):
-        self._last_x = e.x
-        self._last_y = e.y
-
-    def on_release(self, e: tk.Event):
-        x = 'x' + str(self._offset_ac_x).replace('-', '_')
-        y = 'y' + str(self._offset_ac_y).replace('-', '_')
-        self._user_command_ref.set(' '.join(['move', self._name, x, y]))
 
     def create_class_box(self, canvas: tk.Canvas):
         # TODO: This value is just hard coded (obviously)
@@ -1186,10 +1168,4 @@ class Class_Box():
                                                             font=('TkDefaultFont', 10, 'bold')))
             current_line += 1
 
-        # TODO: We will need to add more info to the Class_Box
-            # Removed all of the old functionality as it would never be used again.
         return box, box_text, box_height
-
-if __name__ == "__main__":
-    app = GUI_View()
-    app.mainloop()
