@@ -122,6 +122,8 @@ class UML_Controller:
                 return self._controller.parse_list_cmd(self._diagram, tokens)
             case 'help':
                 return self._controller.parse_help_cmd(tokens)
+            case 'redraw':
+                return [lambda: None]
             case _:
                 raise ValueError("Invalid command.")
 
