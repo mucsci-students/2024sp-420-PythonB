@@ -1127,7 +1127,7 @@ class Class_Box():
         self._canvas = canvas
         self._methods = methods
         self._fields = fields
-        self._width = 150 + width * 10
+        self._width = 150 + width * 4
         self._text_spacing = 20
         self._indent_spacing = 10
         self._x = x
