@@ -77,6 +77,11 @@ class GUI_View(tk.Tk):
             self._camera_x -= delta_x
             self._camera_y -= delta_y
             self._user_command.set('redraw')
+            
+    def center(self) -> None:
+        self._camera_x = 0
+        self._camera_y = 0
+        self._user_command.set('redraw')
 
     def draw_class(self, name, x=None, y=None, methods=[], fields=[], width=0) -> None:
         if x is None or y is None:
@@ -164,6 +169,11 @@ class GUI_View(tk.Tk):
         edit_menu.add_command(label="Undo", command=self.undo)
         edit_menu.add_command(label="Redo", command=self.redo)
         menu_bar.add_cascade(label="Edit", menu=edit_menu)
+
+        #Layout Menu (Return to Center)
+        layout_menu = Menu(menu_bar, tearoff=0)
+        layout_menu.add_command(label="Return to Center", command=self.center)
+        menu_bar.add_cascade(label="Layout", menu=layout_menu)
 
         # Help Menu
         help_menu = Menu(menu_bar, tearoff=0)
