@@ -100,16 +100,39 @@ def test_get_methods():
     assert str(m1) == str(cl._methods[0])
     assert str(m2) == str(cl._methods[1])
 
+def test_get_position():
+    cls1 = UML_Class("Class1")
+    assert cls1.get_position() == [0, 0]
+
+def test_get_position_x():
+    cls1 = UML_Class("Class1")
+    assert cls1.get_position_x() == 0
+
+def test_get_position_y():
+    cls1 = UML_Class("Class1")
+    assert cls1.get_position_y() == 0
+
+def test_set_position_with_delta():
+    cls1 = UML_Class("Class1")
+    cls1.set_position_with_delta([1, -1])
+    assert cls1.get_position() == [1, -1]
+    # These two are actually part of get_position_x() / get_position_y() test
+    assert cls1.get_position_x() == 1
+    assert cls1.get_position_y() == -1
+
 def test_eq():
     c1 = UML_Class("class")
     c2 = UML_Class("class")
     c3 = UML_Class("attribute")
     c4 = UML_Field("hi")
+    c5 = UML_Class("class")
+    c5.set_position_with_delta([1, 2])
 
     assert c1 == c1
     assert c1 == c2
     assert c1 != c3
     assert c1 != c4
+    assert c1 == c5
 
 def test_str():
     c1 = UML_Class("class")

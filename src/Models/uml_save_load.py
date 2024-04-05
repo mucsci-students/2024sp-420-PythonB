@@ -1,6 +1,4 @@
-import sys 
 import os 
-from pathlib import Path 
 from Models.uml_visitor import UML_Visitor
 from Models.uml_diagram import UML_Diagram
 from Models.uml_class import UML_Class
@@ -10,6 +8,7 @@ from Models.uml_param import UML_Param
 from Models.uml_relation import UML_Relation
 
 import json
+import jsonschema
 
 class UML_Save_Visitor(UML_Visitor):
     def __init__(self) -> None:
@@ -38,7 +37,7 @@ class UML_Save_Visitor(UML_Visitor):
                 'name'    : uml_class.get_name(),
                 'fields'  : [self.visit_field(uml_field=field) for field in uml_class.get_fields()],
                 'methods' : [self.visit_method(uml_method=method) for method in uml_class.get_methods()],
-                'position': {'x': 0, 'y': 0} #TODO: position to be defined
+                'position': {'x': uml_class.get_position_x(), 'y': uml_class.get_position_y()}
                }
     
     def visit_field(self, uml_field: UML_Field):
@@ -133,7 +132,11 @@ def load_class(obj):
         clss._fields.append(load_field(field)) #TODO: add checks(add_field)
     for method in obj['methods']:
         clss._methods.append(load_method(method)) #TODO: add checks(add_method)
-    #TODO: position to be defined
+    # position attribute is optional
+    if 'position' in obj:
+        position = obj['position']
+        clss._position[0] = position['x']
+        clss._position[1] = position['y']
     return clss
 
 def load_relation(obj, uml_classes: list[UML_Class]):
@@ -163,6 +166,38 @@ def load_diagram(obj):
 
 ################################################################################
 
+def load_schema():
+    """
+    Load schema file
+    Error if schema file not found
+    """
+    path = os.path.join(os.path.dirname(__file__), '../', 'schema', 'uml_schema.json')
+    if not os.path.exists(path):
+        raise ValueError("Schema file not found.")
+    with open(path, 'r') as file:
+        return json.load(file)
+    
+def load_metaschema(filename: str):
+    """
+    Load metaschema file
+    Error if schema file not found
+    """
+    path = os.path.join(os.path.dirname(__file__), '../', 'schema', filename)
+    if not os.path.exists(path):
+        raise ValueError("Schema file not found.")
+    with open(path, 'r') as file:
+        return json.load(file)
+    
+def get_draft07_validator():
+    """
+    Create a draft07 validator
+    """
+    validator = jsonschema.Draft7Validator
+    validator.META_SCHEMA = load_metaschema(filename='draft07.json')
+    return validator
+
+################################################################################
+
 def encode_json(obj):
     """
     Encode json format object to json str.
@@ -171,8 +206,22 @@ def encode_json(obj):
     (str): the json str
     """
     try:
+        jsonschema.validate(instance=obj, schema=load_schema(), cls=get_draft07_validator())
         content = json.dumps(obj=obj)
-        #TODO: check schema
+    except Exception as e:
+        raise e
+    return content
+
+def encode_json_without_validate(obj):
+    """
+    Encode json format object to json str.
+    (No schema validate! For test use only!)
+
+    Return:
+    (str): the json str
+    """
+    try:
+        content = json.dumps(obj=obj)
     except Exception as e:
         raise e
     return content
@@ -184,7 +233,20 @@ def decode_json(content):
     Return:
     (Any): the json format object
     """
-    return json.loads(content)
+    obj = json.loads(content)
+    jsonschema.validate(instance=obj, schema=load_schema(), cls=get_draft07_validator())
+    return obj
+
+def decode_json_without_validate(content):
+    """
+    Decode json str to json format object.
+    (No schema validate! For test use only!)
+
+    Return:
+    (Any): the json format object
+    """
+    obj = json.loads(content)
+    return obj
 
 ################################################################################
 
@@ -212,23 +274,4 @@ def json_to_diagram(content) -> UML_Diagram:
     """
     return load_diagram(decode_json(content))
 
-def save(d:UML_Diagram, filename:str):
-    """ Saves this controller's diagram to the provided filename 
-        NOTE: Overwrites an existing file with the same name
-    """
-    jsoned = diagram_to_json(d)
-    path = os.path.join(os.path.dirname(__file__), '../', 'saves')
-    if not os.path.exists(path):
-        os.makedirs(path)
-    path = os.path.join(path, filename + '.json')
-    file = open(path, "w")
-    file.write(jsoned)
-    file.close()
-
-def load(d:UML_Diagram, filename:str):
-    path = os.path.join(os.path.dirname(__file__), '../', 'saves')
-    if not os.path.exists(path):
-        raise ValueError("No file named {0}.json exists in the save folder.".format(filename))
-    path = os.path.join(path, filename + '.json')
-    d = json_to_diagram(Path(path).read_text())
 

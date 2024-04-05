@@ -1,7 +1,7 @@
 from Models.uml_class import UML_Class
 from Models.uml_visitor import UML_Visitable, UML_Visitor
 
-rel_types = ["aggregation", "composition", "generalization", "inheritance"]
+rel_types = ["Aggregation", "Composition", "Inheritance", "Realization"]
 
 class UML_Relation(UML_Visitable): 
 
@@ -46,10 +46,10 @@ class UML_Relation(UML_Visitable):
         
     def __valid_type(self, type:str) -> str:
         """Helper to validate types before changes are made to self._type"""
-        if type.lower() not in rel_types: 
-            raise TypeError("%s is not a valid relation type" % type) 
-        
-        return type
+        # convert to capitalized format(start with upper, remain are lower)
+        if type.title() not in rel_types:
+            raise TypeError("%s is not a valid relation type" % type)
+        return type.title()
 
     #===================================== Operators =====================================#
 

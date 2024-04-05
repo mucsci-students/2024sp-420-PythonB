@@ -4,7 +4,7 @@ from ..Models.uml_class import UML_Class
 def test_ctor_relation():
     src = UML_Class("source")
     dest = UML_Class("destination")
-    type1 = "aggregation"
+    type1 = "Aggregation"
     rel1 = UML_Relation(src, dest, type1)
     assert isinstance(rel1, UML_Relation)
     assert rel1._src == src
@@ -48,7 +48,7 @@ def test_get_src_name():
     dest_name = "Hawaii"
     src = UML_Class(src_name)
     dest = UML_Class(dest_name)
-    type1 = "generalization"
+    type1 = "Realization"
     rel1 = UML_Relation(src, dest, type1)
 
     get_source_name = rel1.get_src_name()
@@ -60,7 +60,7 @@ def test_get_dst_name():
     dest_name = "Hawaii"
     src = UML_Class(src_name)
     dest = UML_Class(dest_name)
-    type1 = "generalization"
+    type1 = "Realization"
     rel1 = UML_Relation(src, dest, type1)
 
     get_dest_name = rel1.get_dst_name()
@@ -73,7 +73,7 @@ def test_set_src():
     dest_name = "Hawaii"
     src = UML_Class(src_name)
     dest = UML_Class(dest_name)
-    type1 = "generalization"
+    type1 = "Realization"
     rel1 = UML_Relation(src, dest, type1)
 
     new_src_name = "Hooli"
@@ -88,7 +88,7 @@ def test_set_dst():
     dest_name = "Hawaii"
     src = UML_Class(src_name)
     dest = UML_Class(dest_name)
-    type1 = "generalization"
+    type1 = "Realization"
     rel1 = UML_Relation(src, dest, type1)
 
     new_dst_name = "Stan"
@@ -103,10 +103,10 @@ def test_set_type():
     dest_name = "Hawaii"
     src = UML_Class(src_name)
     dest = UML_Class(dest_name)
-    type1 = "generalization"
+    type1 = "Realization"
     rel1 = UML_Relation(src, dest, type1)
 
-    new_type = "inheritance"
+    new_type = "Inheritance"
     rel1.set_type(new_type)
 
     assert rel1.get_type() == new_type
@@ -126,5 +126,5 @@ def test_eq():
 def test_str():
     rel1 = UML_Relation(UML_Class("name1"), UML_Class("name2"), "inheritance")
 
-    assert str(rel1) == "name1 <--- inheritance ---> name2"
+    assert str(rel1) == "name1 <--- Inheritance ---> name2"
     assert str(rel1) != "Bullock"

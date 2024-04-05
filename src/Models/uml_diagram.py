@@ -4,7 +4,7 @@ from Models.uml_visitor import UML_Visitable, UML_Visitor
 import datetime #for default filename
 
 class UML_Diagram(UML_Visitable): 
-    
+
     def __init__(self):
         self._classes:list[UML_Class] = []
         self._relations:list[UML_Relation] = []
@@ -51,8 +51,11 @@ class UML_Diagram(UML_Visitable):
             #if this doesn't error, the relation already exists
             item = self.get_relation(r_src, r_dst)
         except ValueError: 
-            if r_type not in rel_types: 
+            if r_type.title() not in rel_types: 
                 raise ValueError("Relation type %s is invalid" % r_type)
+            if r_src == r_dst: 
+                raise ValueError("A class cannot have a relation with itself.")
+            
             self._relations.append(UML_Relation(self.get_class(r_src), self.get_class(r_dst), r_type))
             return
 
@@ -60,7 +63,9 @@ class UML_Diagram(UML_Visitable):
         
         
     def delete_class(self, c_name:str) -> None:
+        """Deletes class c_name and all relations including c_name"""
         self._classes.remove(self.get_class(c_name))
+        self.delete_relations_containing(c_name)
     
     def delete_relation(self, r_src:str, r_dst:str) -> None:
         self._relations.remove(self.get_relation(r_src, r_dst))
@@ -68,6 +73,14 @@ class UML_Diagram(UML_Visitable):
     def delete_relations_containing(self, c_name:str) -> None:
         """Remove all relations that have c_name from self._relations"""
         self._relations = list(filter(lambda rel: rel.get_src_name() != c_name and rel.get_dst_name() != c_name, self._relations))
+
+    def replace_content(self, other) -> None:
+        """
+        Replace all attributes with references to other's attributes
+        (This is not making copies! Be careful modifying other after this call!)
+        """
+        self._classes = other._classes
+        self._relations = other._relations
 
 #===================================== Operators =====================================#
 

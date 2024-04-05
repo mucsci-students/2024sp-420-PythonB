@@ -9,6 +9,7 @@ class UML_Class(UML_Named_Object, UML_Visitable):
         super().__init__(name)
         self._fields:list[UML_Field] = []
         self._methods:list[UML_Method] = []
+        self._position = [0] * 2
 
 #===================================== Accessors =====================================#
     
@@ -33,13 +34,22 @@ class UML_Class(UML_Named_Object, UML_Visitable):
     def get_methods(self) -> list[UML_Method]:
         return self._methods
     
+    def get_position(self) -> list[int]:
+        return self._position
+    
+    def get_position_x(self) -> list[int]:
+        return self._position[0]
+    
+    def get_position_y(self) -> list[int]:
+        return self._position[1]
+    
     def accept(self, uml_visitor: UML_Visitor):
         return uml_visitor.visit_class(self)
     
 #===================================== Mutators =====================================#   
     
     def set_name(self, new_name:str) -> None:
-        self._name == new_name
+        self._name = new_name
     
     def add_field(self, new_f_name:str, new_f_type:str) -> None:
         self.__error(new_f_name, self._fields)
@@ -60,6 +70,10 @@ class UML_Class(UML_Named_Object, UML_Visitable):
         if item is None: 
             raise ValueError("Method %s does not exist" % m_name)
         self._methods.remove(item)
+
+    def set_position_with_delta(self, position: list[int]) -> None:
+        self._position[0] += position[0]
+        self._position[1] += position[1]
 
 #===================================== Helpers =====================================#
 
@@ -95,6 +109,7 @@ class UML_Class(UML_Named_Object, UML_Visitable):
         return self._name == o._name \
         and self._methods == o._methods \
         and self._fields == o._fields
+        # position does not need to be equal
     
     def __str__ (self):
         """ Strings a class in the following format: 
