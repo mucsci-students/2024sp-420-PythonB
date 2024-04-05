@@ -13,6 +13,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -21,13 +23,35 @@ jobs:
 
     - name: Install dependencies and build project
       run: |
-        pip install prompt-toolkit
-        pip install jsonschema
-        pip install pytest
-        pip install pytest-cov
-        pip install -e .
+          pip install prompt-toolkit
+          pip install jsonschema
+          pip install pytest
+          pip install pytest-cov
+          pip install -e .
+        
+    - name: Install xmlstarlet
+      run: brew install xmlstarlet
 
-    - name: Run tests
-      run: pytest --cov=src/Models
+    - name: Get current and previous coverage
+      run: |
+          pytest --cov=src/Models --cov-report xml:current.xml
+          git checkout HEAD^
+          pytest --cov=src --cov-report xml:previous.xml
+          git checkout -
       
-
+    - name: Compare coverage
+      run: |
+          current_coverage=$(xml sel -t -v "/coverage/@line-rate" current.xml)
+          previous_coverage=$(xml sel -t -v "/coverage/@line-rate" previous.xml)
+          
+          echo "Current coverage: $current_coverage"
+          echo "Previous coverage: $previous_coverage"
+          
+          if (( $(echo "$current_coverage < $previous_coverage" | bc -l) )); then
+            echo "Code coverage decreased from previous commit."
+            exit 1
+          fi
+          
+    - name: View Pytest Results
+      run: 
+        pytest --cov=src/Models
