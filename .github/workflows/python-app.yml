@@ -54,3 +54,11 @@ jobs:
     - name: View Pytest Results
       run: 
         pytest --cov=src/Models
+
+    - name: Upload XML artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: Test Results
+        path: |
+          current.xml
+          previous.xml
