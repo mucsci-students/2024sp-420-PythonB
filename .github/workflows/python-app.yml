@@ -5,10 +5,27 @@ on:
   pull_request:
     branches:
       - develop
-
+      
 jobs:
-  build:
 
+  build-linux:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+  
+        - name: Set up Python
+          uses: actions/setup-python@v5
+          with:
+            python-version: '3.10'
+  
+        - name: Install dependencies/Build/Test
+          run: |
+            pip install pytest
+            pip install -e .
+            pytest --cov=src/Models
+
+  build-mac:
     runs-on: macos-latest
 
     steps:
@@ -54,11 +71,3 @@ jobs:
     - name: View Pytest Results
       run: 
         pytest --cov=src/Models
-
-    - name: Upload XML artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: Test Results
-        path: |
-          ${{ github.workspace }}/current.xml
-          ${{ github.workspace }}/previous.xml
