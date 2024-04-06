@@ -60,5 +60,5 @@ jobs:
       with:
         name: Test Results
         path: |
-          current.xml
-          previous.xml
+          ${{ github.workspace }}/current.xml
+          ${{ github.workspace }}/previous.xml
