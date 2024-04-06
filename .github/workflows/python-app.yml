@@ -24,8 +24,6 @@ jobs:
 
     - name: Install dependencies and build project
       run: |
-          pip install prompt-toolkit
-          pip install jsonschema
           pip install pytest
           pip install pytest-cov
           pip install -e .
