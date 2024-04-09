@@ -10,7 +10,7 @@ class CLI_Controller:
         self._view = CLI_View()
     
     def request_update(self):
-         return prompt("Command: ", completer=self._view._completer).strip()
+         return prompt("Command: ", completer=self._completer).strip()
 
     def draw(self, diagram: UML_Diagram):
         pass
@@ -35,7 +35,7 @@ class CLI_Controller:
         else:
             raise ValueError("Invalid command.")
         
-    def setup_autocomplete(self):
+    def setup_autocomplete(self, dia: UML_Diagram):
         """
         Sets up autocomplete functionality using the NestedCompleter.
 
@@ -43,7 +43,7 @@ class CLI_Controller:
         NestedCompleter: An instance of NestedCompleter configured with a dictionary representing available commands
         and their respective subcommands or arguments.
         """
-        return NestedCompleter.from_nested_dict({
+        self._completer = NestedCompleter.from_nested_dict({
         'add': {
             'relation': RelationCompleter(),
             'class': {'class1', 'class2', 'class3'},
