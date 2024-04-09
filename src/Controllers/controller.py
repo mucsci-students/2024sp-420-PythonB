@@ -20,6 +20,8 @@ class UML_Controller:
         self._diagram = UML_Diagram()
         self._states = UML_States(self._diagram)
         self._should_quit = False
+        if isinstance(self._controller, CLI_Controller):
+            print("True")
 
     def run(self):
         """Executes the main loop of the program"""

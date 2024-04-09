@@ -1,8 +1,8 @@
-
 from Models.uml_diagram import UML_Diagram
-
 from prompt_toolkit import prompt
 from Views.cli_view import CLI_View
+from prompt_toolkit.completion import NestedCompleter
+from Views.relation_completer import RelationCompleter
 
 class CLI_Controller:
 
@@ -34,3 +34,52 @@ class CLI_Controller:
             return [getattr(self._view, 'help_' + tokens.pop(0))]
         else:
             raise ValueError("Invalid command.")
+        
+    def setup_autocomplete(self):
+        """
+        Sets up autocomplete functionality using the NestedCompleter.
+
+        Returns:
+        NestedCompleter: An instance of NestedCompleter configured with a dictionary representing available commands
+        and their respective subcommands or arguments.
+        """
+        return NestedCompleter.from_nested_dict({
+        'add': {
+            'relation': RelationCompleter(),
+            'class': {'class1', 'class2', 'class3'},
+            'field': None,
+            'method': None,
+            'param': None
+            
+        },
+        'delete': {
+            'relation': None,
+            'class': None,
+            'field': None,
+            'method': None,
+            'param': None
+            
+        },
+        'rename':{
+            'class': None,
+            'field': None,
+            'method': None,
+            'param': None
+        },
+        'list':{
+            'class': None,
+            'classes': None,
+            'relation': None,
+            'relations': None
+        },
+        'help':{
+            'class': None,
+            'attribute': None,
+            'relation': None
+        },
+        'save': None,
+        'load': None,
+        'undo': None,
+        'redo': None,
+        'quit': None
+        })  
