@@ -225,11 +225,10 @@ class GUI_View(tk.Tk):
         if class_count > 0:
             self._btn_fields.config(state = "active")
             self._btn_methods.config(state = "active")
+            self._btn_relations.config(state = "active")
             method_count = sum(len(cb._methods) for cb in self._class_boxes)
             if method_count > 0:
                 self._btn_params.config(state = "active")
-        if class_count >= 2:
-            self._btn_relations.config(state = "active")
 
     def create_diagram_space(self):
         self.diagram_canvas = tk.Canvas(self, bg = 'white')
