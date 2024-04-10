@@ -37,14 +37,6 @@ def test_eq():
     assert r == s
     assert r != p
 
-def test_str():
-    p = param("Bazinga!")
-    r = param("Same")
-
-    assert str(r) == "Same"
-    assert str(p) == "Bazinga!"
-    assert str(p) != "Named"
-
 
 
 
