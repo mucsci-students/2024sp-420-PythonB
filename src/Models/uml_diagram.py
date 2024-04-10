@@ -1,7 +1,6 @@
 from Models.uml_class import UML_Class
 from Models.uml_relation import UML_Relation, rel_types
 from Models.uml_visitor import UML_Visitable, UML_Visitor
-import datetime #for default filename
 
 class UML_Diagram(UML_Visitable): 
 
@@ -53,8 +52,6 @@ class UML_Diagram(UML_Visitable):
         except ValueError: 
             if r_type.title() not in rel_types: 
                 raise ValueError("Relation type %s is invalid" % r_type)
-            if r_src == r_dst: 
-                raise ValueError("A class cannot have a relation with itself.")
             
             self._relations.append(UML_Relation(self.get_class(r_src), self.get_class(r_dst), r_type))
             return
