@@ -8,7 +8,7 @@ from Controllers.gui_controller import GUI_Controller
 from Models.uml_diagram import UML_Diagram
 from Models.uml_undo_redo import UML_States
 from Models.uml_save_load import json_to_diagram, diagram_to_json
-
+from Models.uml_image import UML_Image
 
 class UML_Controller:
 
@@ -19,6 +19,7 @@ class UML_Controller:
         self._controller:CLI_Controller | GUI_Controller = self.__pick_controller()
         self._diagram = UML_Diagram()
         self._states = UML_States(self._diagram)
+        self._image = UML_Image()
         self._should_quit = False
 
     def run(self):
@@ -51,7 +52,7 @@ class UML_Controller:
                 #               but this undo will undo to last state, which is not expected.
                 # self._states.undo()
                 continue
-            self._controller.draw(self._diagram)
+            self._controller.draw(self._diagram, self._image.draw_framebuffer(self._diagram))
 
     def __pick_controller(self, args:str = sys.argv) -> CLI_Controller | GUI_Controller: 
         if len(args) > 1 and str(args[1]).strip().lower() == 'cli':
@@ -97,6 +98,9 @@ class UML_Controller:
         path = os.path.join(path, filename + '.json')
         self._diagram.replace_content(json_to_diagram(Path(path).read_text()))
 
+    def export_image(self):
+        self._image.draw_framebuffer(self._diagram)
+
 #=========================Parseing=========================#  
     def parse(self, input:str) -> list | str:
         tokens = self.check_args(input.split())
@@ -124,6 +128,8 @@ class UML_Controller:
                 return self._controller.parse_help_cmd(tokens)
             case 'redraw':
                 return [lambda: None]
+            case 'export':
+                return [self.export_image]
             case _:
                 raise ValueError("Invalid command.")
 

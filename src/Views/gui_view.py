@@ -112,6 +112,10 @@ class GUI_View(tk.Tk):
                 dst_points.append([dst_class._x + dst_class._width,     dst_class._y + dst_class._height / 2]) # right
             self.draw_relation(src_points, dst_points, type)
 
+    def draw(self, photo):
+        self._image = photo
+        self.diagram_canvas.create_image(0, 0, anchor=tk.NW, image=self._image)
+
     def draw_relation(self, src: list[list[int]], dst: list[list[int]], type: str) -> None:
         a, b = -1, -1
         dist = float('inf')

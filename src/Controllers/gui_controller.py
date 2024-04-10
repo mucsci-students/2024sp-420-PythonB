@@ -14,8 +14,11 @@ class GUI_Controller:
     def request_update(self):
         return self._gui_view.listen()
     
-    def draw(self, diagram: UML_Diagram):
+    def draw(self, diagram: UML_Diagram, image_data=None):
         self._gui_view.clear()
+        if image_data:
+            self._gui_view.draw(image_data)
+            return
         for cls in diagram.get_all_classes():
             self.draw_class(cls)
         self.draw_relations(diagram.get_all_relations())
