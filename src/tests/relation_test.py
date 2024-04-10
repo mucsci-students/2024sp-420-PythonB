@@ -113,6 +113,11 @@ def test_set_type():
     assert rel1.get_type() != 'Minecraft'
     assert rel1.get_type() != type1
 
+    try:
+        rel1.set_type("Invalid Type")
+    except TypeError:
+        assert True
+
 def test_eq():
     rel1 = UML_Relation(UML_Class("name1"), UML_Class("name2"), "inheritance")
     rel2 = UML_Relation(UML_Class("name1"), UML_Class("name2"), "inheritance")
