@@ -174,7 +174,6 @@ def test_delete_relations_containing():
     assert len(rels) == 1
     assert rels[0] == friends1
 
-#TODO: Remove this test if we make diagram Singleton
 def test_equals():
     dia = UML_Diagram()
     class1 = UML_Class("Bender")
