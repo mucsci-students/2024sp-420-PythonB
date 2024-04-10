@@ -44,7 +44,4 @@ class UML_Field (UML_Named_Object, UML_Visitable):
 
         return True
     
-    def __hash__(self):
-        return hash(self._name) \
-            + hash(self._type)
     

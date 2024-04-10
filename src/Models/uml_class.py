@@ -93,12 +93,7 @@ class UML_Class(UML_Named_Object, UML_Visitable):
         return out
     
 #===================================== Operators =====================================#
-    
-    def __hash__(self) -> int:
-        return hash(self._name) \
-        + hash(self._fields) \
-        + hash(self._methods)
-    
+        
     def __eq__(self, o) -> bool:
         if self is o: 
             return True

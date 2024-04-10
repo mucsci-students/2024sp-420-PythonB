@@ -75,12 +75,7 @@ class UML_Method (UML_Named_Object, UML_Visitable):
         return next((p for p in self._params if p.get_name() == p_name), None)
     
 #===================================== Operators =====================================#
-    
-    def __hash__(self) -> int:
-        return hash(self._name)  \
-            + hash(self._ret)    \
-            + hash(self._params)
-    
+       
     def __eq__ (self, o) -> bool:
         if self is o: 
             return True
