@@ -91,19 +91,7 @@ class UML_Diagram(UML_Visitable):
         
         return self._classes == o._classes and self._relations == o._relations
     
-    def __str__(self):
-        """Strings a diagram in the following format: 
-            
-            Classes:
-                class1
-                class2
-            Relationships:
-                relation 1
-                relation 2
-        """
-        #TODO: fix this string override - join doesn't work right in this case
-        return 'Classes:' + '\n\t'.join(str(c) for c in self._classes) + '\n' \
-                + 'Relationships:' + '\n\t'.join(str(r) for r in self._relations)
+
     
 
 

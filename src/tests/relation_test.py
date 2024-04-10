@@ -1,5 +1,5 @@
-from ..Models.uml_relation import UML_Relation
-from ..Models.uml_class import UML_Class
+from Models.uml_relation import UML_Relation
+from Models.uml_class import UML_Class
 
 def test_ctor_relation():
     src = UML_Class("source")
@@ -112,6 +112,11 @@ def test_set_type():
     assert rel1.get_type() == new_type
     assert rel1.get_type() != 'Minecraft'
     assert rel1.get_type() != type1
+
+    try:
+        rel1.set_type("Invalid Type")
+    except TypeError:
+        assert True
 
 def test_eq():
     rel1 = UML_Relation(UML_Class("name1"), UML_Class("name2"), "inheritance")
