@@ -34,6 +34,7 @@ def test_eq():
     s = param("Same")
     p = param("Different")
 
+    assert r != "Not instance of.."
     assert r == s
     assert r != p
 
