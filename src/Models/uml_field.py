@@ -48,8 +48,3 @@ class UML_Field (UML_Named_Object, UML_Visitable):
         return hash(self._name) \
             + hash(self._type)
     
-    def __str__(self) -> str:
-        """Strings a field in the following form:
-            type name
-        """
-        return self._type + ' ' + self._name

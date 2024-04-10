@@ -122,3 +122,9 @@ def test_eq():
     assert rel1 == rel2
     assert rel1 != diff_rel
     assert rel1 != "Hello"
+
+def test_str():
+    rel1 = UML_Relation(UML_Class("name1"), UML_Class("name2"), "inheritance")
+
+    assert str(rel1) == "name1 <--- Inheritance ---> name2"
+    assert str(rel1) != "Bullock"

@@ -92,10 +92,3 @@ class UML_Method (UML_Named_Object, UML_Visitable):
             and self._ret == o._ret  \
             and self._params == o._params
     
-    def __str__ (self) -> str:
-        """Strings a method in the following form: 
-        
-            ret name (param1, param2,..., paramN)
-        """
-        
-        return self._ret + ' ' + self._name + ' (' + ', '.join(str(p) for p in self._params) + ')'
