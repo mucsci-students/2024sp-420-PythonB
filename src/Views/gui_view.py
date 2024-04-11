@@ -625,47 +625,49 @@ class GUI_View(tk.Tk):
 class Dialog_Box:
     def __init__(self):
         self._title = None
+        self._class_options = None
         self._class = None
         self._fields = None
         self._methods = None
-        # self._action = None
-        # self._target = None
         self._dropdown = None
         self._dropdown_second = None
 
 class Dialog_Builder:
-    # def __init__(self, parent, class_options = None, title = None):
-    #     self._parent = parent
-    #     self._class_options = class_options
-    #     self._title = title
-    def set_title(self, title:str):
+    def __init__(self):
+        self._dialog = Dialog_Box()
+
+    def build_title(self, title:str):
         self._title = title
 
-    def set_class(self, class_name:str):
+    def build_class_options(self, class_options:list):
+        self._class_options = class_options
+
+    def build_class(self, class_name:str):
         self._class = class_name
 
-    def set_fields(self, class_name:str):
-        # Check the class and find the fields
-        pass
+    def build_fields(self, fields:list):
+        self._fields = fields
 
-    def set_methods(self, class_name:str):
-        # Check the class and find the methods
-        pass
+    def build_methods(self, methods:list):
+        self._methods = methods
 
 class Dialog_Director:
-    def build_class_dialog(self, builder):
+    def __init__(self, builder:Dialog_Builder):
+        self._builder = builder
+
+    def build_add_dialog(self):
         pass
 
-    def build_rel_dialog(self, builder):
+    def build_rel_dialog(self):
         pass
 
-    def build_field_dialog(self, builder):
+    def build_field_dialog(self):
         pass
     
-    def build_method_dialog(self, builder):
+    def build_method_dialog(self):
         pass
 
-    def build_param_dialog(self, builder):
+    def build_param_dialog(self):
         pass
 
 class Delete_Class_Dialog(simpledialog.Dialog):
