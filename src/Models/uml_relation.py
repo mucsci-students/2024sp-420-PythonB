@@ -52,11 +52,6 @@ class UML_Relation(UML_Visitable):
         return type.title()
 
     #===================================== Operators =====================================#
-
-    def __hash__(self) -> int:
-        #exclude type from this hash because it can be only one of four values
-        return hash(self._src) \
-        + hash(self._dst)
     
     def __eq__(self, o) -> bool:
         if self is o: 

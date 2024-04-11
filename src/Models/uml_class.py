@@ -93,12 +93,7 @@ class UML_Class(UML_Named_Object, UML_Visitable):
         return out
     
 #===================================== Operators =====================================#
-    
-    def __hash__(self) -> int:
-        return hash(self._name) \
-        + hash(self._fields) \
-        + hash(self._methods)
-    
+        
     def __eq__(self, o) -> bool:
         if self is o: 
             return True
@@ -111,16 +106,3 @@ class UML_Class(UML_Named_Object, UML_Visitable):
         and self._fields == o._fields
         # position does not need to be equal
     
-    def __str__ (self):
-        """ Strings a class in the following format: 
-
-        Class:
-            Fields:
-                field1
-                field2
-            Methods:
-                method1
-                method2
-        """
-        return '%s:' % self._name + '\n   Fields:' + self.__str_list(self._fields) \
-                + '\n   Methods:' + self.__str_list(self._methods)

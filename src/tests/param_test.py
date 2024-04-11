@@ -34,16 +34,9 @@ def test_eq():
     s = param("Same")
     p = param("Different")
 
+    assert r != "Not instance of.."
     assert r == s
     assert r != p
-
-def test_str():
-    p = param("Bazinga!")
-    r = param("Same")
-
-    assert str(r) == "Same"
-    assert str(p) == "Bazinga!"
-    assert str(p) != "Named"
 
 
 

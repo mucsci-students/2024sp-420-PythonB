@@ -1,5 +1,5 @@
-from ..Models.uml_method import UML_Method
-from ..Models.uml_param import UML_Param as param
+from Models.uml_method import UML_Method
+from Models.uml_param import UML_Param as param
 
 def test_ctor():
     t = UML_Method("Shaggy", "void")
@@ -15,9 +15,9 @@ def test_ctor():
     assert u._ret == "int"
     assert u._ret != "void"
 
-    assert str(param("test1")) == str(v._params[0])
-    assert str(param("test2")) == str(v._params[1])
-    assert str(param("test3")) == str(v._params[2])
+    assert param("test1") == v._params[0]
+    assert param("test2") == v._params[1]
+    assert param("test3") == v._params[2]
 
 #===================================== Accessors =====================================#
 
@@ -52,9 +52,11 @@ def test_get_ret():
 def test_get_param():
     a = UML_Method("Test", "int", "p1", "p2")
     b = UML_Method("Test", "void", "Branch", "Leaf")
+    p1 = param('p1')
+    p2 = param('Leaf')
 
-    assert str(a.get_param("p1")) == "p1"
-    assert str(b.get_param("Leaf")) == "Leaf"
+    assert a.get_param("p1") == p1
+    assert b.get_param("Leaf") == p2
 
 def test_get_params():
     a = UML_Method("Test", "int", "p1", "p2")
@@ -97,16 +99,17 @@ def test_delete_param():
     a = UML_Method("Test", "int", "p1", "p2")
     a.delete_param("p1")
 
-    assert str(param("p1")) != str(a._params[0])
-    assert str(param("p2")) == str(a._params[0])
+    assert param("p1") != a._params[0]
+    assert param("p2") == a._params[0]
 
 def test_change_params():
     a = UML_Method("Test", "int", "p1", "p2")
-
+    p1 = param("Gorillaz")
+    p2 = param("De La Soul")
     a.change_params("Gorillaz", "De La Soul")
 
-    assert str(a.get_param("Gorillaz")) == "Gorillaz"
-    assert str(a.get_param("De La Soul")) == "De La Soul"
+    assert a.get_param("Gorillaz") == p1
+    assert a.get_param("De La Soul") == p2
     assert len(a.get_params()) == 2
 
 
@@ -138,8 +141,3 @@ def test_eq():
     assert d != 1
     assert a != "General Kenobi!"
 
-def test_str():
-    c = UML_Method("Same", "Same", "Same", "Same", "Samey")
-    #there should only be two params because duplicates are removed on construction
-    assert len(str(c)) == len("Same\nSame (Samey, Same)")
-    assert str(c) != "Tim forgot to test string in UML_Field"
