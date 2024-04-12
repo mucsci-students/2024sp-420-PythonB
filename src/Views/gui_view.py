@@ -1,4 +1,5 @@
 from tkinter import ttk
+import customtkinter as ctk
 
 import tkinter as tk
 from tkinter import filedialog
@@ -198,37 +199,37 @@ class GUI_View(tk.Tk):
         self._sidebar = tk.Frame(self, width = 200, bg = 'lightgray')
         self._sidebar.pack(side = LEFT, fill = tk.Y, padx = (5, 0), pady = (13, 12))
 
-        self._btn_class = tk.Button(self._sidebar, text = "Classes", command = self.class_options_menu)
-        self._btn_class.pack(fill = tk.X, padx = (5, 5), pady = (10, 5))
+        self._btn_class = ctk.CTkButton(self._sidebar, text="Classes", command=self.class_options_menu)
+        self._btn_class.pack(fill=tk.X, padx=(5, 5), pady=(10, 5))
 
-        self._btn_fields = tk.Button(self._sidebar, text = "Fields", command = self.fields_options_menu)
-        self._btn_fields.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
+        self._btn_fields = ctk.CTkButton(self._sidebar, text="Fields", command=self.fields_options_menu)
+        self._btn_fields.pack(fill=tk.X, padx=(5, 5), pady=(5, 5))
 
-        self._btn_methods = tk.Button(self._sidebar, text = "Methods", command = self.methods_options_menu)
-        self._btn_methods.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
+        self._btn_methods = ctk.CTkButton(self._sidebar, text="Methods", command=self.methods_options_menu)
+        self._btn_methods.pack(fill=tk.X, padx=(5, 5), pady=(5, 5))
 
-        self._btn_params = tk.Button(self._sidebar, text = "Parameters", command = self.params_options_menu)
-        self._btn_params.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
+        self._btn_params = ctk.CTkButton(self._sidebar, text="Parameters", command=self.params_options_menu)
+        self._btn_params.pack(fill=tk.X, padx=(5, 5), pady=(5, 5))
 
-        self._btn_relations = tk.Button(self._sidebar, text = "Relationships", command = self.relations_options_menu)
-        self._btn_relations.pack(fill = tk.X, padx = (5, 5), pady = (5, 5))
+        self._btn_relations = ctk.CTkButton(self._sidebar, text="Relationships", command=self.relations_options_menu)
+        self._btn_relations.pack(fill=tk.X, padx=(5, 5), pady=(5, 5))
 
     def update_button_state(self):
-        self._btn_class.config(state = "disabled")
-        self._btn_fields.config(state = "disabled")
-        self._btn_methods.config(state = "disabled")
-        self._btn_params.config(state = "disabled")
-        self._btn_relations.config(state = "disabled")
+        self._btn_class.configure(state = "disabled")
+        self._btn_fields.configure(state = "disabled")
+        self._btn_methods.configure(state = "disabled")
+        self._btn_params.configure(state = "disabled")
+        self._btn_relations.configure(state = "disabled")
 
-        self._btn_class.config(state = "active")
+        self._btn_class.configure(state = "active")
         class_count = len(self._class_boxes)
         if class_count > 0:
-            self._btn_fields.config(state = "active")
-            self._btn_methods.config(state = "active")
-            self._btn_relations.config(state = "active")
+            self._btn_fields.configure(state = "active")
+            self._btn_methods.configure(state = "active")
+            self._btn_relations.configure(state = "active")
             method_count = sum(len(cb._methods) for cb in self._class_boxes)
             if method_count > 0:
-                self._btn_params.config(state = "active")
+                self._btn_params.configure(state = "active")
 
     def create_diagram_space(self):
         self.diagram_canvas = tk.Canvas(self, bg = 'white')
