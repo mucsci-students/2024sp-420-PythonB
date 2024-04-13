@@ -10,7 +10,7 @@ class CLI_Controller:
         self._view = CLI_View()
     
     def request_update(self):
-         return prompt("Command: ", completer=self._view._completer).strip()
+         return prompt("Command: ", completer=self._view.get_completer()).strip()
 
     def draw(self, diagram: UML_Diagram):
         pass
@@ -30,7 +30,6 @@ class CLI_Controller:
         """Parses a help command, returning it in a form ready to be run"""
         if len(tokens) == 0:
             return [getattr(self._view, 'help')]
-        elif len(tokens) == 1:
+        if len(tokens) == 1:
             return [getattr(self._view, 'help_' + tokens.pop(0))]
-        else:
-            raise ValueError("Invalid command.")
+        raise ValueError("Invalid command.")

@@ -5,10 +5,10 @@ rel_types = ["Aggregation", "Composition", "Inheritance", "Realization"]
 
 class UML_Relation(UML_Visitable): 
 
-    def __init__ (self, src:UML_Class, dst:UML_Class, type:str):
+    def __init__ (self, src:UML_Class, dst:UML_Class, rel_type:str):
         self._src = src
         self._dst = dst      
-        self._type = self.__valid_type(type)
+        self._type = self.__valid_type(rel_type)
         
 
     #===================================== Accessors =====================================#
@@ -48,7 +48,7 @@ class UML_Relation(UML_Visitable):
         """Helper to validate types before changes are made to self._type"""
         # convert to capitalized format(start with upper, remain are lower)
         if type.title() not in rel_types:
-            raise TypeError("%s is not a valid relation type" % type)
+            raise ValueError(f"%s is not a valid relation type" % type)
         return type.title()
 
     #===================================== Operators =====================================#
@@ -67,5 +67,5 @@ class UML_Relation(UML_Visitable):
         
             Relation of type between src and dst
         """
-        return "{0} <--- {1} ---> {2}".format(
+        return f"{0} <--- {1} ---> {2}".format(
             self._src.get_name(), self._type, self._dst.get_name())

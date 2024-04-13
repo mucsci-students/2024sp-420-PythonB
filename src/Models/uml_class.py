@@ -6,7 +6,7 @@ from Models.uml_visitor import UML_Visitable, UML_Visitor
 class UML_Class(UML_Named_Object, UML_Visitable): 
 
     def __init__(self, name:str):
-        super().__init__(name)
+        self._name = name
         self._fields:list[UML_Field] = []
         self._methods:list[UML_Method] = []
         self._position = [0] * 2
@@ -19,13 +19,13 @@ class UML_Class(UML_Named_Object, UML_Visitable):
     def get_field(self, f_name:str) -> UML_Field:
         item = self.__find_name(f_name, self._fields)
         if item is None: 
-            raise ValueError("Field %s does not exist" % f_name) 
+            raise ValueError(f"Field %s does not exist" % f_name) 
         return item
  
     def get_method(self, m_name:str) -> UML_Method:
         item = self.__find_name(m_name, self._methods)
         if item is None: 
-            raise ValueError("Method %s does not exist" % m_name)
+            raise ValueError(f"Method %s does not exist" % m_name)
         return item
 
     def get_fields(self) -> list[UML_Field]:
@@ -62,13 +62,13 @@ class UML_Class(UML_Named_Object, UML_Visitable):
     def delete_field(self, f_name:str) -> None:
         item = self.__find_name(f_name, self._fields)
         if item is None: 
-            raise ValueError("Field %s does not exist" % f_name) 
+            raise ValueError(f"Field %s does not exist" % f_name) 
         self._fields.remove(item)
 
     def delete_method(self, m_name:str) -> None:
         item = self.__find_name(m_name, self._methods)
         if item is None: 
-            raise ValueError("Method %s does not exist" % m_name)
+            raise ValueError(f"Method %s does not exist" % m_name)
         self._methods.remove(item)
 
     def set_position_with_delta(self, position: list[int]) -> None:
@@ -80,7 +80,7 @@ class UML_Class(UML_Named_Object, UML_Visitable):
     def __error(self, value:str, loc:list) -> None:
         """Iterate through a list and error if value already exists in list"""
         if self.__find_name(value, loc) is not None:
-            raise ValueError("%s already exists" % value) 
+            raise ValueError(f"%s already exists" % value) 
     
     def __find_name(self, name:str, loc:list) -> UML_Field | UML_Method | None:
         return next((v for v in loc if v.get_name() == name), None)

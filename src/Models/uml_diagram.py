@@ -12,7 +12,7 @@ class UML_Diagram(UML_Visitable):
     def get_class(self, c_name:str) -> UML_Class:
         item = next((c for c in self._classes if c.get_name() == c_name), None)
         if item is None: 
-            raise ValueError("Class %s does not exist" % c_name)
+            raise ValueError(f"Class %s does not exist" % c_name)
         return item
     
     def get_relation(self, r_src:str, r_dst:str) -> UML_Relation:
@@ -20,7 +20,7 @@ class UML_Diagram(UML_Visitable):
         item = next((r for r in self._relations if 
                      r.get_src_name() == r_src and r.get_dst_name() == r_dst), None)
         if item is None: 
-            raise ValueError("Relation between {0} and {1} does not exist".format(r_src, r_dst))
+            raise ValueError(f"Relation between {0} and {1} does not exist".format(r_src, r_dst))
         return item
         
     def get_all_classes(self) -> list[UML_Class]:
@@ -42,21 +42,20 @@ class UML_Diagram(UML_Visitable):
             self._classes.append(UML_Class(c_name))
         
         if item is not None: 
-            raise ValueError("Class %s already exists" % c_name)        
+            raise ValueError(f"Class %s already exists" % c_name)        
 
     def add_relation(self, r_src:str, r_dst:str, r_type:str) -> None:
-        item = None
         try:
             #if this doesn't error, the relation already exists
-            item = self.get_relation(r_src, r_dst)
+            self.get_relation(r_src, r_dst)
         except ValueError: 
             if r_type.title() not in rel_types: 
-                raise ValueError("Relation type %s is invalid" % r_type)
+                raise ValueError(f"Relation type %s is invalid" % r_type)
             
-            self._relations.append(UML_Relation(self.get_class(r_src), self.get_class(r_dst), r_type))
+            self._relations.append(UML_Relation(self.get_class(r_src), self.get_class(r_dst), r_type.title()))
             return
 
-        raise ValueError("Relation between {0} and {1} already exists".format(r_src, r_dst))
+        raise ValueError(f"Relation between {0} and {1} already exists".format(r_src, r_dst))
         
         
     def delete_class(self, c_name:str) -> None:
@@ -76,12 +75,11 @@ class UML_Diagram(UML_Visitable):
         Replace all attributes with references to other's attributes
         (This is not making copies! Be careful modifying other after this call!)
         """
-        self._classes = other._classes
-        self._relations = other._relations
+        self._classes = other.get_all_classes()
+        self._relations = other.get_all_relations()
 
 #===================================== Operators =====================================#
-
-    #TODO: Remove this function if we make diagram Singleton            
+           
     def __eq__(self, o):
         if self is o: 
             return True

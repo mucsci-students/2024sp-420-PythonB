@@ -3,9 +3,9 @@ from Models.uml_visitor import UML_Visitable, UML_Visitor
 
 class UML_Field (UML_Named_Object, UML_Visitable):
     
-    def __init__(self, name:str, type:str = "void"):
-        super().__init__(name)
-        self._type:str = type
+    def __init__(self, name:str, f_type:str = "void"):
+        self._name = name
+        self._type:str = f_type
 
 #===================================== Accessors =====================================#
     def get_name (self) -> str:
@@ -24,9 +24,9 @@ class UML_Field (UML_Named_Object, UML_Visitable):
         """Mutator for this field's name"""
         self._name = new_name
 
-    def set_type(self, new_name:str) -> None:
+    def set_type(self, new_type:str) -> None:
         """Mutator for this field's return type"""
-        self._type = new_name
+        self._type = new_type
 
 #===================================== Operators =====================================#
     def __eq__(self, o) -> bool:

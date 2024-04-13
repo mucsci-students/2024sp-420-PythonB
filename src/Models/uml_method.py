@@ -6,7 +6,7 @@ from collections import OrderedDict
 class UML_Method (UML_Named_Object, UML_Visitable):
 
     def __init__ (self, name:str, ret:str, *params:str):
-        super().__init__(name)
+        self._name = name
         self._ret:str = ret
         self._params:list[UML_Param] = []
         self.append_params(*params)
@@ -27,7 +27,7 @@ class UML_Method (UML_Named_Object, UML_Visitable):
         for p in self._params: 
             if p.get_name() == p_name: 
                 return p
-        raise ValueError ("No param with name %s exists" % p_name)
+        raise ValueError (f"No param with name %s exists" % p_name)
     
     def get_params (self) -> list[UML_Param]:
         """Accessor for the full list of this method's params"""
@@ -50,7 +50,7 @@ class UML_Method (UML_Named_Object, UML_Visitable):
         Raises: ValueError if p_name already exists. """
        
        if self.__find_param(p_name) is not None: 
-        raise ValueError ("Param with name %s already exists" % p_name)
+        raise ValueError (f"Param with name %s already exists" % p_name)
        self._params.append(UML_Param(p_name))
 
     def delete_param (self, p_name:str) -> None:

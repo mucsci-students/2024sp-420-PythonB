@@ -8,7 +8,13 @@ class CLI_View:
     def __init__(self):
         self._lister = UML_List_Visitor() 
         self._completer = self.setup_autocomplete() 
-             
+    
+    def get_lister (self) -> UML_List_Visitor:
+        return self._lister
+    
+    def get_completer (self) -> NestedCompleter:
+        return self._completer
+    
     #A list of surface level commands    
     def help(self):
         return (

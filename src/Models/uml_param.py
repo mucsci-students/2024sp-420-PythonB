@@ -5,7 +5,7 @@ from Models.uml_visitor import UML_Visitable, UML_Visitor
 class UML_Param(UML_Named_Object, UML_Visitable):
 
     def __init__ (self, name:str):
-        super().__init__(name)
+        self._name = name
 
     def get_name(self) -> str:
         """Accessor for name"""
