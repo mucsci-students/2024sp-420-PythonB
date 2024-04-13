@@ -46,7 +46,6 @@ class UML_Relation(UML_Visitable):
         
     def __valid_type(self, type:str) -> str:
         """Helper to validate types before changes are made to self._type"""
-        # convert to capitalized format(start with upper, remain are lower)
         if type.title() not in rel_types:
             raise ValueError(f"%s is not a valid relation type" % type)
         return type.title()
