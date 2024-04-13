@@ -622,9 +622,12 @@ class GUI_View(tk.Tk):
         
 #===================================== Dialog Classes =====================================#
 
-class Dialog_Box:
+class Dialog_Box(simpledialog.Dialog):
     def __init__(self):
         self._title = None
+        self._action = None
+        self._label = None
+        self._input = None
         self._class_options = None
         self._class = None
         self._fields = None
@@ -632,31 +635,57 @@ class Dialog_Box:
         self._dropdown = None
         self._dropdown_second = None
 
+    # Base stolen from Delete Class
+    def body(self, parent):
+        tk.Label(parent, text = "Class:").grid(row = 0)
+        self._class_delete = tk.StringVar(parent)
+        tk.OptionMenu(parent, self._class_delete, *self._class_options).grid(row = 0, column = 1)
+
+        return parent
+    
+    def apply(self):
+        class_name = self._class_delete.get()
+        self.result = class_name
+
 class Dialog_Builder:
     def __init__(self):
         self._dialog = Dialog_Box()
 
-    def build_title(self, title:str):
+    def set_title(self, title:str):
         self._title = title
 
-    def build_class_options(self, class_options:list):
+    def set_input(self, input:list):
+        self._input = input
+
+    def set_action(self, action:str):
+        self._action = action
+
+    def set_class_options(self, class_options:list):
         self._class_options = class_options
 
-    def build_class(self, class_name:str):
+    def set_class(self, class_name:str):
         self._class = class_name
 
-    def build_fields(self, fields:list):
+    def set_fields(self, fields:list):
         self._fields = fields
 
-    def build_methods(self, methods:list):
+    def set_methods(self, methods:list):
         self._methods = methods
 
 class Dialog_Director:
     def __init__(self, builder:Dialog_Builder):
         self._builder = builder
 
-    def build_add_dialog(self):
-        pass
+    def build_class_dialog(self, action:str):
+        title = action + " Class"
+        self._builder.set_title(title)
+        self._builder.set_action(action)
+        if action == "Add":
+            self._class = simpledialog.askstring("Input", "Enter Class Name:", parent = self)
+        elif action == "Delete":
+            pass
+        elif action == "Rename":
+            pass
 
     def build_rel_dialog(self):
         pass
@@ -680,7 +709,6 @@ class Delete_Class_Dialog(simpledialog.Dialog):
         self._class_delete = tk.StringVar(master)
         tk.OptionMenu(master, self._class_delete, *self._class_options).grid(row = 0, column = 1)
 
-        # return self._class_delete
         return master
 
     def apply(self):
