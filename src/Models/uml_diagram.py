@@ -20,7 +20,7 @@ class UML_Diagram(UML_Visitable):
         item = next((r for r in self._relations if 
                      r.get_src_name() == r_src and r.get_dst_name() == r_dst), None)
         if item is None: 
-            raise ValueError("Relation between {0} and {1} does not exist.".format(r_src, r_dst))
+            raise ValueError("Relation between {0} and {1} does not exist".format(r_src, r_dst))
         return item
         
     def get_all_classes(self) -> list[UML_Class]:
@@ -56,7 +56,7 @@ class UML_Diagram(UML_Visitable):
             self._relations.append(UML_Relation(self.get_class(r_src), self.get_class(r_dst), r_type))
             return
 
-        raise ValueError("Relation between {0} and {1} already exists.".format(r_src, r_dst))
+        raise ValueError("Relation between {0} and {1} already exists".format(r_src, r_dst))
         
         
     def delete_class(self, c_name:str) -> None:

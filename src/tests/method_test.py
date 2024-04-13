@@ -1,6 +1,8 @@
 from Models.uml_method import UML_Method
 from Models.uml_param import UML_Param as param
 
+import pytest
+
 def test_ctor():
     t = UML_Method("Shaggy", "void")
     u = UML_Method("Matt", "int")
@@ -58,6 +60,11 @@ def test_get_param():
     assert a.get_param("p1") == p1
     assert b.get_param("Leaf") == p2
 
+    with pytest.raises(ValueError) as VE:
+        a.get_param("badName")
+    assert str(VE.value) == "No param with name badName exists"
+        
+
 def test_get_params():
     a = UML_Method("Test", "int", "p1", "p2")
     b = UML_Method("Test", "void", "Branch", "Leaf")
@@ -94,6 +101,10 @@ def test_add_param():
 
     assert a.get_param("p3cO")
     assert len(a.get_params()) == 3
+
+    with pytest.raises(ValueError) as VE:
+        a.add_param("p3cO")
+    assert str(VE.value) == "Param with name p3cO already exists"
 
 def test_delete_param():
     a = UML_Method("Test", "int", "p1", "p2")
@@ -134,6 +145,7 @@ def test_eq():
     c = UML_Method("Same", "Same", "Same", "Same", "Samey")
     d = UML_Method("Same", "Same", "Same", "Samey")
 
+    assert a == a
     assert c == d
     assert a != c
     assert b != d
