@@ -57,7 +57,7 @@ class GUI_View(tk.Tk):
         self._cursor_x = event.x
         self._cursor_y = event.y
         for cb in self._class_boxes:
-            if cb._x <= self._cursor_x <= cb._x + cb._width and cb._y <= self._cursor_y <= cb._y + cb._height:
+            if cb['x'] <= self._cursor_x <= cb['x'] + cb['width'] and cb['y'] <= self._cursor_y <= cb['y'] + cb['height']:
                 self._dragged_class_box = cb
                 break
 
@@ -72,7 +72,7 @@ class GUI_View(tk.Tk):
         if self._dragged_class_box:
             x = 'x' + str(delta_x).replace('-', '_')
             y = 'y' + str(delta_y).replace('-', '_')
-            self._user_command.set(' '.join(['move', self._dragged_class_box._name, x, y]))
+            self._user_command.set(' '.join(['move', self._dragged_class_box['name'], x, y]))
         else:
             self._camera_x -= delta_x
             self._camera_y -= delta_y
@@ -112,9 +112,11 @@ class GUI_View(tk.Tk):
                 dst_points.append([dst_class._x + dst_class._width,     dst_class._y + dst_class._height / 2]) # right
             self.draw_relation(src_points, dst_points, type)
 
-    def draw(self, photo):
+    def draw(self, photo, class_boxes):
         self._image = photo
-        self.diagram_canvas.create_image(0, 0, anchor=tk.NW, image=self._image)
+        # margin = 500
+        self.diagram_canvas.create_image(-500 - self._camera_x, -500 - self._camera_y, anchor=tk.NW, image=self._image)
+        self._class_boxes = class_boxes
 
     def draw_relation(self, src: list[list[int]], dst: list[list[int]], type: str) -> None:
         a, b = -1, -1
@@ -151,6 +153,7 @@ class GUI_View(tk.Tk):
         self.wait_variable(self._user_command)
         cmd = self._user_command.get()
         self._user_command.set('')
+        print('Debugging: {}'.format(cmd))
         return cmd
     
     def get_all_positions(self):
@@ -164,6 +167,7 @@ class GUI_View(tk.Tk):
         # file_menu.add_command(label="New", command=self.new_file)
         file_menu.add_command(label="Load", command=self.open_file)
         file_menu.add_command(label="Save", command=self.save_file)
+        file_menu.add_command(label="Export", command=self.export_image)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.on_close)
         menu_bar.add_cascade(label="File", menu=file_menu)
@@ -230,7 +234,7 @@ class GUI_View(tk.Tk):
             self._btn_fields.config(state = "active")
             self._btn_methods.config(state = "active")
             self._btn_relations.config(state = "active")
-            method_count = sum(len(cb._methods) for cb in self._class_boxes)
+            method_count = sum(len(cb['methods']) for cb in self._class_boxes)
             if method_count > 0:
                 self._btn_params.config(state = "active")
 
@@ -258,12 +262,19 @@ class GUI_View(tk.Tk):
 
 
     def save_file(self):
-        # Open a dialog asking for the filename to save to
         file_name = filedialog.asksaveasfilename(initialfile='untitled.json', initialdir='saves/', defaultextension=".json",
                                                 filetypes=[("JSON files", "*.json"), ("All files", "*.*")])
         if not file_name:
             return
         new_command = 'save ' + file_name[file_name.rfind('/') + 1:].removesuffix('.json')
+        self._user_command.set(new_command)
+
+    def export_image(self):
+        file_name = filedialog.asksaveasfilename(initialfile='untitled.png', initialdir='images/', defaultextension=".png",
+                                                filetypes=[("PNG files", "*.png"), ("All files", "*.*")])
+        if not file_name:
+            return
+        new_command = 'export ' + file_name[file_name.rfind('/') + 1:].removesuffix('.png')
         self._user_command.set(new_command)
     
     def show_help_messagebox(self):
@@ -368,7 +379,7 @@ class GUI_View(tk.Tk):
         self._user_command.set(new_command)
       
     def delete_class(self) -> str:
-        class_options = [cb._name for cb in self._class_boxes]
+        class_options = [cb['name'] for cb in self._class_boxes]
 
         dialog = Delete_Class_Dialog(self, class_options, "Delete Class")
         if dialog.result:
@@ -378,7 +389,7 @@ class GUI_View(tk.Tk):
             self._user_command.set(new_command)
     
     def rename_class(self) -> None:
-        class_options = [cb._name for cb in self._class_boxes]
+        class_options = [cb['name'] for cb in self._class_boxes]
 
         dialog = Rename_Class_Dialog(self, class_options, "Rename Class")
         if dialog.result:
@@ -386,10 +397,8 @@ class GUI_View(tk.Tk):
             new_command = "rename class " + old_name + " " + new_name
             self._user_command.set(new_command)
 
-            # messagebox.showinfo("Rename Class", f"'{old_name}' has been renamed to '{new_name}'")
-
     def add_field(self) -> None:
-        class_options = [cb._name for cb in self._class_boxes]
+        class_options = [cb['name'] for cb in self._class_boxes]
 
         dialog = Add_Field_Dialog(self, class_options, "Add Field")
         if dialog.result:
@@ -398,7 +407,7 @@ class GUI_View(tk.Tk):
             self._user_command.set(new_command)
 
     def delete_field(self):
-        class_options = [cb._name for cb in self._class_boxes]
+        class_options = [cb['name'] for cb in self._class_boxes]
 
         dialog_result = Delete_Field_Dialog(self, class_options, title = "Delete Field").result
         if dialog_result:
@@ -408,17 +417,7 @@ class GUI_View(tk.Tk):
             self._user_command.set(new_command)
 
     def rename_field(self):
-        # class_name = simpledialog.askstring("Rename Field", "Enter the name of the class:", parent=self)
-        # if not class_name:
-        #     return
-        # old_name = simpledialog.askstring("Rename Field", "Enter the name of the field to rename:", parent=self)
-        # if not old_name:
-        #     return
-        # new_name = simpledialog.askstring("Rename Field", "Enter the new name for the field:", parent=self)
-        # if not new_name:
-        #     return
-
-        class_options = [cb._name for cb in self._class_boxes]
+        class_options = [cb['name'] for cb in self._class_boxes]
 
         dialog_result = Rename_Field_Dialog(self, class_options, title = "Rename Field").result
         if dialog_result:
@@ -427,11 +426,8 @@ class GUI_View(tk.Tk):
             new_command = "rename field " + class_name + " " + old_name + " " + new_name
             self._user_command.set(new_command)
 
-        # messagebox.showinfo("Success", f"Field '{old_name}' renamed to '{new_name}' in class '{class_name}'.")
-        # messagebox.showinfo("Error", "Attribute not found.")
-
     def add_method(self):
-        class_options = [cb._name for cb in self._class_boxes]
+        class_options = [cb['name'] for cb in self._class_boxes]
 
         dialog = Add_Method_Dialog(self, class_options, "Add Method")
         if dialog.result:
@@ -440,7 +436,7 @@ class GUI_View(tk.Tk):
             self._user_command.set(new_command)
 
     def delete_method(self):
-        class_options = [cb._name for cb in self._class_boxes]
+        class_options = [cb['name'] for cb in self._class_boxes]
 
         dialog_result = Delete_Method_Dialog(self, class_options, title = "Delete Method").result
         if dialog_result:
@@ -450,17 +446,7 @@ class GUI_View(tk.Tk):
             self._user_command.set(new_command)
 
     def rename_method(self):
-        # class_name = simpledialog.askstring("Rename Method", "Enter the name of the class:", parent=self)
-        # if not class_name:
-        #     return
-        # old_name = simpledialog.askstring("Rename Method", "Enter the name of the method to rename:", parent=self)
-        # if not old_name:
-        #     return
-        # new_name = simpledialog.askstring("Rename Method", "Enter the new name for the method:", parent=self)
-        # if not new_name:
-        #     return
-
-        class_options = [cb._name for cb in self._class_boxes]
+        class_options = [cb['name'] for cb in self._class_boxes]
 
         dialog_result = Rename_Method_Dialog(self, class_options, title = "Rename Method").result
         if dialog_result:
@@ -470,7 +456,7 @@ class GUI_View(tk.Tk):
             self._user_command.set(new_command)
 
     def add_param(self):
-        class_options = [cb._name for cb in self._class_boxes]
+        class_options = [cb['name'] for cb in self._class_boxes]
 
         dialog_result = Add_Parameter_Dialog(self, class_options, title="Add Parameter").result
         if dialog_result:
@@ -479,13 +465,8 @@ class GUI_View(tk.Tk):
             new_command = "add param " + class_name + " " + method_name + " " + param_name
             self._user_command.set(new_command)
 
-            # messagebox.showinfo("Error","All fields are required.")
-            # messagebox.showinfo("Add Parameter", f"Method '{method_name}' not found.")
-            # messagebox.showinfo("Add Parameter", f"Class '{class_name}' not found.")
-            # messagebox.showinfo("Success", f"Parameter '{param_name}' added to '{class_name}")
-
     def delete_param(self):
-        class_options = [cb._name for cb in self._class_boxes]
+        class_options = [cb['name'] for cb in self._class_boxes]
 
         dialog_result = Delete_Parameter_Dialog(self, class_options, "Delete Parameter").result
         if dialog_result:
@@ -494,13 +475,8 @@ class GUI_View(tk.Tk):
             new_command = "delete param " + class_name + " " + method_name + " " + param_name
             self._user_command.set(new_command)
 
-            # messagebox.showinfo("Success", f"Parameter '{param_name}' removed from method '{method_name}' in class '{class_name}'.")
-            # messagebox.showinfo("Error", f"Parameter '{param_name}' not found in method '{method_name}'.")
-            # messagebox.showinfo("Error", f"Method '{method_name}' not found in class '{class_name}'.")
-            # messagebox.showinfo("Error", f"Class '{class_name}' not found.")
-
     def rename_param(self):
-        class_options = [cb._name for cb in self._class_boxes]
+        class_options = [cb['name'] for cb in self._class_boxes]
 
         dialog_result = Rename_Parameter_Dialog(self, class_options, title="Rename Parameter").result
         if dialog_result:
@@ -508,9 +484,6 @@ class GUI_View(tk.Tk):
 
             new_command = "rename param " + class_name + " " + method_name + " " + old_name + " " + new_name
             self._user_command.set(new_command)
-
-            # messagebox.showinfo("Success", "Parameter renamed successfully.")
-            # messagebox.showinfo("Error", "Parameter not found.")
 
     def vec(self, p1: list[int], p2: list[int]):
         return p2[0] - p1[0], p2[1] - p1[1]
@@ -562,27 +535,22 @@ class GUI_View(tk.Tk):
         self.draw_triangle(start, end, 'white')
 
     def add_relation(self):
-        # TODO: This will break once our back end is in
-        # Create list of classes in Diagram
-        class_options = [cb._name for cb in self._class_boxes]
+        class_options = [cb['name'] for cb in self._class_boxes]
 
         dialog = Add_Relation_Dialog(self, class_options, "Add Relationship")
         if dialog.result:
             src, dest, rel = dialog.result
-
             new_command = "add relation " + src + " " + dest + " " + rel
             self._user_command.set(new_command)
 
     def delete_relation(self):
-        class_options = [cb._name for cb in self._class_boxes]
+        class_options = [cb['name'] for cb in self._class_boxes]
 
         dialog = Delete_Relation_Dialog(self, class_options, "Delete Relationship")
         if dialog.result:
             src, dst = dialog.result
             new_command = "delete relation " + src + " " + dst
             self._user_command.set(new_command)
-
-            # messagebox.showinfo("Success", "Relationship deleted successfully.")
 
 #===================================== Helper Functions =====================================#
             
@@ -636,7 +604,6 @@ class Delete_Class_Dialog(simpledialog.Dialog):
         self._class_delete = tk.StringVar(master)
         tk.OptionMenu(master, self._class_delete, *self._class_options).grid(row = 0, column = 1)
 
-        # return self._class_delete
         return master
 
     def apply(self):
@@ -657,7 +624,6 @@ class Rename_Class_Dialog(simpledialog.Dialog):
         self.new_name_entry = tk.Entry(master)
         self.new_name_entry.grid(row=1, column=1)
 
-        # return self.class_name_entry  # Set focus on the first entry widget
         return master
 
     def apply(self):
@@ -681,7 +647,6 @@ class Add_Field_Dialog(simpledialog.Dialog):
         self._field_type_entry = tk.Entry(master)
         self._field_type_entry.grid(row = 2, column = 1)
 
-        # return self._class, self._field_entry # initial focus
         return master # initial focus
 
     def apply(self):
@@ -708,15 +673,14 @@ class Delete_Field_Dialog(simpledialog.Dialog):
         self._field_options = tk.OptionMenu(master, self._delete_field, ())
         self._field_options.grid(row = 1, column = 1)
 
-        # return self._class, self._delete_field
         return master
 
     def update_options(self, *args):
         self._delete_field.set('')
         class_name = self._class.get()
         for cb in self.parent._class_boxes:
-            if cb._name == class_name:
-                options = [x for _, x in cb._fields]
+            if cb['name'] == class_name:
+                options = cb['fields']
                 break
         
         menu = self._field_options['menu']
@@ -752,15 +716,14 @@ class Rename_Field_Dialog(simpledialog.Dialog):
         self._new_field = tk.Entry(master)
         self._new_field.grid(row = 2, column = 1)
 
-        # return self._class, self._delete_field
         return master
 
     def update_options(self, *args):
         self._delete_field.set('')
         class_name = self._class.get()
         for cb in self.parent._class_boxes:
-            if cb._name == class_name:
-                options = [x for _, x in cb._fields]
+            if cb['name'] == class_name:
+                options = cb['fields']
                 break
         
         menu = self._field_options['menu']
@@ -789,13 +752,11 @@ class Add_Method_Dialog(simpledialog.Dialog):
         self._method_name_entry = tk.Entry(master)
         self._method_name_entry.grid(row = 1, column = 1)
 
-
         tk.Label(master, text="Return Type:").grid(row=2)
 
         self._return_type_entry = tk.Entry(master)
         self._return_type_entry.grid(row = 2, column = 1)
 
-        # return self._class, self._method_entry # initial focus
         return master # initial focus
 
     def apply(self):
@@ -822,15 +783,14 @@ class Delete_Method_Dialog(simpledialog.Dialog):
         self._method_options = tk.OptionMenu(master, self._delete_method, ())
         self._method_options.grid(row = 1, column = 1)
 
-        # return self._class, self._delete_method
         return master
 
     def update_options(self, *args):
         self._delete_method.set('')
         class_name = self._class.get()
         for cb in self.parent._class_boxes:
-            if cb._name == class_name:
-                options = [lst[0][1] for lst in cb._methods]
+            if cb['name'] == class_name:
+                options = list(cb['methods'])
                 break
         
         menu = self._method_options['menu']
@@ -866,15 +826,14 @@ class Rename_Method_Dialog(simpledialog.Dialog):
         self._new_method = tk.Entry(master)
         self._new_method.grid(row = 2, column = 1)
 
-        # return self._class, self._delete_method
         return master
 
     def update_options(self, *args):
         self._delete_method.set('')
         class_name = self._class.get()
         for cb in self.parent._class_boxes:
-            if cb._name == class_name:
-                options = [lst[0][1] for lst in cb._methods]
+            if cb['name'] == class_name:
+                options = list(cb['methods'])
                 break
         
         menu = self._method_options['menu']
@@ -896,7 +855,6 @@ class Add_Parameter_Dialog(simpledialog.Dialog):
         super().__init__(parent, title)
 
     def body(self, master):
-
         tk.Label(master, text = "Select Class:").grid(row = 0)
         self._class = tk.StringVar(master)
         self._class.trace_add("write",self.update_options)
@@ -908,20 +866,18 @@ class Add_Parameter_Dialog(simpledialog.Dialog):
         self._method_options = tk.OptionMenu(master, self._method_select, ())
         self._method_options.grid(row = 1, column = 1)
 
-
         tk.Label(master, text = "Parameter Name:").grid(row = 2)
         self.param_name_entry = tk.Entry(master)
         self.param_name_entry.grid(row = 2, column = 1)
 
-        # return self.class_name_entry  # initial focus
         return master
 
     def update_options(self, *args):
         self._method_select.set('')
         class_name = self._class.get()
         for cb in self.parent._class_boxes:
-            if cb._name == class_name:
-                options = [lst[0][1] for lst in cb._methods]
+            if cb['name'] == class_name:
+                options = list(cb['methods'])
                 break
         
         menu = self._method_options['menu']
@@ -937,7 +893,6 @@ class Add_Parameter_Dialog(simpledialog.Dialog):
         self.result = class_name, method_name, param_name
 
 class Delete_Parameter_Dialog(simpledialog.Dialog):
-
     def __init__(self, parent, class_options:list = None, title=None):
         self.parent = parent
         self._class_options = class_options
@@ -961,16 +916,14 @@ class Delete_Parameter_Dialog(simpledialog.Dialog):
         self._param_options = tk.OptionMenu(master, self._param_select, ())
         self._param_options.grid(row = 2, column = 1)
 
-
-        # return self.class_name_entry  # Set focus on the first entry widget
         return master
 
     def update_options(self, *args):
         self._method_select.set('')
         class_name = self._class.get()
         for cb in self.parent._class_boxes:
-            if cb._name == class_name:
-                options = [lst[0][1] for lst in cb._methods]
+            if cb['name'] == class_name:
+                options = list(cb['methods'])
                 break
         
         menu = self._method_options['menu']
@@ -986,9 +939,8 @@ class Delete_Parameter_Dialog(simpledialog.Dialog):
             options = []
         else:
             for cb in self.parent._class_boxes:
-                if cb._name == class_name:
-                    options = next(lst[1:] for lst in cb._methods if lst[0][1] == self._method_select.get())
-                    options = [x[0] for x in options]
+                if cb['name'] == class_name:
+                    options = cb['methods'][self._method_select.get()]
                     break
         
         menu = self._param_options['menu']
@@ -1038,13 +990,12 @@ class Rename_Parameter_Dialog(simpledialog.Dialog):
         self._method_select.set('')
         class_name = self._class.get()
         for cb in self.parent._class_boxes:
-            if cb._name == class_name:
-                options = [lst[0][1] for lst in cb._methods]
+            if cb['name'] == class_name:
+                options = list(cb['methods'])
                 break
         
         menu = self._method_options['menu']
         menu.delete(0,'end')
-
 
         for o in options:
             self._method_options['menu'].add_command(label = o, command = tk._setit(self._method_select,o))
@@ -1056,9 +1007,8 @@ class Rename_Parameter_Dialog(simpledialog.Dialog):
             options = []
         else:
             for cb in self.parent._class_boxes:
-                if cb._name == class_name:
-                    options = next(lst[1:] for lst in cb._methods if lst[0][1] == self._method_select.get())
-                    options = [x[0] for x in options]
+                if cb['name'] == class_name:
+                    options = cb['methods'][self._method_select.get()]
                     break
         
         menu = self._param_options['menu']
@@ -1093,7 +1043,6 @@ class Add_Relation_Dialog(simpledialog.Dialog):
         rel_options = ["Aggregation", "Composition", "Inheritance", "Realization"]
         tk.OptionMenu(master, self._rel_type, *rel_options).grid(row = 2, column = 1)
 
-        # return self._src # initial focus
         return master
 
     def apply(self):
@@ -1112,6 +1061,7 @@ class Delete_Relation_Dialog(simpledialog.Dialog):
         self._src = tk.StringVar(master)
         tk.OptionMenu(master, self._src, *self._class_options).grid(row = 0, column = 1)
 
+        # limit options to only relationships from source, if have time to implement
         tk.Label(master, text="Destination Class:").grid(row = 1)
         self._dest = tk.StringVar(master)
         tk.OptionMenu(master, self._dest, *self._class_options).grid(row = 1, column = 1)

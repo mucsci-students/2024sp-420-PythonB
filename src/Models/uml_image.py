@@ -17,12 +17,17 @@ class UML_Image:
         self.line_height = 72
         self.letter_width = 20
         self.margin = 500
+        self.background_color = (64, 64, 64)
+
+        self._framebuffer = pygame.Surface((self.margin * 2, self.margin * 2))
+        self._framebuffer.fill(self.background_color)
 
     def draw_framebuffer(self, diagram: UML_Diagram):
         left_border = 0
         right_border = 0
         top_border = 0
         bot_border = 0
+        class_boxes = []
         class_rects = []
         for cls in diagram.get_all_classes():
             text_cls_width = len(cls.get_name()) * self.letter_width
@@ -30,7 +35,6 @@ class UML_Image:
             text_cls_height += 2 * self.line_height
             text_fields = []
             for field in cls.get_fields():
-                text_field = ' '.join([field.get_type(), field.get_name()])
                 text_field = '{} {}'.format(field.get_type(), field.get_name())
                 text_fields.append(text_field)
                 text_cls_width = max(text_cls_width, len(text_field) * self.letter_width)
@@ -50,6 +54,17 @@ class UML_Image:
             top_border = min(top_border, cls.get_position_y())
             bot_border = max(bot_border, cls.get_position_y() + text_cls_height)
             class_rects.append([cls.get_position_x(), cls.get_position_y(), text_cls_width, text_cls_height, cls.get_name(), text_fields, text_methods])
+            # GUI use
+            class_box = {}; class_boxes.append(class_box)
+            class_box['name'] = cls.get_name()
+            class_box['x'] = cls.get_position_x()
+            class_box['y'] = cls.get_position_y()
+            class_box['width'] = text_cls_width
+            class_box['height'] = text_cls_height
+            class_box['fields'] = [field.get_name() for field in cls.get_fields()]
+            class_box['methods'] = {}
+            for method in cls.get_methods():
+                class_box['methods'][method.get_name()] = [param.get_name() for param in method.get_params()]
         # margin
         left_border -= self.margin
         right_border += self.margin
@@ -62,8 +77,9 @@ class UML_Image:
         width += 3 * self.letter_width
         height += 2 * self.line_height
         framebuffer = pygame.Surface((width, height))
-        framebuffer.fill((64, 64, 64))
+        framebuffer.fill(self.background_color)
         font = pygame.font.Font(None, 36)
+
         for cls_x, cls_y, cls_width, cls_height, cls_name, text_fields, text_methods in class_rects:
             curr = 1
             pygame.draw.rect(framebuffer, (200, 200, 200), ((cls_x + self.margin, cls_y + self.margin), (cls_width, cls_height)))
@@ -82,8 +98,12 @@ class UML_Image:
                                                 cls_y + curr * self.line_height + self.margin))
                 curr += 1
         relations = [[rel.get_src().get_position(), rel.get_dst().get_position(), rel.get_type()] for rel in diagram.get_all_relations()]
-        pygame.image.save(framebuffer, "framebuffer_image.png")
+
+        self._framebuffer = framebuffer
 
         image = Image.frombytes('RGB', (width, height), pygame.image.tostring(framebuffer, 'RGB'))
         tk_image = ImageTk.PhotoImage(image)
-        return tk_image
+        return tk_image, class_boxes
+    
+    def save_image(self, name: str):
+        pygame.image.save(self._framebuffer, name)
