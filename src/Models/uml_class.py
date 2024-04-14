@@ -85,13 +85,6 @@ class UML_Class(UML_Named_Object, UML_Visitable):
     def __find_name(self, name:str, loc:list) -> UML_Field | UML_Method | None:
         return next((v for v in loc if v.get_name() == name), None)
     
-    def __str_list(self, l:list) -> str:
-        """Custom list format used in to_string"""
-        out = ""
-        for f in l: 
-            out += '\n      ' + str(f)
-        return out
-    
 #===================================== Operators =====================================#
         
     def __eq__(self, o) -> bool:
