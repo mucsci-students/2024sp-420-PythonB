@@ -1,5 +1,6 @@
 from Models.uml_relation import UML_Relation
 from Models.uml_class import UML_Class
+from Views.uml_list import UML_List_Visitor
 
 def test_ctor_relation():
     src = UML_Class("source")
@@ -133,3 +134,10 @@ def test_str():
 
     assert str(rel1) == "name1 <--- Inheritance ---> name2"
     assert str(rel1) != "Bullock"
+
+def test_visit():
+    v = UML_List_Visitor()
+    rel = UML_Relation(UML_Class("c1"), UML_Class("c2"), "inheritance")
+
+    out = rel.accept(v)
+    assert out == str(rel) + '\n'

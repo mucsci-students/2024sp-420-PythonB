@@ -1,4 +1,4 @@
-from uml_visitor import UML_Visitor
+from Models.uml_visitor import UML_Visitor
 from Models.uml_diagram import UML_Diagram
 from Models.uml_class import UML_Class
 from Models.uml_field import UML_Field
