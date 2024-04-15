@@ -52,8 +52,10 @@ class CLI_Controller:
         classes = set(self._view.list_classes(self._diagram).split())
 
         # Add Relation dict
-        class_2nd = {cls: {"Aggregation", "Composition", "Realization", "Inheritance"} for cls in classes}
-        add_relation = {cls: class_2nd for cls in class_2nd}
+        class_2nd = {key: {"Aggregation", "Composition", "Realization", "Inheritance"} for key in classes}
+        add_relation = {key: class_2nd for key in class_2nd}
+        # Delete Relation dict
+        delete_relation = {key: self.suggest_delete_relation(self._diagram, key) for key in classes}
 
         self._completer = NestedCompleter.from_nested_dict({
         'add': {
@@ -65,7 +67,7 @@ class CLI_Controller:
             
         },
         'delete': {
-            'relation': None,
+            'relation': delete_relation,
             'class': classes,
             'field': None,
             'method': None,
@@ -94,3 +96,10 @@ class CLI_Controller:
         'redo': None,
         'quit': None
         })  
+    
+    def suggest_delete_relation(self, dia: UML_Diagram, name: str) -> set[str]: 
+        res = set()
+        for rel in dia.get_all_relations():
+            if rel.get_src_name() == name:
+                res.add(rel.get_dst_name())      
+        return res
