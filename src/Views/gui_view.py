@@ -336,10 +336,12 @@ class GUI_View(tk.Tk):
 #===================================== Diagram Functions =====================================#
 
     def add_class(self) -> str:
-        class_name = Dialog_Factory.create_dialog("class", "add", "", self.diagram_canvas)
-        if not class_name:
-            return
-        new_command = 'add class ' + class_name
+        dialog_params = Dialog_Parts("text", "Class Name")
+        result = Dialog_Factory.create("Add Class", dialog_params)
+        # class_name = Dialog_Factory.create_dialog("class", "add", "", self.diagram_canvas)
+        # if not class_name:
+        #     return
+        new_command = 'add class ' + result
         self._user_command.set(new_command)
       
     def delete_class(self) -> str:
@@ -556,117 +558,87 @@ class GUI_View(tk.Tk):
         
 #===================================== Dialog Classes =====================================#
 
-class Dialog_Box(ABC):
-    def __init__(self, parent, dialog_action):
-        self._parent = parent
-        self._dialog = None
-        self._dialog_action = dialog_action
-
-    @abstractmethod
-    def create_dialog(self):
-        pass
-
-class Class_Dialog(Dialog_Box):
-    def create_dialog(self, action:str, class_options:list):
-        class_name = ""
-        if action == "add":
-            class_name = simpledialog.askstring("Input", "Enter Class Name:", parent = self)
-
-        elif action == "delete":
-            tk.Label(self, text = "Class:").grid(row = 0)
-            self._class_delete = tk.StringVar(self)
-            tk.OptionMenu(self, self._class_delete, class_options).grid(row = 0, column = 1)
-            class_name = self._class_delete.get()
-          
-        elif action == "rename":
-            pass
-
-        return class_name
-    
-class Field_Dialog(Dialog_Box):
-    def create_dialog(self, action:str, class_options:list):
-        class_name = ""
-        field_name = ""
-        if action == "add":
-            pass
-       
-        elif action == "delete":
-            pass
+# class Dialog_Factory:
+#     @staticmethod
+#     def create_dialog(dialog_type:str, action_type:str, class_options:list, parent):
+#         if dialog_type == "class":
+#             class_name = Class_Dialog.create_dialog(parent, action_type, class_options)
+#             return class_name
         
-        elif action == "rename":
-            pass
+#         elif dialog_type == "field":
+#             class_name, field_name = Field_Dialog.create_dialog(parent, action_type, class_options)
+#             return class_name, field_name
         
-        return class_name, field_name
-
-class Method_Dialog(Dialog_Box):
-    def create_dialog(self, action:str, class_options:list):
-        class_name = ""
-        method_name = ""
-        if action == "add":
-            pass
+#         elif dialog_type == "method":
+#             class_name, method_name = Method_Dialog.create_dialog(parent, action_type, class_options)
+#             return class_name, method_name
         
-        elif action == "delete":
-            pass
+#         elif dialog_type == "param":
+#             class_name, method_name, param_name = Param_Dialog.create_dialog(parent, action_type, class_options)
+#             return class_name, method_name, param_name
         
-        elif action == "rename":
-            pass
+#         elif dialog_type == "relation":
+#             src_name, dest_name, rel_type = Relation_Dialog.create_dialog(parent, action_type, class_options)
+#             return src_name, dest_name, rel_type
         
-        return class_name, method_name
-
-class Param_Dialog(Dialog_Box):
-    def create_dialog(self, action:str, class_options:list):
-        class_name = ""
-        method_name = ""
-        param_name = ""
-        if action == "add":
-            pass
+#         else:
+#             return None
         
-        elif action == "delete":
-            pass
-        
-        elif action == "rename":
-            pass
-        
-        return class_name, method_name, param_name
-
-class Relation_Dialog(Dialog_Box):
-    def create_dialog(self, action:str, class_options:list):
-        src_name = ""
-        dest_name = ""
-        rel_type = ""
-        if action == "add":
-            pass
-        
-        elif action == "delete":
-            pass
-        
-        return src_name, dest_name, rel_type
+class Dialog_Parts:
+    def __init__(self, input_type:str, title:str, values = None, default = None):
+        self._input_type = input_type
+        self._title = title
+        self._values = values
+        self._default = default
 
 class Dialog_Factory:
-    @staticmethod
-    def create_dialog(dialog_type:str, action_type:str, class_options:list, parent):
-        if dialog_type == "class":
-            class_name = Class_Dialog.create_dialog(parent, action_type, class_options)
-            return class_name
+    @abstractmethod
+    def create(dialog_name, params):
+        if isinstance(params, Dialog_Parts):
+            params = [params]
+        if isinstance(params, list):
+            Dialog_Factory._create(dialog_name, params)
+
+    def _create(dialog_name, params):
+        frame = tk.Tk()
+        frame.title = dialog_name
+        selects = []
+
+        def action_ok():
+            result = []
+            for s in selects:
+                result.append(s.get())
+            return result
         
-        elif dialog_type == "field":
-            class_name, field_name = Field_Dialog.create_dialog(parent, action_type, class_options)
-            return class_name, field_name
-        
-        elif dialog_type == "method":
-            class_name, method_name = Method_Dialog.create_dialog(parent, action_type, class_options)
-            return class_name, method_name
-        
-        elif dialog_type == "param":
-            class_name, method_name, param_name = Param_Dialog.create_dialog(parent, action_type, class_options)
-            return class_name, method_name, param_name
-        
-        elif dialog_type == "relation":
-            src_name, dest_name, rel_type = Relation_Dialog.create_dialog(parent, action_type, class_options)
-            return src_name, dest_name, rel_type
-        
-        else:
-            return None
+        def action_destroy():
+            frame.destroy()
+
+        for i, p in enumerate(params):
+            tk.Label(frame, text = f'{ p._title }:').grid(row = i, column = 0, padx = 5, pady = 5, sticky = tk.W)
+            if p._input_type == 'combo':
+                sel = tk.StringVar()
+                out = ttk.Combobox(frame, values = p._values, textvariable = sel)
+                if p._default is not None:
+                    sel.set(p._default)
+                else:
+                    sel.set(p._values[0])
+            elif p._input_type == 'text':
+                out = tk.Entry(frame)
+                if p._default is not None:
+                    out.insert(tk.END, p._default)
+            out.grid(row = i, column = 1, padx = 5, pady = 5)
+            selects.append(out)
+
+        btn_ok = tk.Button(frame, text = "OK", command = action_ok)
+        btn_ok.grid(row = len(params) + 1, column = 0, padx = 5, pady = 10)
+        # btn_ok.pack()
+        btn_cncl = tk.Button(frame, text = "Cancel", command = action_destroy)
+        btn_cncl.grid(row = len(params) + 1, column = 1, padx = 5, pady = 10)
+        # btn_cncl.pack()
+
+        frame.mainloop()
+
+    
 
 class Delete_Class_Dialog(simpledialog.Dialog):
     def __init__(self, parent, class_options:list = None, title:str = None):
