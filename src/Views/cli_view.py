@@ -1,5 +1,6 @@
 from Models.uml_diagram import UML_Diagram
-from Models.uml_list import UML_List_Visitor
+from src.Views.uml_list import UML_List_Visitor
+from Views.relation_completer import RelationCompleter
 
 class CLI_View:
     

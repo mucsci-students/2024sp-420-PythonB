@@ -32,6 +32,3 @@ class UML_Param(UML_Named_Object, UML_Visitable):
         
         return self._name == o._name
     
-    def __str__(self) -> str:
-        """Returns a string of this param."""
-        return self._name

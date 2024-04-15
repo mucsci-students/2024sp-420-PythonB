@@ -1,4 +1,4 @@
-from Models.uml_save_load import UML_Save_Visitor, encode_json, decode_json
+from Models.uml_save_load import UML_Save_Visitor, load_schema, load_metaschema, encode_json, encode_json_without_validate
 from Models.uml_save_load import encode_json_without_validate, decode_json_without_validate
 from Models.uml_save_load import load_field
 from Models.uml_save_load import load_param
@@ -12,6 +12,8 @@ from Models.uml_field import UML_Field
 from Models.uml_method import UML_Method
 from Models.uml_param import UML_Param
 from Models.uml_relation import UML_Relation
+
+import pytest
 
 def test_save_load_field():
     save_visitor = UML_Save_Visitor()
@@ -166,10 +168,6 @@ def test_save_load_class():
     assert cls7.get_position_x() == loaded_cls7.get_position_x()
     assert cls7.get_position_y() == loaded_cls7.get_position_y()
 
-def test_save_load_relation():
-    # TODO: Haven't figure out what's the best way to write this test
-    pass
-
 def test_save_load_diagram():
     save_visitor = UML_Save_Visitor()
 
@@ -232,3 +230,20 @@ def test_simple_diagram_json_convert_func():
     loaded_dgm1 = json_to_diagram(json)
     assert dgm1 is not loaded_dgm1
     assert dgm1 == loaded_dgm1
+
+def test_wild_exceptions():
+    with pytest.raises(ValueError) as FNF: 
+        load_schema("badname")
+    assert str(FNF.value) == "Schema file not found."
+
+    with pytest.raises(ValueError) as MFNF:
+        load_metaschema("badname")
+    assert str(MFNF.value) == "Schema file not found."
+
+    with pytest.raises(Exception) as E:
+        encode_json_without_validate(pytest.raises)
+    assert isinstance(E.value, TypeError)
+
+    with pytest.raises(Exception) as E2:
+        encode_json(pytest.raises)
+    assert isinstance(E.value, TypeError)
