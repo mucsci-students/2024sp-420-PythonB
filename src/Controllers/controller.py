@@ -21,7 +21,7 @@ class UML_Controller:
         self._states = UML_States(self._diagram)
         self._should_quit = False
         if isinstance(self._controller, CLI_Controller):
-            self._controller.setup_autocomplete(self._diagram)
+            self._controller.get_diagram(self._diagram)
 
     def run(self):
         """Executes the main loop of the program"""

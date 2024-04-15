@@ -10,10 +10,14 @@ class CLI_Controller:
         self._view = CLI_View()
     
     def request_update(self):
+         self.setup_autocomplete(self._diagram)
          return prompt("Command: ", completer=self._completer).strip()
 
     def draw(self, diagram: UML_Diagram):
         pass
+
+    def get_diagram(self, diagram: UML_Diagram):
+        self._diagram = diagram
 
 #=========================CLI Specific Parseing=========================#  
     def parse_list_cmd(self, d:UML_Diagram, tokens:list[str]):
@@ -35,6 +39,8 @@ class CLI_Controller:
         else:
             raise ValueError("Invalid command.")
         
+
+#========================= Autocomplete Functionality =========================#          
     def setup_autocomplete(self, dia: UML_Diagram):
         """
         Sets up autocomplete functionality using the NestedCompleter.
@@ -43,10 +49,11 @@ class CLI_Controller:
         NestedCompleter: An instance of NestedCompleter configured with a dictionary representing available commands
         and their respective subcommands or arguments.
         """
+        #set(self._view.list_classes(self._diagram).split())
         self._completer = NestedCompleter.from_nested_dict({
         'add': {
             'relation': RelationCompleter(),
-            'class': {'class1', 'class2', 'class3'},
+            'class': None,
             'field': None,
             'method': None,
             'param': None
@@ -54,20 +61,19 @@ class CLI_Controller:
         },
         'delete': {
             'relation': None,
-            'class': None,
+            'class': set(self._view.list_classes(self._diagram).split()),
             'field': None,
             'method': None,
             'param': None
-            
         },
         'rename':{
-            'class': None,
+            'class': set(self._view.list_classes(self._diagram).split()),
             'field': None,
             'method': None,
             'param': None
         },
         'list':{
-            'class': None,
+            'class': set(self._view.list_classes(self._diagram).split()),
             'classes': None,
             'relation': None,
             'relations': None
