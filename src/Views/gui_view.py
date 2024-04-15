@@ -557,32 +557,6 @@ class GUI_View(tk.Tk):
                 self.diagram_canvas.create_line(source_center, destination_center, arrow=tk.LAST)
         
 #===================================== Dialog Classes =====================================#
-
-# class Dialog_Factory:
-#     @staticmethod
-#     def create_dialog(dialog_type:str, action_type:str, class_options:list, parent):
-#         if dialog_type == "class":
-#             class_name = Class_Dialog.create_dialog(parent, action_type, class_options)
-#             return class_name
-        
-#         elif dialog_type == "field":
-#             class_name, field_name = Field_Dialog.create_dialog(parent, action_type, class_options)
-#             return class_name, field_name
-        
-#         elif dialog_type == "method":
-#             class_name, method_name = Method_Dialog.create_dialog(parent, action_type, class_options)
-#             return class_name, method_name
-        
-#         elif dialog_type == "param":
-#             class_name, method_name, param_name = Param_Dialog.create_dialog(parent, action_type, class_options)
-#             return class_name, method_name, param_name
-        
-#         elif dialog_type == "relation":
-#             src_name, dest_name, rel_type = Relation_Dialog.create_dialog(parent, action_type, class_options)
-#             return src_name, dest_name, rel_type
-        
-#         else:
-#             return None
         
 class Dialog_Parts:
     def __init__(self, input_type:str, title:str, values = None, default = None):
@@ -601,7 +575,7 @@ class Dialog_Factory:
 
     def _create(dialog_name, params):
         frame = tk.Tk()
-        frame.title = dialog_name
+        frame.title(dialog_name)
         selects = []
 
         def action_ok():
@@ -631,12 +605,10 @@ class Dialog_Factory:
 
         btn_ok = tk.Button(frame, text = "OK", command = action_ok)
         btn_ok.grid(row = len(params) + 1, column = 0, padx = 5, pady = 10)
-        # btn_ok.pack()
+
         btn_cncl = tk.Button(frame, text = "Cancel", command = action_destroy)
         btn_cncl.grid(row = len(params) + 1, column = 1, padx = 5, pady = 10)
-        # btn_cncl.pack()
 
-        frame.mainloop()
 
     
 
