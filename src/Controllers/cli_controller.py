@@ -49,10 +49,15 @@ class CLI_Controller:
         NestedCompleter: An instance of NestedCompleter configured with a dictionary representing available commands
         and their respective subcommands or arguments.
         """
-        #set(self._view.list_classes(self._diagram).split())
+        classes = set(self._view.list_classes(self._diagram).split())
+
+        # Add Relation dict
+        class_2nd = {cls: {"Aggregation", "Composition", "Realization", "Inheritance"} for cls in classes}
+        add_relation = {cls: class_2nd for cls in class_2nd}
+
         self._completer = NestedCompleter.from_nested_dict({
         'add': {
-            'relation': RelationCompleter(),
+            'relation': add_relation,
             'class': None,
             'field': None,
             'method': None,
@@ -61,19 +66,19 @@ class CLI_Controller:
         },
         'delete': {
             'relation': None,
-            'class': set(self._view.list_classes(self._diagram).split()),
+            'class': classes,
             'field': None,
             'method': None,
             'param': None
         },
         'rename':{
-            'class': set(self._view.list_classes(self._diagram).split()),
+            'class': classes,
             'field': None,
             'method': None,
             'param': None
         },
         'list':{
-            'class': set(self._view.list_classes(self._diagram).split()),
+            'class': classes,
             'classes': None,
             'relation': None,
             'relations': None
