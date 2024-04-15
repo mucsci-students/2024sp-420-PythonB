@@ -372,20 +372,18 @@ class GUI_View(tk.Tk):
         # if dialog.result:
         if class_name:
             # class_name = dialog.result
-            
             new_command = "delete class " + class_name
             self._user_command.set(new_command)
     
     def rename_class(self) -> None:
         class_options = [cb._name for cb in self._class_boxes]
 
-        dialog = Rename_Class_Dialog(self, class_options, "Rename Class")
-        if dialog.result:
-            old_name, new_name = dialog.result
+        # dialog = Rename_Class_Dialog(self, class_options, "Rename Class")
+        # if dialog.result:
+        old_name, new_name = Dialog_Factory.create_dialog("class", "rename", class_options, self.diagram_canvas)
+        if old_name and new_name:
             new_command = "rename class " + old_name + " " + new_name
             self._user_command.set(new_command)
-
-            # messagebox.showinfo("Rename Class", f"'{old_name}' has been renamed to '{new_name}'")
 
     def add_field(self) -> None:
         class_options = [cb._name for cb in self._class_boxes]
@@ -407,16 +405,6 @@ class GUI_View(tk.Tk):
             self._user_command.set(new_command)
 
     def rename_field(self):
-        # class_name = simpledialog.askstring("Rename Field", "Enter the name of the class:", parent=self)
-        # if not class_name:
-        #     return
-        # old_name = simpledialog.askstring("Rename Field", "Enter the name of the field to rename:", parent=self)
-        # if not old_name:
-        #     return
-        # new_name = simpledialog.askstring("Rename Field", "Enter the new name for the field:", parent=self)
-        # if not new_name:
-        #     return
-
         class_options = [cb._name for cb in self._class_boxes]
 
         dialog_result = Rename_Field_Dialog(self, class_options, title = "Rename Field").result
@@ -425,9 +413,6 @@ class GUI_View(tk.Tk):
 
             new_command = "rename field " + class_name + " " + old_name + " " + new_name
             self._user_command.set(new_command)
-
-        # messagebox.showinfo("Success", f"Field '{old_name}' renamed to '{new_name}' in class '{class_name}'.")
-        # messagebox.showinfo("Error", "Attribute not found.")
 
     def add_method(self):
         class_options = [cb._name for cb in self._class_boxes]
@@ -449,16 +434,6 @@ class GUI_View(tk.Tk):
             self._user_command.set(new_command)
 
     def rename_method(self):
-        # class_name = simpledialog.askstring("Rename Method", "Enter the name of the class:", parent=self)
-        # if not class_name:
-        #     return
-        # old_name = simpledialog.askstring("Rename Method", "Enter the name of the method to rename:", parent=self)
-        # if not old_name:
-        #     return
-        # new_name = simpledialog.askstring("Rename Method", "Enter the new name for the method:", parent=self)
-        # if not new_name:
-        #     return
-
         class_options = [cb._name for cb in self._class_boxes]
 
         dialog_result = Rename_Method_Dialog(self, class_options, title = "Rename Method").result
@@ -478,11 +453,6 @@ class GUI_View(tk.Tk):
             new_command = "add param " + class_name + " " + method_name + " " + param_name
             self._user_command.set(new_command)
 
-            # messagebox.showinfo("Error","All fields are required.")
-            # messagebox.showinfo("Add Parameter", f"Method '{method_name}' not found.")
-            # messagebox.showinfo("Add Parameter", f"Class '{class_name}' not found.")
-            # messagebox.showinfo("Success", f"Parameter '{param_name}' added to '{class_name}")
-
     def delete_param(self):
         class_options = [cb._name for cb in self._class_boxes]
 
@@ -493,11 +463,6 @@ class GUI_View(tk.Tk):
             new_command = "delete param " + class_name + " " + method_name + " " + param_name
             self._user_command.set(new_command)
 
-            # messagebox.showinfo("Success", f"Parameter '{param_name}' removed from method '{method_name}' in class '{class_name}'.")
-            # messagebox.showinfo("Error", f"Parameter '{param_name}' not found in method '{method_name}'.")
-            # messagebox.showinfo("Error", f"Method '{method_name}' not found in class '{class_name}'.")
-            # messagebox.showinfo("Error", f"Class '{class_name}' not found.")
-
     def rename_param(self):
         class_options = [cb._name for cb in self._class_boxes]
 
@@ -507,9 +472,6 @@ class GUI_View(tk.Tk):
 
             new_command = "rename param " + class_name + " " + method_name + " " + old_name + " " + new_name
             self._user_command.set(new_command)
-
-            # messagebox.showinfo("Success", "Parameter renamed successfully.")
-            # messagebox.showinfo("Error", "Parameter not found.")
 
     def vec(self, p1: list[int], p2: list[int]):
         return p2[0] - p1[0], p2[1] - p1[1]
@@ -656,6 +618,22 @@ class Class_Dialog(Dialog_Box):
 
 
         return class_name
+    
+class Field_Dialog(Dialog_Box):
+    def create_dialog(self, action:str, class_options:list):
+        pass
+
+class Method_Dialog(Dialog_Box):
+    def create_dialog(self, action:str, class_options:list):
+        pass
+
+class Param_Dialog(Dialog_Box):
+    def create_dialog(self, action:str, class_options:list):
+        pass
+
+class Relation_Dialog(Dialog_Box):
+    def create_dialog(self, action:str, class_options:list):
+        pass
 
 class Dialog_Factory:
     @staticmethod
@@ -663,89 +641,24 @@ class Dialog_Factory:
         if dialog_type == "class":
             class_name = Class_Dialog.create_dialog(parent, action_type, class_options)
             return class_name
+        
+        elif dialog_type == "field":
+            class_name, field_name = Field_Dialog.create_dialog(parent, action_type, class_options)
+            return class_name, field_name
+        
+        elif dialog_type == "method":
+            class_name, method_name = Method_Dialog.create_dialog(parent, action_type, class_options)
+            return class_name, method_name
+        
+        elif dialog_type == "param":
+            class_name, method_name, param_name = Param_Dialog.create_dialog(parent, action_type, class_options)
+            return class_name, method_name, param_name
+        
+        elif dialog_type == "relation":
+            src_name, dest_name, rel_type = Relation_Dialog.create_dialog(parent, action_type, class_options)
+            return src_name, dest_name, rel_type
         else:
             return None
-
-# class Dialog_Box(simpledialog.Dialog):
-#     def __init__(self):
-#         self._title = None
-#         self._action = None
-#         self._label = None
-#         self._input = None
-#         self._class_options = None
-#         self._class = None
-#         self._fields = None
-#         self._methods = None
-#         self._dropdown = None
-#         self._dropdown_second = None
-
-#     # Base stolen from Delete Class
-#     def body(self, parent):
-#         tk.Label(parent, text = "Class:").grid(row = 0)
-#         self._class_delete = tk.StringVar(parent)
-#         tk.OptionMenu(parent, self._class_delete, *self._class_options).grid(row = 0, column = 1)
-
-#         return parent
-    
-#     def apply(self):
-#         class_name = self._class_delete.get()
-#         self.result = class_name
-
-# class Dialog_Builder:
-#     def __init__(self):
-#         self._dialog = None
-
-#     def build_class(self, action:str, parent:tk.Tk):
-#         if action == "Add":
-#             self._dialog = AddClassDialog(parent)
-
-#     def set_title(self, title:str):
-#         self._title = title
-
-#     def set_input(self, input:list):
-#         self._input = input
-
-#     def set_action(self, action:str):
-#         self._action = action
-
-#     def set_class_options(self, class_options:list):
-#         self._class_options = class_options
-
-#     def set_class(self, class_name:str):
-#         self._class = class_name
-
-#     def set_fields(self, fields:list):
-#         self._fields = fields
-
-#     def set_methods(self, methods:list):
-#         self._methods = methods
-
-# class Dialog_Director:
-#     def __init__(self, builder:Dialog_Builder):
-#         self._builder = builder
-
-#     def build_class_dialog(self, action:str):
-#         title = action + " Class"
-#         self._builder.set_title(title)
-#         self._builder.set_action(action)
-#         if action == "Add":
-#             self._class = simpledialog.askstring("Input", "Enter Class Name:", parent = self)
-#         elif action == "Delete":
-#             pass
-#         elif action == "Rename":
-#             pass
-
-#     def build_rel_dialog(self):
-#         pass
-
-#     def build_field_dialog(self):
-#         pass
-    
-#     def build_method_dialog(self):
-#         pass
-
-#     def build_param_dialog(self):
-#         pass
 
 class Delete_Class_Dialog(simpledialog.Dialog):
     def __init__(self, parent, class_options:list = None, title:str = None):
