@@ -358,8 +358,7 @@ class GUI_View(tk.Tk):
 #===================================== Diagram Functions =====================================#
 
     def add_class(self) -> str:
-        # class_name = simpledialog.askstring("Input", "Enter Class Name:", parent = self)
-        class_name = Dialog_Factory.create_dialog("class", "add", self.diagram_canvas)
+        class_name = Dialog_Factory.create_dialog("class", "add", "", self.diagram_canvas)
         if not class_name:
             return
         new_command = 'add class ' + class_name
@@ -368,9 +367,11 @@ class GUI_View(tk.Tk):
     def delete_class(self) -> str:
         class_options = [cb._name for cb in self._class_boxes]
 
-        dialog = Delete_Class_Dialog(self, class_options, "Delete Class")
-        if dialog.result:
-            class_name = dialog.result
+        class_name = Dialog_Factory.create_dialog("class", "delete", class_options, self.diagram_canvas)
+        # dialog = Delete_Class_Dialog(self, class_options, "Delete Class")
+        # if dialog.result:
+        if class_name:
+            # class_name = dialog.result
             
             new_command = "delete class " + class_name
             self._user_command.set(new_command)
@@ -635,21 +636,32 @@ class Dialog_Box(ABC):
         pass
 
 class Class_Dialog(Dialog_Box):
-    def create_dialog(self, action:str):
+    def create_dialog(self, action:str, class_options:list):
+        class_name = ""
         if action == "add":
             class_name = simpledialog.askstring("Input", "Enter Class Name:", parent = self)
             return class_name
+        elif action == "delete":
+            tk.Label(self, text = "Class:").grid(row = 0)
+            self._class_delete = tk.StringVar(self)
+            tk.OptionMenu(self, self._class_delete, class_options).grid(row = 0, column = 1)
+            class_name = self._class_delete.get()
+        
+        
+        
+        
+        
+        elif action == "rename":
+            class_name = class_name
 
-            # class_name = simpledialog.askstring("Input", "Enter Class Name:", parent = self)
 
-        else:
-            return None
+        return class_name
 
 class Dialog_Factory:
     @staticmethod
-    def create_dialog(dialog_type, action_type, parent):
+    def create_dialog(dialog_type:str, action_type:str, class_options:list, parent):
         if dialog_type == "class":
-            class_name = Class_Dialog.create_dialog(parent, action_type)
+            class_name = Class_Dialog.create_dialog(parent, action_type, class_options)
             return class_name
         else:
             return None
