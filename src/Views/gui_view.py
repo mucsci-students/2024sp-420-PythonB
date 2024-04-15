@@ -602,7 +602,7 @@ class Class_Dialog(Dialog_Box):
         class_name = ""
         if action == "add":
             class_name = simpledialog.askstring("Input", "Enter Class Name:", parent = self)
-            return class_name
+
         elif action == "delete":
             tk.Label(self, text = "Class:").grid(row = 0)
             self._class_delete = tk.StringVar(self)
@@ -614,26 +614,69 @@ class Class_Dialog(Dialog_Box):
         
         
         elif action == "rename":
-            class_name = class_name
+            pass
 
 
         return class_name
     
 class Field_Dialog(Dialog_Box):
     def create_dialog(self, action:str, class_options:list):
-        pass
+        class_name = ""
+        field_name = ""
+        if action == "add":
+            pass
+       
+        elif action == "delete":
+            pass
+        
+        elif action == "rename":
+            pass
+        
+        return class_name, field_name
 
 class Method_Dialog(Dialog_Box):
     def create_dialog(self, action:str, class_options:list):
-        pass
+        class_name = ""
+        method_name = ""
+        if action == "add":
+            pass
+        
+        elif action == "delete":
+            pass
+        
+        elif action == "rename":
+            pass
+        
+        return class_name, method_name
 
 class Param_Dialog(Dialog_Box):
     def create_dialog(self, action:str, class_options:list):
-        pass
+        class_name = ""
+        method_name = ""
+        param_name = ""
+        if action == "add":
+            pass
+        
+        elif action == "delete":
+            pass
+        
+        elif action == "rename":
+            pass
+        
+        return class_name, method_name, param_name
 
 class Relation_Dialog(Dialog_Box):
     def create_dialog(self, action:str, class_options:list):
-        pass
+        src_name = ""
+        dest_name = ""
+        rel_type = ""
+        if action == "add":
+            pass
+        
+        elif action == "delete":
+            pass
+        
+        return src_name, dest_name, rel_type
 
 class Dialog_Factory:
     @staticmethod
@@ -657,6 +700,7 @@ class Dialog_Factory:
         elif dialog_type == "relation":
             src_name, dest_name, rel_type = Relation_Dialog.create_dialog(parent, action_type, class_options)
             return src_name, dest_name, rel_type
+        
         else:
             return None
 
