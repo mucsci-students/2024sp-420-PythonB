@@ -181,12 +181,6 @@ class GUI_View(tk.Tk):
         help_menu.add_command(label="View Help", command=self.show_help_messagebox)
         menu_bar.add_cascade(label="Help", menu=help_menu)
 
-        #menu_bar.add_separator()
-        #menu_bar.add_separator()
-
-        #menu_bar.add_command(label = "Undo", command = self.undo)
-        #menu_bar.add_command(label = "Redo", command = self.redo)
-
     def undo(self):
         self._user_command.set('undo')
 
@@ -237,14 +231,6 @@ class GUI_View(tk.Tk):
 
 #===================================== Menu Methods =====================================#
 
-    def new_file(self):
-        # TODO: This either needs removed or needs to ask if you want to save, then restart the program
-            # new Diagram and everything
-            # If removed, this needs to be removed from the file menu
-        # Placeholder for new file action
-        messagebox.showinfo("Action", "Create a new file")
-
-    # TODO: self.controller
     def open_file(self):
         file_name = filedialog.askopenfilename(initialdir='saves/', defaultextension=".json",
                                                 filetypes=[("JSON files", "*.json"), ("All files", "*.*")])
@@ -306,8 +292,6 @@ class GUI_View(tk.Tk):
     def fields_options_menu(self):
         menu = Menu(self, tearoff = 0)
         if len(self._class_boxes) > 0:
-            # TODO: Replace this menu with all available classes, then when you click one of those give a dialog?
-                # Potentially a second menu for these three related to that class?
             menu.add_command(label = "Add Field", command = self.add_field)
             menu.add_command(label = "Delete Field", command = self.delete_field)
             menu.add_command(label = "Rename Field", command = self.rename_field)
@@ -319,7 +303,6 @@ class GUI_View(tk.Tk):
     def methods_options_menu(self):
         menu = Menu(self, tearoff = 0)
         if len(self._class_boxes) > 0:
-            # TODO: See field_options_menu above
             menu.add_command(label = "Add Method", command = self.add_method)
             menu.add_command(label = "Delete Method", command = self.delete_method)
             menu.add_command(label = "Rename Method", command = self.rename_method)
@@ -331,7 +314,6 @@ class GUI_View(tk.Tk):
     def params_options_menu(self):
         menu = Menu(self, tearoff = 0)
         if len(self._class_boxes) > 0:
-            # TODO: See methods_options_menu above
             menu.add_command(label = "Add Parameter", command = self.add_param)
             menu.add_command(label = "Delete Parameter", command = self.delete_param)
             menu.add_command(label = "Rename Parameter", command = self.rename_param)
@@ -343,12 +325,8 @@ class GUI_View(tk.Tk):
     def relations_options_menu(self):
         menu = Menu(self, tearoff=0)
         menu = Menu(self, tearoff=0)
-        if True:
-        # if len(self._class_boxes) > 1:
+        if len(self._class_boxes) > 1:
             menu.add_command(label = "Add Relationship", command = self.add_relation)
-        # The below check *should* work, but given the state of things, I can't add a relation to test
-            # Until then, as long as there is at least 2 classes, Delete relation will appear.
-        # if len(self.relationshipsList) > 0:
             menu.add_command(label = "Delete Relationship", command = self.delete_relation)
         try:
             menu.tk_popup(x = self._sidebar.winfo_pointerx(), y = self._sidebar.winfo_pointery())
@@ -367,21 +345,22 @@ class GUI_View(tk.Tk):
     def delete_class(self) -> str:
         class_options = [cb._name for cb in self._class_boxes]
 
-        class_name = Dialog_Factory.create_dialog("class", "delete", class_options, self.diagram_canvas)
-        # dialog = Delete_Class_Dialog(self, class_options, "Delete Class")
-        # if dialog.result:
-        if class_name:
-            # class_name = dialog.result
+        # class_name = Dialog_Factory.create_dialog("class", "delete", class_options, self.diagram_canvas)
+        dialog = Delete_Class_Dialog(self, class_options, "Delete Class")
+        if dialog.result:
+        # if class_name:
+            class_name = dialog.result
             new_command = "delete class " + class_name
             self._user_command.set(new_command)
     
     def rename_class(self) -> None:
         class_options = [cb._name for cb in self._class_boxes]
 
-        # dialog = Rename_Class_Dialog(self, class_options, "Rename Class")
-        # if dialog.result:
-        old_name, new_name = Dialog_Factory.create_dialog("class", "rename", class_options, self.diagram_canvas)
-        if old_name and new_name:
+        dialog = Rename_Class_Dialog(self, class_options, "Rename Class")
+        if dialog.result:
+        # old_name, new_name = Dialog_Factory.create_dialog("class", "rename", class_options, self.diagram_canvas)
+        # if old_name and new_name:
+            old_name, new_name = Rename_Class_Dialog(self, class_options, "Rename Class")
             new_command = "rename class " + old_name + " " + new_name
             self._user_command.set(new_command)
 
@@ -523,7 +502,6 @@ class GUI_View(tk.Tk):
         self.draw_triangle(start, end, 'white')
 
     def add_relation(self):
-        # TODO: This will break once our back end is in
         # Create list of classes in Diagram
         class_options = [cb._name for cb in self._class_boxes]
 
@@ -543,14 +521,9 @@ class GUI_View(tk.Tk):
             new_command = "delete relation " + src + " " + dst
             self._user_command.set(new_command)
 
-            # messagebox.showinfo("Success", "Relationship deleted successfully.")
-
 #===================================== Helper Functions =====================================#
             
     def get_next_position(self):
-        # TODO: This should probably be more involved as the cards won't just appear in a row
-            # Probably not high priority
-        # For simplicity, let's just arrange them in a horizontal line for now
         spacing = 10  # Spacing between class boxes
         box_width = 150  # Assume a fixed width for now
         x, y = 50, 50  # Starting position for the first class box
@@ -580,10 +553,6 @@ class GUI_View(tk.Tk):
 
                 # Draw a line between them
                 self.diagram_canvas.create_line(source_center, destination_center, arrow=tk.LAST)
-
-        # Re-draw each class box
-        # for class_box in self.class_boxes:
-        #     self.create_class_box(self.diagram_canvas, class_box['class_name'], class_box.get('fields', []), class_box.get('methods', []), class_box['x'], class_box['y'])
         
 #===================================== Dialog Classes =====================================#
 
@@ -608,14 +577,9 @@ class Class_Dialog(Dialog_Box):
             self._class_delete = tk.StringVar(self)
             tk.OptionMenu(self, self._class_delete, class_options).grid(row = 0, column = 1)
             class_name = self._class_delete.get()
-        
-        
-        
-        
-        
+          
         elif action == "rename":
             pass
-
 
         return class_name
     
@@ -1223,9 +1187,6 @@ class Class_Box():
         self._box, self._box_text, self._height = self.create_class_box(canvas)
 
     def create_class_box(self, canvas: tk.Canvas):
-        # TODO: This value is just hard coded (obviously)
-            # It should could the number of lines in the class box
-            
         # Calculate the height of the box
         num_text_lines = 2 + 2 + len(self._fields) + len(self._methods) # class_name + fields + methods
         # Calculate box height dynamically based on contents
