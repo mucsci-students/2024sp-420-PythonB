@@ -5,6 +5,7 @@ from tkinter import filedialog
 from tkinter import *
 from tkinter import messagebox
 from tkinter import simpledialog
+from abc import ABC, abstractmethod
 
 import math
 
@@ -357,7 +358,8 @@ class GUI_View(tk.Tk):
 #===================================== Diagram Functions =====================================#
 
     def add_class(self) -> str:
-        class_name = simpledialog.askstring("Input", "Enter Class Name:", parent = self)
+        # class_name = simpledialog.askstring("Input", "Enter Class Name:", parent = self)
+        class_name = Dialog_Factory.create_dialog("class", "add", self.diagram_canvas)
         if not class_name:
             return
         new_command = 'add class ' + class_name
@@ -622,82 +624,116 @@ class GUI_View(tk.Tk):
         
 #===================================== Dialog Classes =====================================#
 
-class Dialog_Box(simpledialog.Dialog):
-    def __init__(self):
-        self._title = None
-        self._action = None
-        self._label = None
-        self._input = None
-        self._class_options = None
-        self._class = None
-        self._fields = None
-        self._methods = None
-        self._dropdown = None
-        self._dropdown_second = None
+class Dialog_Box(ABC):
+    def __init__(self, parent, dialog_action):
+        self._parent = parent
+        self._dialog = None
+        self._dialog_action = dialog_action
 
-    # Base stolen from Delete Class
-    def body(self, parent):
-        tk.Label(parent, text = "Class:").grid(row = 0)
-        self._class_delete = tk.StringVar(parent)
-        tk.OptionMenu(parent, self._class_delete, *self._class_options).grid(row = 0, column = 1)
+    @abstractmethod
+    def create_dialog(self):
+        pass
 
-        return parent
+class Class_Dialog(Dialog_Box):
+    def create_dialog(self, action:str):
+        if action == "add":
+            class_name = simpledialog.askstring("Input", "Enter Class Name:", parent = self)
+            return class_name
+
+            # class_name = simpledialog.askstring("Input", "Enter Class Name:", parent = self)
+
+        else:
+            return None
+
+class Dialog_Factory:
+    @staticmethod
+    def create_dialog(dialog_type, action_type, parent):
+        if dialog_type == "class":
+            class_name = Class_Dialog.create_dialog(parent, action_type)
+            return class_name
+        else:
+            return None
+
+# class Dialog_Box(simpledialog.Dialog):
+#     def __init__(self):
+#         self._title = None
+#         self._action = None
+#         self._label = None
+#         self._input = None
+#         self._class_options = None
+#         self._class = None
+#         self._fields = None
+#         self._methods = None
+#         self._dropdown = None
+#         self._dropdown_second = None
+
+#     # Base stolen from Delete Class
+#     def body(self, parent):
+#         tk.Label(parent, text = "Class:").grid(row = 0)
+#         self._class_delete = tk.StringVar(parent)
+#         tk.OptionMenu(parent, self._class_delete, *self._class_options).grid(row = 0, column = 1)
+
+#         return parent
     
-    def apply(self):
-        class_name = self._class_delete.get()
-        self.result = class_name
+#     def apply(self):
+#         class_name = self._class_delete.get()
+#         self.result = class_name
 
-class Dialog_Builder:
-    def __init__(self):
-        self._dialog = Dialog_Box()
+# class Dialog_Builder:
+#     def __init__(self):
+#         self._dialog = None
 
-    def set_title(self, title:str):
-        self._title = title
+#     def build_class(self, action:str, parent:tk.Tk):
+#         if action == "Add":
+#             self._dialog = AddClassDialog(parent)
 
-    def set_input(self, input:list):
-        self._input = input
+#     def set_title(self, title:str):
+#         self._title = title
 
-    def set_action(self, action:str):
-        self._action = action
+#     def set_input(self, input:list):
+#         self._input = input
 
-    def set_class_options(self, class_options:list):
-        self._class_options = class_options
+#     def set_action(self, action:str):
+#         self._action = action
 
-    def set_class(self, class_name:str):
-        self._class = class_name
+#     def set_class_options(self, class_options:list):
+#         self._class_options = class_options
 
-    def set_fields(self, fields:list):
-        self._fields = fields
+#     def set_class(self, class_name:str):
+#         self._class = class_name
 
-    def set_methods(self, methods:list):
-        self._methods = methods
+#     def set_fields(self, fields:list):
+#         self._fields = fields
 
-class Dialog_Director:
-    def __init__(self, builder:Dialog_Builder):
-        self._builder = builder
+#     def set_methods(self, methods:list):
+#         self._methods = methods
 
-    def build_class_dialog(self, action:str):
-        title = action + " Class"
-        self._builder.set_title(title)
-        self._builder.set_action(action)
-        if action == "Add":
-            self._class = simpledialog.askstring("Input", "Enter Class Name:", parent = self)
-        elif action == "Delete":
-            pass
-        elif action == "Rename":
-            pass
+# class Dialog_Director:
+#     def __init__(self, builder:Dialog_Builder):
+#         self._builder = builder
 
-    def build_rel_dialog(self):
-        pass
+#     def build_class_dialog(self, action:str):
+#         title = action + " Class"
+#         self._builder.set_title(title)
+#         self._builder.set_action(action)
+#         if action == "Add":
+#             self._class = simpledialog.askstring("Input", "Enter Class Name:", parent = self)
+#         elif action == "Delete":
+#             pass
+#         elif action == "Rename":
+#             pass
 
-    def build_field_dialog(self):
-        pass
+#     def build_rel_dialog(self):
+#         pass
+
+#     def build_field_dialog(self):
+#         pass
     
-    def build_method_dialog(self):
-        pass
+#     def build_method_dialog(self):
+#         pass
 
-    def build_param_dialog(self):
-        pass
+#     def build_param_dialog(self):
+#         pass
 
 class Delete_Class_Dialog(simpledialog.Dialog):
     def __init__(self, parent, class_options:list = None, title:str = None):
