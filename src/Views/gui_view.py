@@ -467,16 +467,6 @@ class GUI_View(tk.Tk):
             new_command = "rename param " + class_name + " " + method_name + " " + old_name + " " + new_name
             self._user_command.set(new_command)
 
-    def vec(self, p1: list[int], p2: list[int]):
-        return p2[0] - p1[0], p2[1] - p1[1]
-    
-    def rotate(self, v: tuple[int], rad: float):
-        return v[0] * math.cos(rad) - v[1] * math.sin(rad), v[0] * math.sin(rad) + v[1] * math.cos(rad)
-    
-    def normalized(self, v: tuple[int]):
-        ac = 1e-11 + (v[0]**2 + v[1]**2)**0.5
-        return v[0] / ac, v[1] / ac
-
     def draw_diamond(self, start: list[int], end: list[int], color: str, side_length: int=30) -> None:
         orgin = self.vec(start, end)
         left = self.normalized(self.rotate(orgin, -5 * math.pi / 6))
