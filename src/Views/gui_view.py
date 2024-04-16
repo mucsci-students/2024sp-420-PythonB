@@ -281,6 +281,8 @@ class GUI_View(tk.Tk):
         menu = Menu(self, tearoff = 0)
         if len(self._class_boxes) > 0:
             menu.add_command(label = "Add Field", command = self.add_field)
+        # Only show the delete and rename options if there are fields to delete or rename
+        if any(len(cb._fields) > 0 for cb in self._class_boxes):
             menu.add_command(label = "Delete Field", command = self.delete_field)
             menu.add_command(label = "Rename Field", command = self.rename_field)
         try:
@@ -292,6 +294,8 @@ class GUI_View(tk.Tk):
         menu = Menu(self, tearoff = 0)
         if len(self._class_boxes) > 0:
             menu.add_command(label = "Add Method", command = self.add_method)
+        # Only show the delete and rename options if there are methods to delete or rename
+        if any(len(cb._methods) > 0 for cb in self._class_boxes):
             menu.add_command(label = "Delete Method", command = self.delete_method)
             menu.add_command(label = "Rename Method", command = self.rename_method)
         try:
@@ -312,8 +316,7 @@ class GUI_View(tk.Tk):
 
     def relations_options_menu(self):
         menu = Menu(self, tearoff=0)
-        menu = Menu(self, tearoff=0)
-        if len(self._class_boxes) > 1:
+        if len(self._class_boxes) > 0:
             menu.add_command(label = "Add Relationship", command = self.add_relation)
             menu.add_command(label = "Delete Relationship", command = self.delete_relation)
         try:
