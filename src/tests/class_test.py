@@ -2,6 +2,8 @@ from Models.uml_class import UML_Class
 from Models.uml_field import UML_Field
 from Models.uml_method import UML_Method
 
+import pytest
+
 def test_ctor():
     cl = UML_Class("class")
     assert cl._name == "class"
@@ -14,13 +16,25 @@ def test_get_name():
     assert cl.get_name() == "class"
     assert cl.get_name() != "Minecraft"
 
+def test_set_class():
+    cl = UML_Class("class")
+    assert cl.get_name() == "class"
+
+    cl.set_name("class2")
+    assert cl.get_name() == "class2"
+
+
 def test_add_field():
     cl = UML_Class("class")
-    cl.add_field("field1", "x")
-    field = cl._fields[0]
+    field = UML_Field("field1")
+    cl.add_field(field.get_name(), field.get_type())
 
-    assert UML_Field("field1", "x") == cl._fields[0]
+    assert field == cl._fields[0]
     assert UML_Field("field2", "x") != cl._fields[0]
+
+    with pytest.raises(ValueError) as VE:
+        cl.add_field(field.get_name(), field.get_type())
+    assert str(VE.value) == "field1 already exists"
 
 def test_add_method():
     cl = UML_Class("class")
@@ -28,6 +42,10 @@ def test_add_method():
 
     assert UML_Method("mthd", "int", "p1", "p2") == cl._methods[0]
     assert UML_Method("mthd", "int") != str(cl._methods[0])
+
+    with pytest.raises(ValueError) as VE:
+        cl.add_method("mthd", "int", "p1", "p2")
+    assert str(VE.value) == "mthd already exists"
 
 def test_delete_field():
     cl = UML_Class("class")
@@ -39,6 +57,12 @@ def test_delete_field():
     cl.delete_field("field1")
     assert UML_Field("field1", "x") != cl._fields[0]
     assert UML_Field("field2", "y") == cl._fields[0]
+
+    with pytest.raises(ValueError) as VE:
+        cl.delete_field("field1")
+    assert str(VE.value) == "Field field1 does not exist"
+
+
 
 def test_delete_method():
     cl = UML_Class("class")
@@ -56,6 +80,10 @@ def test_delete_method():
     assert next((m for m in cl._methods if m == m1), True)
     assert next((m for m in cl._methods if m == m2), False)
 
+    with pytest.raises(ValueError) as VE:
+        cl.delete_method("Kwanzaa")
+    assert str(VE.value) == "Method Kwanzaa does not exist"
+
 def test_get_field():
     cl = UML_Class("class")
     cl.add_field("field1", "x")
@@ -64,6 +92,10 @@ def test_get_field():
     assert cl.get_field("field1")
     assert cl.get_field("field1") == f1
 
+    with pytest.raises(ValueError) as VE:
+        cl.get_field("badname")
+    assert str(VE.value) == "Field badname does not exist"
+
 def test_get_method():
     cl = UML_Class("class")
     cl.add_method("mthd", "int", "p1", "p2")
@@ -71,6 +103,10 @@ def test_get_method():
 
     assert cl.get_method("mthd")
     assert cl.get_method("mthd") == m1
+
+    with pytest.raises(ValueError) as VE:
+        cl.get_method("badname")
+    assert str(VE.value) == "Method badname does not exist"
 
 def test_get_fields():
     cl = UML_Class("class")

@@ -2,6 +2,8 @@ from Models.uml_diagram import UML_Diagram
 from Models.uml_class import UML_Class
 from Models.uml_relation import UML_Relation
 
+import pytest
+
 def test_ctor_dia():
     dia = UML_Diagram()
     assert dia
@@ -13,6 +15,17 @@ def test_add_class():
     assert len(dia.get_all_classes()) == 0
     dia.add_class("Bender Bending Rodriguez")
     assert dia._classes[0] == bender
+    assert len(dia.get_all_classes()) == 1
+
+def test_add_repeat_class():
+    dia = UML_Diagram()
+
+    dia.add_class("cl")
+    assert len(dia.get_all_classes()) == 1
+    
+    with pytest.raises(ValueError) as VE:
+        dia.add_class("cl")
+    assert str(VE.value) == "Class cl already exists"
     assert len(dia.get_all_classes()) == 1
 
 def test_add_relation():
@@ -29,6 +42,23 @@ def test_add_relation():
     assert len(dia._relations) == 1
     assert dia._relations[0].get_src_name() == "Bender Bending Rodriguez"
     assert dia._relations[0].get_dst_name() == "Philip J. Fry"
+
+def test_invalid_relations():
+    dia = UML_Diagram()
+    dia.add_class("cl")
+    dia.add_relation("cl", "cl", "Aggregation")
+
+    assert len(dia.get_all_relations()) == 1
+
+    with pytest.raises(ValueError) as VE:
+        dia.add_relation("cl", "cl", "Composition")
+    assert str(VE.value) == "Relation between cl and cl already exists"
+
+    with pytest.raises(ValueError) as VE:
+        dia.add_class("c2")
+        dia.add_relation("cl", "c2", "badType")
+    assert str(VE.value) == "Relation type badType is invalid"
+
 
 def test_get_class():
     dia = UML_Diagram()
@@ -188,3 +218,43 @@ def test_equals():
     assert dia2 != class2
     assert dia2 == dia2
     assert dia != dia2
+
+def test_replace_content():
+    d1 = UML_Diagram()
+    d2 = UML_Diagram()
+
+    d1.add_class("c1")
+    d1.add_class("c2")
+    d1.add_class("c3")
+    d1.add_relation("c1", "c2", "aggregation")
+
+    d2.add_class("d1")
+    d2.add_class("d2")
+    d2.add_class("d3")
+    d2.add_relation("d2", "d3", "realization")
+
+    c1 = d1.get_class("c1")
+    c2 = d1.get_class("c2")
+
+    assert d1.get_class("c1") == UML_Class("c1")
+    assert d1.get_class("c2") == UML_Class("c2")
+    assert d1.get_class("c3") == UML_Class("c3")
+    assert d1.get_relation("c1", "c2") == UML_Relation(c1, c2, "aggregation")
+
+    d1.replace_content(d2)
+
+    c3 = d1.get_class("d2")
+    c4 = d1.get_class("d3")
+
+    assert d1.get_class("d1") == UML_Class("d1")
+    assert d1.get_class("d2") == UML_Class("d2")
+    assert d1.get_class("d3") == UML_Class("d3")
+    assert d1.get_relation("d2", "d3") == UML_Relation(c3, c4, "aggregation")
+
+    with pytest.raises(ValueError) as VE:
+        d1.get_class("c1")
+    assert str(VE.value) == "Class c1 does not exist"
+
+    with pytest.raises(ValueError) as VE: 
+        d1.get_relation("d1", "d2")
+    assert str(VE.value) == "Relation between d1 and d2 does not exist"
