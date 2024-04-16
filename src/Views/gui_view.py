@@ -269,9 +269,6 @@ class GUI_View(tk.Tk):
                 - Names must start with a letter
                 - Can include numbers, dashes (-), and underscores (_).
 
-            Requirements:
-                - To create relationships, you need at least two classes.
-
             Visuals and Meanings:
                 - Aggregation: An empty diamond to a normal arrow.
                 - Composition: A filled diamond to a normal arrow.
