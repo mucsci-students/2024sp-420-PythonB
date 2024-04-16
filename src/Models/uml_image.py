@@ -59,6 +59,7 @@ class UML_Image:
             class_box['name'] = cls.get_name()
             class_box['x'] = cls.get_position_x()
             class_box['y'] = cls.get_position_y()
+            print(cls.get_name(), cls.get_position_x(), cls.get_position_y())
             class_box['width'] = text_cls_width
             class_box['height'] = text_cls_height
             class_box['fields'] = [field.get_name() for field in cls.get_fields()]

@@ -57,7 +57,7 @@ class GUI_View(tk.Tk):
         self._cursor_x = event.x
         self._cursor_y = event.y
         for cb in self._class_boxes:
-            if cb['x'] <= self._cursor_x <= cb['x'] + cb['width'] and cb['y'] <= self._cursor_y <= cb['y'] + cb['height']:
+            if cb['x'] <= self._cursor_x + self._camera_x <= cb['x'] + cb['width'] and cb['y'] <= self._cursor_y + self._camera_y <= cb['y'] + cb['height']:
                 self._dragged_class_box = cb
                 break
 
@@ -117,6 +117,16 @@ class GUI_View(tk.Tk):
         # margin = 500
         self.diagram_canvas.create_image(-500 - self._camera_x, -500 - self._camera_y, anchor=tk.NW, image=self._image)
         self._class_boxes = class_boxes
+        #debug: display lines bounding class boxes
+        for cb in self._class_boxes:
+            top_left = cb['x'] - self._camera_x, cb['y'] - self._camera_y
+            top_right = cb['x'] + cb['width'] - self._camera_x, cb['y'] - self._camera_y
+            bot_left = cb['x'] - self._camera_x, cb['y'] + cb['height'] - self._camera_y
+            bot_right = cb['x'] + cb['width'] - self._camera_x, cb['y'] + cb['height'] - self._camera_y
+            self.diagram_canvas.create_line(top_left, top_right)
+            self.diagram_canvas.create_line(top_right, bot_right)
+            self.diagram_canvas.create_line(bot_right, bot_left)
+            self.diagram_canvas.create_line(bot_left, top_left)
 
     def draw_relation(self, src: list[list[int]], dst: list[list[int]], type: str) -> None:
         a, b = -1, -1
