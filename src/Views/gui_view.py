@@ -413,7 +413,7 @@ class GUI_View(tk.Tk):
             Dialog_Parts("dynamic_combo", "Method", meth_options),
             Dialog_Parts("text", "New Name")
         ]
-        Dialog_Factory.create("Rename Method", dialog_params, lambda result: self._user_command.set(f'rename method {result[0]} {result[1].rsplit(maxsplit = 1)[-1]} {result[2]}'))
+        Dialog_Factory.create("Rename Method", dialog_params, lambda result: self._user_command.set(f'rename method { result[0] } { result[1].rsplit(maxsplit = 1)[-1] } { result[2] }'))
 
     def add_param(self):
         class_options = [cb._name for cb in self._class_boxes]
@@ -427,9 +427,24 @@ class GUI_View(tk.Tk):
             Dialog_Parts("dynamic_combo", "Method", meth_options),
             Dialog_Parts("text", "Name")
         ]
-        Dialog_Factory.create("Add Paramcheese", dialog_params, lambda result:self._user_command.set(f'add method { result[0] } { result[1] } { result[2] }'))
+        Dialog_Factory.create("Add Paramcheese", dialog_params, lambda result:self._user_command.set(f'add param { result[0] } { result[1].rsplit(maxsplit = 1)[-1] } { result[2] }'))
 
     def delete_param(self):
+        # class_options = [cb._name for cb in self._class_boxes]
+        # meth_options = {}
+        # param_options = {}
+        # for cb in self._class_boxes:
+        #     meth_options[cb._name] = []
+        #     for m in cb._methods:
+        #         meth_options[cb._name].append(m[0])
+        # dialog_params = [
+        #     Dialog_Parts("combo", "Class", class_options),
+        #     Dialog_Parts("dynamic_combo", "Method", meth_options),
+        #     Dialog_Parts("dynamic_combo", "Param", param_options)
+        # ]
+        # Dialog_Factory.create("Delete Parameter", dialog_params, lambda result:self._user_command.set(f'delete param { result[0] } { result[1].rsplit(maxsplit = 1)[-1] } { result[2] }'))
+
+
         class_options = [cb._name for cb in self._class_boxes]
 
         dialog_result = Delete_Parameter_Dialog(self, class_options, "Delete Parameter").result
@@ -440,6 +455,22 @@ class GUI_View(tk.Tk):
             self._user_command.set(new_command)
 
     def rename_param(self):
+        # class_options = [cb._name for cb in self._class_boxes]
+        # meth_options = {}
+        # param_options = {}
+        # for cb in self._class_boxes:
+        #     meth_options[cb._name] = []
+        #     for m in cb._methods:
+        #         meth_options[cb._name].append(m[0])
+        # dialog_params = [
+        #     Dialog_Parts("combo", "Class", class_options),
+        #     Dialog_Parts("dynamic_combo", "Method", meth_options),
+        #     Dialog_Parts("dynamic_combo", "Param", param_options),
+        #     Dialog_Parts("text", "New Name")
+        # ]
+        # Dialog_Factory.create("Delete Parameter", dialog_params, lambda result:self._user_command.set(f'delete param { result[0] } { result[1].rsplit(maxsplit = 1)[-1] } { result[2] } { result[3] }'))
+
+
         class_options = [cb._name for cb in self._class_boxes]
 
         dialog_result = Rename_Parameter_Dialog(self, class_options, title="Rename Parameter").result
