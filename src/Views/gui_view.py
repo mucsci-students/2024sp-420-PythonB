@@ -580,14 +580,35 @@ class GUI_View(tk.Tk):
 #===================================== Dialog Factory =====================================#
         
 class Dialog_Parts:
+    """
+    Input Type: Text, Combo, or Dynamic Combo.
+        Text: A label and text input.
+        Combo: A label and a drop down menu populated from a list.
+        Dynamic Combo: A label and dropdown populated based on the selection of the previous.
+
+    Title: The Title of the Dialog Card
+
+    Values: The values of the rows in the Dialog Card
+    """
     def __init__(self, input_type:str, title:str, values = None):
         self._input_type = input_type
         self._title = title
         self._values = values
 
 class Dialog_Factory:
+    """
+    Creates a Dialog based on the parts passed to it.
+
+    Return:
+        A list of strings.
+            NOTE: Based on how our application works, you need to make sure you
+            are adding spaces correctly when you recreate the command.
+    """
     @staticmethod
     def create(dialog_name, params, callback):
+        """
+        Creates the base of the Dialog, and calls the actual create function.
+        """
         if isinstance(params, Dialog_Parts):
             params = [params]
         if isinstance(params, list):
@@ -600,6 +621,9 @@ class Dialog_Factory:
         selects = []
 
         def action_ok():
+            """
+            Appends the selections/entry to the return result
+            """
             result = []
             for s in selects:
                 result.append(s.get())
@@ -610,6 +634,9 @@ class Dialog_Factory:
             frame.destroy()
 
         def update_options(first_box, second_box, dy_values):
+            """
+            Updates the options in the Dynamic Combo based on selection of previous dropdown.
+            """
             first_val = first_box.get()
             second_box["values"] = dy_values[first_val]
             if len(second_box["values"]) > 0:
@@ -619,17 +646,20 @@ class Dialog_Factory:
 
         for i, p in enumerate(params):
             tk.Label(frame, text = f'{ p._title }:').grid(row = i, column = 0, padx = 5, pady = 5, sticky = tk.W)
+            # Creates a dropdown for the dialog
             if p._input_type == 'combo':
                 sel = tk.StringVar()
                 out = ttk.Combobox(frame, values = p._values, textvariable = sel, state = "readonly")
                 out.current(0)
                 sel.set(p._values[0])
+            # Creates a dropdown that is linked to previous dropdown
             elif p._input_type == 'dynamic_combo':
                 sel = tk.StringVar()
                 out = ttk.Combobox(frame, values = p._values, textvariable = sel, state = "readonly")
                 prev_combo = selects[i - 1]
                 prev_combo.bind("<<ComboboxSelected>>", lambda event: update_options(prev_combo, out, p._values))
                 update_options(prev_combo, out, p._values)
+            # Creates a text entry
             elif p._input_type == 'text':
                 out = tk.Entry(frame)
 
@@ -661,7 +691,6 @@ class Dialog_Factory:
         frame.geometry(f'{ frame_width }x{ frame_height }+{ x_offset }+{ y_offset }')
 
 class Delete_Parameter_Dialog(simpledialog.Dialog):
-
     def __init__(self, parent, class_options:list = None, title=None):
         self.parent = parent
         self._class_options = class_options
