@@ -354,20 +354,23 @@ class GUI_View(tk.Tk):
 
     def delete_field(self):
         class_options = [cb._name for cb in self._class_boxes]
-        # field_options = {}
-        # for cb in class_options:
-        #     for f in cb._fields:
-        #         field_options[cb]
-        # dialog_params = [
-        #     Dialog_Parts("combo", "Class", class_options),
-        #     Dialog_Parts("combo", "Field", field_options)
-        # ]
-        dialog_result = Delete_Field_Dialog(self, class_options, title = "Delete Field").result
-        if dialog_result:
-            class_name, field_name = dialog_result
+        field_options = {}
+        for cb in self._class_boxes:
+            field_options[cb._name] = []
+            for f in cb._fields:
+                field_options[cb._name].append(f[1])
+        dialog_params = [
+            Dialog_Parts("combo", "Class", class_options),
+            Dialog_Parts("dynamic_combo", "Field", field_options)
+        ]
+        Dialog_Factory.create("Delete Field", dialog_params, lambda result:self._user_command.set("delete field " + result[0] + " " + result[1]))
+
+        # dialog_result = Delete_Field_Dialog(self, class_options, title = "Delete Field").result
+        # if dialog_result:
+        #     class_name, field_name = dialog_result
             
-            new_command = "delete field " + class_name + " " + field_name
-            self._user_command.set(new_command)
+        #     new_command = "delete field " + class_name + " " + field_name
+        #     self._user_command.set(new_command)
 
     def rename_field(self):
         class_options = [cb._name for cb in self._class_boxes]
@@ -538,11 +541,10 @@ class GUI_View(tk.Tk):
 #===================================== Dialog Factory =====================================#
         
 class Dialog_Parts:
-    def __init__(self, input_type:str, title:str, values = None, default = None):
+    def __init__(self, input_type:str, title:str, values = None):
         self._input_type = input_type
         self._title = title
         self._values = values
-        self._default = default
 
 class Dialog_Factory:
     @staticmethod
@@ -568,22 +570,30 @@ class Dialog_Factory:
         def action_destroy():
             frame.destroy()
 
+        def update_options(first_box, second_box, dy_values):
+            first_val = first_box.get()
+            second_box["values"] = dy_values[first_val]
+            if len(second_box["values"]) > 0:
+                second_box.current(0)
+            else:
+                second_box.set('')
+
         for i, p in enumerate(params):
             tk.Label(frame, text = f'{ p._title }:').grid(row = i, column = 0, padx = 5, pady = 5, sticky = tk.W)
             if p._input_type == 'combo':
                 sel = tk.StringVar()
                 out = ttk.Combobox(frame, values = p._values, textvariable = sel, state = "readonly")
                 out.current(0)
-                if p._default is not None:
-                    sel.set(p._default)
-                else:
-                    sel.set(p._values[0])
+                sel.set(p._values[0])
             elif p._input_type == 'dynamic_combo':
-                pass
+                sel = tk.StringVar()
+                out = ttk.Combobox(frame, values = p._values, textvariable = sel, state = "readonly")
+                prev_combo = selects[i - 1]
+                prev_combo.bind("<<ComboboxSelected>>", lambda event: update_options(prev_combo, out, p._values))
+                update_options(prev_combo, out, p._values)
             elif p._input_type == 'text':
                 out = tk.Entry(frame)
-                if p._default is not None:
-                    out.insert(tk.END, p._default)
+
             out.grid(row = i, column = 1, padx = 5, pady = 5)
             selects.append(out)
 
@@ -610,45 +620,6 @@ class Dialog_Factory:
 
         # use frame.geometry to set, uses a 'secret sauce' string like "1024x768+400+200"
         frame.geometry(f'{ frame_width }x{ frame_height }+{ x_offset }+{ y_offset }')
-
-class Delete_Field_Dialog(simpledialog.Dialog):
-    def __init__(self, parent, class_options:list = None, title:str = None):
-        self.parent = parent
-        self._class_options = class_options
-        super().__init__(parent, title=title)
-
-    def body(self, master):
-        tk.Label(master, text = "Select Class:").grid(row = 0)
-        self._class = tk.StringVar(master)
-        self._class.trace_add("write",self.update_options)
-        self._class_select = tk.OptionMenu(master, self._class, *self._class_options)
-        self._class_select.grid(row = 0, column = 1)
-
-        tk.Label(master, text = "Field Name:").grid(row = 1)
-        self._delete_field = tk.StringVar(master)
-        self._field_options = tk.OptionMenu(master, self._delete_field, ())
-        self._field_options.grid(row = 1, column = 1)
-
-        return master
-
-    def update_options(self, *args):
-        self._delete_field.set('')
-        class_name = self._class.get()
-        for cb in self.parent._class_boxes:
-            if cb._name == class_name:
-                options = [x for _, x in cb._fields]
-                break
-        
-        menu = self._field_options['menu']
-        menu.delete(0,'end')
-
-        for o in options:
-            self._field_options['menu'].add_command(label = o, command = tk._setit(self._delete_field,o))
-
-    def apply(self):
-        class_name = self._class.get()
-        field_name = self._delete_field.get()
-        self.result = class_name, field_name
 
 class Rename_Field_Dialog(simpledialog.Dialog):
     def __init__(self, parent, class_options:list = None, title:str = None):
