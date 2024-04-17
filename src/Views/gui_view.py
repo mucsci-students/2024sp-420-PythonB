@@ -365,22 +365,19 @@ class GUI_View(tk.Tk):
         ]
         Dialog_Factory.create("Delete Field", dialog_params, lambda result:self._user_command.set("delete field " + result[0] + " " + result[1]))
 
-        # dialog_result = Delete_Field_Dialog(self, class_options, title = "Delete Field").result
-        # if dialog_result:
-        #     class_name, field_name = dialog_result
-            
-        #     new_command = "delete field " + class_name + " " + field_name
-        #     self._user_command.set(new_command)
-
     def rename_field(self):
         class_options = [cb._name for cb in self._class_boxes]
-
-        dialog_result = Rename_Field_Dialog(self, class_options, title = "Rename Field").result
-        if dialog_result:
-            class_name, old_name, new_name = dialog_result
-
-            new_command = "rename field " + class_name + " " + old_name + " " + new_name
-            self._user_command.set(new_command)
+        field_options = {}
+        for cb in self._class_boxes:
+            field_options[cb._name] = []
+            for f in cb._fields:
+                field_options[cb._name].append(f[1])
+        dialog_params = [
+            Dialog_Parts("combo", "Class", class_options),
+            Dialog_Parts("dynamic_combo", "Field", field_options),
+            Dialog_Parts("text", "New Name")
+        ]
+        Dialog_Factory.create("Rename Field", dialog_params, lambda result:self._user_command.set("rename field " + result[0] + " " + result[1] + " " + result[2]))
 
     def add_method(self):
         class_options = [cb._name for cb in self._class_boxes]
@@ -393,13 +390,16 @@ class GUI_View(tk.Tk):
 
     def delete_method(self):
         class_options = [cb._name for cb in self._class_boxes]
-
-        dialog_result = Delete_Method_Dialog(self, class_options, title = "Delete Method").result
-        if dialog_result:
-            class_name, method_name = dialog_result
-            
-            new_command = "delete method " + class_name + " " + method_name
-            self._user_command.set(new_command)
+        meth_options = {}
+        for cb in self._class_boxes:
+            meth_options[cb._name] = []
+            for m in cb._methods:
+                meth_options[cb._name].append(m[0])
+        dialog_params = [
+            Dialog_Parts("combo", "Class", class_options),
+            Dialog_Parts("dynamic_combo", "Method", meth_options)
+        ]
+        Dialog_Factory.create("Delete Method", dialog_params, lambda result:self._user_command.set("delete method " + result[0] + " " + result[1].rsplit(maxsplit = 1)[-1]))
 
     def rename_method(self):
         class_options = [cb._name for cb in self._class_boxes]
@@ -620,89 +620,6 @@ class Dialog_Factory:
 
         # use frame.geometry to set, uses a 'secret sauce' string like "1024x768+400+200"
         frame.geometry(f'{ frame_width }x{ frame_height }+{ x_offset }+{ y_offset }')
-
-class Rename_Field_Dialog(simpledialog.Dialog):
-    def __init__(self, parent, class_options:list = None, title:str = None):
-        self.parent = parent
-        self._class_options = class_options
-        super().__init__(parent, title=title)
-
-    def body(self, master):
-        tk.Label(master, text = "Select Class:").grid(row = 0)
-        self._class = tk.StringVar(master)
-        self._class.trace_add("write",self.update_options)
-        self._class_select = tk.OptionMenu(master, self._class, *self._class_options)
-        self._class_select.grid(row = 0, column = 1)
-
-        tk.Label(master, text = "Field Name:").grid(row = 1)
-        self._delete_field = tk.StringVar(master)
-        self._field_options = tk.OptionMenu(master, self._delete_field, ())
-        self._field_options.grid(row = 1, column = 1)
-
-        tk.Label(master, text="New Field Name:").grid(row = 2)
-        self._new_field = tk.Entry(master)
-        self._new_field.grid(row = 2, column = 1)
-
-        return master
-
-    def update_options(self, *args):
-        self._delete_field.set('')
-        class_name = self._class.get()
-        for cb in self.parent._class_boxes:
-            if cb._name == class_name:
-                options = [x for _, x in cb._fields]
-                break
-        
-        menu = self._field_options['menu']
-        menu.delete(0,'end')
-
-        for o in options:
-            self._field_options['menu'].add_command(label = o, command = tk._setit(self._delete_field,o))
-
-    def apply(self):
-        class_name = self._class.get()
-        field_name = self._delete_field.get()
-        new_field = self._new_field.get()
-        self.result = class_name, field_name, new_field
-
-class Delete_Method_Dialog(simpledialog.Dialog):
-    def __init__(self, parent, class_options:list = None, title:str = None):
-        self.parent = parent
-        self._class_options = class_options
-        super().__init__(parent, title = title)
-
-    def body(self, master):
-        tk.Label(master, text = "Select Class:").grid(row = 0)
-        self._class = tk.StringVar(master)
-        self._class.trace_add("write",self.update_options)
-        self._class_select = tk.OptionMenu(master, self._class, *self._class_options)
-        self._class_select.grid(row = 0, column = 1)
-
-        tk.Label(master, text = "Method Name:").grid(row = 1)
-        self._delete_method = tk.StringVar(master)
-        self._method_options = tk.OptionMenu(master, self._delete_method, ())
-        self._method_options.grid(row = 1, column = 1)
-
-        return master
-
-    def update_options(self, *args):
-        self._delete_method.set('')
-        class_name = self._class.get()
-        for cb in self.parent._class_boxes:
-            if cb._name == class_name:
-                options = [lst[0][1] for lst in cb._methods]
-                break
-        
-        menu = self._method_options['menu']
-        menu.delete(0,'end')
-
-        for o in options:
-            self._method_options['menu'].add_command(label = o, command = tk._setit(self._delete_method,o))
-
-    def apply(self):
-        class_name = self._class.get()
-        method_name = self._delete_method.get()
-        self.result = class_name, method_name
 
 class Rename_Method_Dialog(simpledialog.Dialog):
     def __init__(self, parent, class_options:list = None, title:str = None):
