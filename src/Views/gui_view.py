@@ -354,9 +354,13 @@ class GUI_View(tk.Tk):
 
     def delete_field(self):
         class_options = [cb._name for cb in self._class_boxes]
+        # field_options = {}
+        # for cb in class_options:
+        #     for f in cb._fields:
+        #         field_options[cb]
         # dialog_params = [
         #     Dialog_Parts("combo", "Class", class_options),
-        #     Dialog_Parts("combo", "Field", something)
+        #     Dialog_Parts("combo", "Field", field_options)
         # ]
         dialog_result = Delete_Field_Dialog(self, class_options, title = "Delete Field").result
         if dialog_result:
@@ -541,13 +545,14 @@ class Dialog_Parts:
         self._default = default
 
 class Dialog_Factory:
-    @abstractmethod
+    @staticmethod
     def create(dialog_name, params, callback):
         if isinstance(params, Dialog_Parts):
             params = [params]
         if isinstance(params, list):
             Dialog_Factory._create(dialog_name, params, callback)
 
+    @staticmethod
     def _create(dialog_name, params, callback):
         frame = tk.Tk()
         frame.title(dialog_name)
@@ -567,11 +572,14 @@ class Dialog_Factory:
             tk.Label(frame, text = f'{ p._title }:').grid(row = i, column = 0, padx = 5, pady = 5, sticky = tk.W)
             if p._input_type == 'combo':
                 sel = tk.StringVar()
-                out = ttk.Combobox(frame, values = p._values, textvariable = sel)
+                out = ttk.Combobox(frame, values = p._values, textvariable = sel, state = "readonly")
+                out.current(0)
                 if p._default is not None:
                     sel.set(p._default)
                 else:
                     sel.set(p._values[0])
+            elif p._input_type == 'dynamic_combo':
+                pass
             elif p._input_type == 'text':
                 out = tk.Entry(frame)
                 if p._default is not None:
@@ -584,6 +592,24 @@ class Dialog_Factory:
 
         btn_cncl = tk.Button(frame, text = "Cancel", command = action_destroy)
         btn_cncl.grid(row = len(params) + 1, column = 1, padx = 5, pady = 10)
+
+        # This is putting the pop up in the middle of my screen. Which is better than way off to the side
+        frame.update_idletasks()
+
+        # monitor resolution
+        win_width = frame.winfo_screenwidth()
+        win_height = frame.winfo_screenheight()
+
+        # calculated frame dimensions
+        frame_height = frame.winfo_reqheight()
+        frame_width = frame.winfo_reqwidth()
+
+        # integer offset for positions of anchor for frame
+        x_offset = (win_width - frame_width) // 2
+        y_offset = (win_height - frame_height) // 2
+
+        # use frame.geometry to set, uses a 'secret sauce' string like "1024x768+400+200"
+        frame.geometry(f'{ frame_width }x{ frame_height }+{ x_offset }+{ y_offset }')
 
 class Delete_Field_Dialog(simpledialog.Dialog):
     def __init__(self, parent, class_options:list = None, title:str = None):
