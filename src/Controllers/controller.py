@@ -45,6 +45,7 @@ class UML_Controller:
             except Exception as e:
                 if isinstance(self._controller, CLI_Controller):
                     print(str(e))
+                    exit()
                 else:
                     self._controller.error_message(str(e))
                 # This undo is unnecessary for most cases

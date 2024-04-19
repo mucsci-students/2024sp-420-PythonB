@@ -49,35 +49,42 @@ class CLI_Controller:
         NestedCompleter: An instance of NestedCompleter configured with a dictionary representing available commands
         and their respective subcommands or arguments.
         """
-        classes = set(self._view.list_classes(self._diagram).split())
+        # Set containing all of the classes as strings
+        classes = {c.get_name() for c in dia.get_all_classes()}
 
-        # Add Relation dict
-        class_2nd = {key: {"Aggregation", "Composition", "Realization", "Inheritance"} for key in classes}
-        add_relation = {key: class_2nd for key in class_2nd}
-        # Delete Relation dict
+        # Dictionary containing nest class {classes {relationship types}}
+        class_reltype = {key: {"Aggregation", "Composition", "Realization", "Inheritance"} for key in classes}
+        class_class_reltype = {key: class_reltype for key in class_reltype}
+
+        # dict containing possible relations to be deleted
         delete_relation = {key: self.suggest_delete_relation(self._diagram, key) for key in classes}
+        # Method dict add method c1 m1 
+
+        #methods = {key: self.get_methods(self._diagram, key) for key in classes}
+        
+
 
         self._completer = NestedCompleter.from_nested_dict({
         'add': {
-            'relation': add_relation,
+            'relation': class_class_reltype,
             'class': None,
-            'field': None,
-            'method': None,
+            'field': classes,
+            'method': classes,
             'param': None
             
         },
         'delete': {
             'relation': delete_relation,
             'class': classes,
-            'field': None,
-            'method': None,
-            'param': None
+            'field': None, #TODO
+            'method': None, #TODO
+            'param': None #TODO
         },
         'rename':{
             'class': classes,
-            'field': None,
-            'method': None,
-            'param': None
+            'field': None, #TODO
+            'method': None, #TODO
+            'param': None #TODO
         },
         'list':{
             'class': classes,
@@ -97,9 +104,27 @@ class CLI_Controller:
         'quit': None
         })  
     
-    def suggest_delete_relation(self, dia: UML_Diagram, name: str) -> set[str]: 
+    def suggest_delete_relation(self, dia: UML_Diagram, uml_class: str) -> set[str]: 
         res = set()
         for rel in dia.get_all_relations():
-            if rel.get_src_name() == name:
+            if rel.get_src_name() == uml_class:
                 res.add(rel.get_dst_name())      
         return res
+    
+    '''
+    def get_methods(self, dia: UML_Diagram, uml_class: str):
+        print(uml_class)
+        res = set()
+        method_list = dia.get_class(uml_class).get_methods()
+        for method in method_list:
+            res.add(method.get_name())
+        return res
+    '''
+
+    def get_classes(self, dia: UML_Diagram) -> set[str]:
+        res = set()
+        class_list = dia.get_all_classes()
+        for uml_class in class_list:
+            res.add(uml_class.get_name())
+        return res
+    
