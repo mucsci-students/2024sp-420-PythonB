@@ -427,7 +427,7 @@ class GUI_View(tk.Tk):
             Dialog_Parts("dynamic_combo", "Method", meth_options),
             Dialog_Parts("text", "Name")
         ]
-        Dialog_Factory.create("Add Paramcheese", dialog_params, lambda result:self._user_command.set(f'add param { result[0] } { result[1].rsplit(maxsplit = 1)[-1] } { result[2] }'))
+        Dialog_Factory.create("Add Parameter", dialog_params, lambda result:self._user_command.set(f'add param { result[0] } { result[1].rsplit(maxsplit = 1)[-1] } { result[2] }'))
 
     def delete_param(self):
         # class_options = [cb._name for cb in self._class_boxes]
