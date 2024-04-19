@@ -12,7 +12,7 @@ class CLI_Controller:
         self._view = CLI_View()
 
     def request_update(self):
-        self.setup_autocomplete(self._diagram)
+        self.setup_autocomplete()
         return prompt("Command: ", completer=self._completer).strip()
 
     def draw(self, diagram: UML_Diagram):
@@ -44,8 +44,7 @@ class CLI_Controller:
 
 # ========================= Autocomplete Functionality =========================#
 
-
-    def setup_autocomplete(self, dia: UML_Diagram):
+    def setup_autocomplete(self):
         """
         Sets up autocomplete functionality using the NestedCompleter.
 
@@ -53,48 +52,31 @@ class CLI_Controller:
         NestedCompleter: An instance of NestedCompleter configured with a dictionary representing available commands
         and their respective subcommands or arguments.
         """
-        classes = OrderedDict((c.get_name(), None)
-                              for c in dia.get_all_classes())
-        rel_types = OrderedDict([
-            ("Aggregation", None),
-            ("Composition", None),
-            ("Realization", None),
-            ("Inheritance", None)
-        ])
-
-        # Dictionary containing nest class {classes {relationship types}}
-        class_reltype = {key: rel_types for key in classes}
-        class_class_reltype = {key: class_reltype for key in class_reltype}
-
-
-        # Method dict add method c1 m1
-        #methods = {key: self.get_methods(self._diagram, key)
-        #           for key in classes}
 
         self._completer = NestedCompleter.from_nested_dict({
             'add': {
-                'relation': class_class_reltype,
+                'relation': self.get_add_relation(),
                 'class': None,
-                'field': classes,
-                'method': classes,
+                'field': self.get_classes(),
+                'method': self.get_classes(),
                 'param': None  # TODO
 
             },
             'delete': {
-                'relation': self.suggest_delete_relation(dia, classes),
-                'class': classes,
+                'relation': self.get_delete_relation(),
+                'class': self.get_classes(),
                 'field': None,  # TODO
-                'method': self.get_methods(dia),
+                'method': self.get_methods(),
                 'param': None  # TODO
             },
             'rename': {
-                'class': classes,
+                'class': self.get_classes(),
                 'field': None,  # TODO
-                'method': self.get_methods(dia),
+                'method': self.get_methods(),
                 'param': None  # TODO
             },
             'list': {
-                'class': classes,
+                'class': self.get_classes(),
                 'classes': None,
                 'relation': None,
                 'relations': None
@@ -111,20 +93,61 @@ class CLI_Controller:
             'quit': None
         })
 
-    def suggest_delete_relation(self, dia: UML_Diagram, classes: set[str]) -> dict[str, str]:
+    def get_delete_relation(self) -> OrderedDict[str, set[str]]:
+        """
+        Get a dictionary of relations to be deleted between classes.
+
+        Returns:
+            dict[str, set[str]]: A dictionary where keys are class names (str) and values are sets
+                                containing names of classes (str) with existing relations to be deleted.
+        """
         res = OrderedDict()
-        for uml_class in classes:
+        for uml_class in self.get_classes():
             existing_relations = set()
-            for rel in dia.get_all_relations():
+            for rel in self._diagram.get_all_relations():
                 if rel.get_src_name() == uml_class:
                     existing_relations.add(rel.get_dst_name())
             if existing_relations:
                 res[uml_class] = existing_relations
         return res
+    
+    def get_add_relation(self) -> OrderedDict[str, OrderedDict[str, str]]:
+        """
+        Suggests class, class, relationship type 
 
-    def get_methods(self, dia: UML_Diagram) -> dict[str, str]:
+        Returns:
+        OrderedDict[str, OrderedDict[str, str]]: An ordered dictionary where keys are class names (str)
+                                                 and values are dictionaries of class names (str) and
+                                                 corresponding relationship types (str).
+        """
+        rel_types = OrderedDict([
+            ("Aggregation", None),
+            ("Composition", None),
+            ("Realization", None),
+            ("Inheritance", None)
+        ])
+        class_reltype = OrderedDict((key, rel_types) for key in self.get_classes())
+        return OrderedDict((key, class_reltype) for key in self.get_classes())
+    
+    def get_classes(self) -> OrderedDict[str, None]:
+        """
+        Get a dictionary of class names.
+
+        Returns:
+            OrderedDict[str, None]: An ordered dictionary where keys are class names (str) and values are None.
+        """
+        return OrderedDict((c.get_name(), None) for c in self._diagram.get_all_classes())
+
+    def get_methods(self) -> OrderedDict[str, set[str]]:
+        """
+        Get a dictionary of methods for each class.
+
+        Returns:
+            OrderedDict[str, set[str]]: An ordered dictionary where keys are class names (str) and
+                                        values are sets containing names of methods (str) for each class.
+        """
         res = OrderedDict()
-        for uml_class in dia.get_all_classes():
+        for uml_class in self._diagram.get_all_classes():
             methods = set()
             for method in uml_class.get_methods():
                 methods.add(method.get_name())
