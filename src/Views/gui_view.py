@@ -104,7 +104,6 @@ class GUI_View(tk.Tk):
         Wait for user action and return as a command
         """
         self.update_button_state()
-
         self.wait_variable(self._user_command)
         cmd = self._user_command.get()
         self._user_command.set('')
@@ -450,20 +449,6 @@ class GUI_View(tk.Tk):
             x += box_width + spacing
         return x, y
 
-    def redraw_canvas(self):
-        self.diagram_canvas.delete("all")  # Clears the canvas
-        # Draw relationships
-        for relationship in self.relationshipsList:
-            source = next((box for box in self._class_boxes if box['class_name'] == relationship["source"]), None)
-            destination = next((box for box in self._class_boxes if box['class_name'] == relationship["destination"]), None)
-
-            if source and destination:
-                # Calculate center points of source and destination boxes
-                source_center = (source['x'] + 75, source['y'] + (20 * (2 + len(source.get('fields', [])) + len(source.get('methods', []))) / 2))
-                destination_center = (destination['x'] + 75, destination['y'] + (20 * (2 + len(destination.get('fields', [])) + len(destination.get('methods', []))) / 2))
-                # Draw a line between them
-                self.diagram_canvas.create_line(source_center, destination_center, arrow=tk.LAST)
-        
 #===================================== Dialog Factory =====================================#
         
 class Dialog_Parts:

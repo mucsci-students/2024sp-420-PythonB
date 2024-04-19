@@ -2,15 +2,9 @@ import os
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
 import pygame
 import math
-
 from PIL import Image, ImageTk
 
 from Models.uml_diagram import UML_Diagram
-from Models.uml_class import UML_Class
-from Models.uml_field import UML_Field
-from Models.uml_method import UML_Method
-from Models.uml_param import UML_Param
-from Models.uml_relation import UML_Relation
 
 class UML_Image:
     def __init__(self) -> None:
@@ -24,6 +18,38 @@ class UML_Image:
         self._framebuffer.fill(self.background_color)
 
     def draw_framebuffer(self, diagram: UML_Diagram):
+        class_boxes, class_rects, left_border, right_border, top_border, bot_border = self.__generate_class_boxes_and_class_rects_and_boarders(diagram)
+        # margin
+        left_border -= self.margin
+        right_border += self.margin
+        top_border -= self.margin
+        bot_border += self.margin
+
+        width = right_border - left_border
+        height = bot_border - top_border
+        #padding
+        width += 3 * self.letter_width
+        height += 2 * self.line_height
+        framebuffer = pygame.Surface((width, height))
+        framebuffer.fill(self.background_color)
+        font = pygame.font.Font(None, 36)
+        # draw relationship arrows
+        self.__draw_relationship_arrows(framebuffer, diagram, class_rects)
+        # draw class boxes
+        self.__draw_class_boxes(framebuffer, font, class_rects)
+
+        self._framebuffer = framebuffer
+
+        image = Image.frombytes('RGB', (width, height), pygame.image.tostring(framebuffer, 'RGB'))
+        tk_image = ImageTk.PhotoImage(image)
+        return tk_image, class_boxes
+    
+    def save_image(self, name: str):
+        pygame.image.save(self._framebuffer, name)
+
+    # helpers #
+
+    def __generate_class_boxes_and_class_rects_and_boarders(self, diagram: UML_Diagram):
         left_border = 0
         right_border = 0
         top_border = 0
@@ -66,22 +92,9 @@ class UML_Image:
             class_box['methods'] = {}
             for method in cls.get_methods():
                 class_box['methods'][method.get_name()] = [param.get_name() for param in method.get_params()]
-        # margin
-        left_border -= self.margin
-        right_border += self.margin
-        top_border -= self.margin
-        bot_border += self.margin
+        return class_boxes, class_rects, left_border, right_border, top_border, bot_border
 
-        width = right_border - left_border
-        height = bot_border - top_border
-        #padding
-        width += 3 * self.letter_width
-        height += 2 * self.line_height
-        framebuffer = pygame.Surface((width, height))
-        framebuffer.fill(self.background_color)
-        font = pygame.font.Font(None, 36)
-        # draw relationship arrows
-        #TODO: self relationship
+    def __draw_relationship_arrows(self, framebuffer: pygame.Surface, diagram: UML_Diagram, class_rects) -> None:
         for rel in diagram.get_all_relations():
             for rect in class_rects:
                 if rect[4] == rel.get_src_name():
@@ -92,6 +105,28 @@ class UML_Image:
                     dst_x, dst_y, dst_width, dst_height, _, _, _ = rect
                     dst_x += self.margin
                     dst_y += self.margin
+            #self relationship
+            if rel.get_src_name() == rel.get_dst_name():
+                radius = 0.5 * min(src_width, src_height)
+                draw_area = src_x - radius, src_y - radius, 2 * radius, 2 * radius
+                # draw line
+                if rel.get_type() == 'Realization':
+                    segment_count = 40
+                    delta_angle = 2 * math.pi / segment_count
+                    for i in range(0, segment_count, 2):
+                        pygame.draw.arc(framebuffer, (0, 0, 0), draw_area, i * delta_angle, (i + 1) * delta_angle, 5)
+                    # draw arrow
+                    self.__draw_triangle(framebuffer, [src_x - radius, src_y + radius - 5], [src_x, src_y + radius - 5], (255, 255, 255))
+                else:
+                    pygame.draw.arc(framebuffer, (0, 0, 0), draw_area, 0, 2 * math.pi, 5)
+                    # draw arrow
+                    if rel.get_type() == 'Aggregation':
+                        self.__draw_diamond(framebuffer, [src_x - radius, src_y + radius - 5], [src_x, src_y + radius - 5], (255, 255, 255))
+                    elif rel.get_type() == 'Composition':
+                        self.__draw_diamond(framebuffer, [src_x - radius, src_y + radius - 5], [src_x, src_y + radius - 5], (0, 0, 0))
+                    elif rel.get_type() == 'Inheritance':
+                        self.__draw_triangle(framebuffer, [src_x - radius, src_y + radius - 5], [src_x, src_y + radius - 5], (255, 255, 255))
+                continue
             # from
             src_center_x = (src_x + src_x + src_width) // 2
             src_center_y = (src_y + src_y + src_height) // 2
@@ -147,7 +182,8 @@ class UML_Image:
                 self.__draw_inheritance(framebuffer, [src_center_x, src_center_y], intersection)
             elif rel.get_type() == 'Realization':
                 self.__draw_realization(framebuffer, [src_center_x, src_center_y], intersection)
-        # draw class boxes
+
+    def __draw_class_boxes(self, framebuffer: pygame.Surface, font: pygame.font.Font, class_rects) -> None:
         for cls_x, cls_y, cls_width, cls_height, cls_name, text_fields, text_methods in class_rects:
             curr = 1
             pygame.draw.rect(framebuffer, (200, 200, 200), ((cls_x + self.margin, cls_y + self.margin), (cls_width, cls_height)))
@@ -166,17 +202,6 @@ class UML_Image:
                                                 cls_y + curr * self.line_height + self.margin))
                 curr += 1
 
-        self._framebuffer = framebuffer
-
-        image = Image.frombytes('RGB', (width, height), pygame.image.tostring(framebuffer, 'RGB'))
-        tk_image = ImageTk.PhotoImage(image)
-        return tk_image, class_boxes
-    
-    def save_image(self, name: str):
-        pygame.image.save(self._framebuffer, name)
-
-    # helpers #
-
     def __vec(self, p1: list[int], p2: list[int]):
         return p2[0] - p1[0], p2[1] - p1[1]
     
@@ -187,7 +212,13 @@ class UML_Image:
         ac = 1e-11 + (v[0]**2 + v[1]**2)**0.5
         return v[0] / ac, v[1] / ac
     
-    def __draw_diamond(self, framebuffer: pygame.Surface, start: list[int], end: list[int], color: str, side_length: int=30) -> None:
+    def __add(self, v1, v2):
+        return v1[0] + v2[0], v1[1] + v2[1]
+
+    def __multiply(self, v, x):
+        return v[0] * x, v[1] * x
+    
+    def __draw_diamond(self, framebuffer: pygame.Surface, start: list[int], end: list[int], color: tuple[int, int, int], side_length: int=30) -> None:
         orgin = self.__vec(start, end)
         left = self.__normalized(self.__rotate(orgin, -5 * math.pi / 6))
         right = self.__normalized(self.__rotate(orgin, 5 * math.pi / 6))
@@ -197,7 +228,7 @@ class UML_Image:
         to = end[0] + v[0] * side_length * 3**0.5, end[1] + v[1] * side_length * 3**0.5
         pygame.draw.polygon(framebuffer, color, [end, p1, to, p2])
 
-    def __draw_triangle(self, framebuffer: pygame.Surface, start: list[int], end: list[int], color: str, side_length: int=40) -> None:
+    def __draw_triangle(self, framebuffer: pygame.Surface, start: list[int], end: list[int], color: tuple[int, int, int], side_length: int=40) -> None:
 
         orgin = self.__vec(start, end)
         left = self.__normalized(self.__rotate(orgin, -5 * math.pi / 6))
@@ -223,6 +254,10 @@ class UML_Image:
 
     def __draw_realization(self, framebuffer: pygame.Surface, start: list[int], end: list[int]) -> None:
         # dash line with white triangle
-        #TODO: dash line
-        pygame.draw.line(framebuffer, (0, 0, 0), start, end, 5)
+        delta_len = 10
+        segment_count = int(math.dist(start, end) / delta_len)
+        direction = self.__normalized(self.__vec(start, end))
+        for i in range(0, segment_count, 2):
+            pygame.draw.line(framebuffer, (0, 0, 0), self.__add(start, self.__multiply(direction, i * delta_len)),
+                             self.__add(start, self.__multiply(direction, (i + 1) * delta_len)), 5)
         self.__draw_triangle(framebuffer, start, end, (255, 255, 255))
