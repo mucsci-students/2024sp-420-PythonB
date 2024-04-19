@@ -56,11 +56,12 @@ class CLI_Controller:
         class_reltype = {key: {"Aggregation", "Composition", "Realization", "Inheritance"} for key in classes}
         class_class_reltype = {key: class_reltype for key in class_reltype}
 
-        # dict containing possible relations to be deleted
-        delete_relation = {key: self.suggest_delete_relation(self._diagram, key) for key in classes}
-        # Method dict add method c1 m1 
+        # dict containing possible relations to be deleted based on src relation
+        #delete_relation = {key: self.suggest_delete_relation(self._diagram, key) for key in classes}
 
-        #methods = {key: self.get_methods(self._diagram, key) for key in classes}
+      
+        # Method dict add method c1 m1 
+        methods = {key: self.get_methods(self._diagram, key) for key in classes}
         
 
 
@@ -70,14 +71,14 @@ class CLI_Controller:
             'class': None,
             'field': classes,
             'method': classes,
-            'param': None
+            'param': None #TODO
             
         },
         'delete': {
-            'relation': delete_relation,
+            'relation': self.suggest_delete_relation(dia, classes),
             'class': classes,
             'field': None, #TODO
-            'method': None, #TODO
+            'method': methods, #TODO
             'param': None #TODO
         },
         'rename':{
@@ -104,22 +105,26 @@ class CLI_Controller:
         'quit': None
         })  
     
-    def suggest_delete_relation(self, dia: UML_Diagram, uml_class: str) -> set[str]: 
-        res = set()
-        for rel in dia.get_all_relations():
-            if rel.get_src_name() == uml_class:
-                res.add(rel.get_dst_name())      
+    def suggest_delete_relation(self, dia: UML_Diagram, classes:set[str]) -> dict[str, str]: 
+        #delete_relation = {key: self.suggest_delete_relation(self._diagram, key) for key in classes}
+        res = dict()
+        for uml_class in classes:
+            existing_relations = set()
+            for rel in dia.get_all_relations():
+                if rel.get_src_name() == uml_class:
+                    existing_relations.add(rel.get_dst_name())   
+            if existing_relations:
+                res[uml_class] = existing_relations
         return res
     
-    '''
+
     def get_methods(self, dia: UML_Diagram, uml_class: str):
-        print(uml_class)
         res = set()
         method_list = dia.get_class(uml_class).get_methods()
         for method in method_list:
             res.add(method.get_name())
         return res
-    '''
+
 
     def get_classes(self, dia: UML_Diagram) -> set[str]:
         res = set()
