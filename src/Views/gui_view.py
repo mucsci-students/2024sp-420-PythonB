@@ -499,7 +499,7 @@ class Dialog_Factory:
         def action_destroy():
             frame.destroy()
 
-        def update_options(first_box, second_box, dy_values):
+        def update_options(first_box, second_box, dy_values: dict):
             """
             Updates the options in the Dynamic Combo based on selection of previous dropdown.
             """
@@ -523,8 +523,11 @@ class Dialog_Factory:
                 sel = tk.StringVar()
                 out = ttk.Combobox(frame, values = p._values, textvariable = sel, state = "readonly")
                 prev_combo = selects[i - 1]
-                prev_combo.bind("<<ComboboxSelected>>", lambda event: update_options(prev_combo, out, p._values))
                 update_options(prev_combo, out, p._values)
+                # Make references for callback functions as they will be reassigned with other values
+                out_ref = out
+                p_ref = p
+                prev_combo.bind("<<ComboboxSelected>>", lambda event: update_options(prev_combo, out_ref, p_ref._values))
             # Creates a text entry
             elif p._input_type == 'text':
                 out = tk.Entry(frame)
