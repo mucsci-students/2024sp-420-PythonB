@@ -107,24 +107,29 @@ class CLI_Controller:
                 res[uml_class] = existing_relations
         return res
 
-    def get_add_relation(self) -> dict[str, dict[str, str]]:
+    def get_add_relation(self) -> dict[str, dict[str, set[str]]]:
         """
         Suggests class, class, relationship type 
 
         Returns:
-        dict[str, dict[str, str]]: A dictionary where keys are class names (str)
+        dict[str, dict[str, set[str]]]: A dictionary where keys are class names (str)
                                                  and values are dictionaries of class names (str) and
                                                  corresponding relationship types (str).
         """
-        rel_types = dict([
-            ("Aggregation", None),
-            ("Composition", None),
-            ("Realization", None),
-            ("Inheritance", None)
-        ])
-        class_reltype = dict((key, rel_types) for key in self.get_classes())
-        return dict((key, class_reltype) for key in self.get_classes())
-        
+        rel_types = {"Aggregation", "Composition", "Realization", "Inheritance"}
+        res = dict()
+        for uml_class in self._diagram.get_all_classes():
+            class_type = dict()
+            for uml_class2 in self._diagram.get_all_classes():
+                try:
+                    self._diagram.get_relation(
+                        uml_class.get_name(), uml_class2.get_name())
+                # If relation doesn't exist, add to suggestions
+                except ValueError:
+                    class_type[uml_class2.get_name()] = rel_types
+            if class_type:
+                res[uml_class.get_name()] = class_type
+        return res
 
     def get_classes(self) -> dict[str, None]:
         """

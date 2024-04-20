@@ -20,6 +20,8 @@ class UML_Controller:
         self._diagram = UML_Diagram()
         self._states = UML_States(self._diagram)
         self._should_quit = False
+        if isinstance(self._controller, CLI_Controller):
+            self._controller.set_diagram(self._diagram)
 
     def run(self):
         """Executes the main loop of the program"""
@@ -55,7 +57,6 @@ class UML_Controller:
 
     def __pick_controller(self, args:str = sys.argv) -> CLI_Controller | GUI_Controller: 
         if len(args) > 1 and str(args[1]).strip().lower() == 'cli':
-            self._controller.set_diagram(self._diagram)
             return CLI_Controller()
         return GUI_Controller()
     
