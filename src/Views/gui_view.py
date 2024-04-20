@@ -123,8 +123,8 @@ class GUI_View(tk.Tk):
         menu_bar.add_cascade(label="Edit", menu=edit_menu)
         #Layout Menu (Return to Center)
         layout_menu = Menu(menu_bar, tearoff=0)
-        layout_menu.add_command(label="Return to Center", command=self.center)
-        menu_bar.add_cascade(label="Layout", menu=layout_menu)
+        layout_menu.add_command(label="Move Camera to Center", command=self.center)
+        menu_bar.add_cascade(label="View", menu=layout_menu)
         # Help Menu
         help_menu = Menu(menu_bar, tearoff=0)
         help_menu.add_command(label="View Help", command=self.show_help_messagebox)
