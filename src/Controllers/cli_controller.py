@@ -12,9 +12,6 @@ class CLI_Controller:
     def request_update(self):
          return prompt("Command: ", completer=self._view._completer).strip()
 
-    def draw(self, diagram: UML_Diagram):
-        pass
-
 #=========================CLI Specific Parseing=========================#  
     def parse_list_cmd(self, d:UML_Diagram, tokens:list[str]):
         """Parses a list command, returning it in a state ready to be called"""

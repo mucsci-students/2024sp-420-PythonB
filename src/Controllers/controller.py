@@ -3,12 +3,15 @@ import re
 import os
 from pathlib import Path
 
+import pygame
+from PIL import Image, ImageTk
+
 from Controllers.cli_controller import CLI_Controller
 from Controllers.gui_controller import GUI_Controller
 from Models.uml_diagram import UML_Diagram
 from Models.uml_undo_redo import UML_States
 from Models.uml_save_load import json_to_diagram, diagram_to_json
-
+from Models.uml_image import UML_Image
 
 class UML_Controller:
 
@@ -19,6 +22,7 @@ class UML_Controller:
         self._controller:CLI_Controller | GUI_Controller = self.__pick_controller()
         self._diagram = UML_Diagram()
         self._states = UML_States(self._diagram)
+        self._image = UML_Image()
         self._should_quit = False
 
     def run(self):
@@ -45,13 +49,14 @@ class UML_Controller:
                     print(str(e))
                 else:
                     self._controller.error_message(str(e))
-                # This undo is unnecessary for most cases
-                # since the Diagram is not changed if Exception is thrown in most cases
-                # For example: if cmd contains invalid arguments, the diagram is not touched at all,
-                #               but this undo will undo to last state, which is not expected.
-                # self._states.undo()
                 continue
-            self._controller.draw(self._diagram)
+            if isinstance(self._controller, GUI_Controller):
+                camera_pos = self._controller.get_camera_pos()
+                viewport_size = self._controller.get_viewport_size()
+                framebuffer, class_boxes = self._image.draw_framebuffer(self._diagram, camera_pos)
+                # generate image here to make test easier
+                image = ImageTk.PhotoImage(Image.frombytes('RGB', tuple(viewport_size), pygame.image.tostring(framebuffer, 'RGB')))
+                self._controller.draw(self._diagram, image, class_boxes)
 
     def __pick_controller(self, args:str = sys.argv) -> CLI_Controller | GUI_Controller: 
         if len(args) > 1 and str(args[1]).strip().lower() == 'cli':
@@ -97,6 +102,14 @@ class UML_Controller:
         path = os.path.join(path, filename + '.json')
         self._diagram.replace_content(json_to_diagram(Path(path).read_text()))
 
+    def export_image(self, filename: str):
+        path = os.path.join(os.path.dirname(__file__), '../', '../', 'images')
+        if not os.path.exists(path):
+            os.makedirs(path)
+        path = os.path.join(path, filename + '.png')
+        framebuffer = self._image.save_image(self._diagram)
+        pygame.image.save(framebuffer, path)
+
 #=========================Parseing=========================#  
     def parse(self, input:str) -> list | str:
         tokens = self.check_args(input.split())
@@ -124,6 +137,8 @@ class UML_Controller:
                 return self._controller.parse_help_cmd(tokens)
             case 'redraw':
                 return [lambda: None]
+            case 'export':
+                return [self.export_image, tokens.pop(0)]
             case _:
                 raise ValueError("Invalid command.")
 
