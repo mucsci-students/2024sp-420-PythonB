@@ -12,6 +12,9 @@ packages = [
 python = "^3.8"
 jsonschema = "*"
 prompt_toolkit = "*"
+customtkinter = "*"
+pygame = "*"
+pillow = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"

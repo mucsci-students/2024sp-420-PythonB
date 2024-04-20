@@ -1,4 +1,5 @@
 save_folder
+images
 poetry.lock
 __pycache__
 dist
