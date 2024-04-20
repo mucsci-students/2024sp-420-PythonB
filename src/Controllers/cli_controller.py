@@ -65,20 +65,20 @@ class CLI_Controller:
             'delete': {
                 'relation': self.get_delete_relation(),
                 'class': self.get_classes(),
-                'field': None,  # TODO
+                'field': self.get_fields(),
                 'method': self.get_methods(),
                 'param': None  # TODO
             },
             'rename': {
                 'class': self.get_classes(),
-                'field': None,  # TODO
+                'field': self.get_fields(),
                 'method': self.get_methods(),
                 'param': None  # TODO
             },
             'list': {
                 'class': self.get_classes(),
                 'classes': None,
-                'relation': None,
+                'relation': self.get_classes(),
                 'relations': None
             },
             'help': {
@@ -154,3 +154,20 @@ class CLI_Controller:
             if methods:
                 res[uml_class.get_name()] = methods
         return res
+    
+    def get_fields(self) -> OrderedDict[str, set[str]]:
+        """
+        Get a dictionary of fields for each class.
+
+        Returns:
+            OrderedDict[str, set[str]]: An ordered dictionary where keys are class names (str) and
+                                        values are sets containing names of fields (str) for each class.
+        """
+        res = OrderedDict()
+        for uml_class in self._diagram.get_all_classes():
+            fields = set()
+            for field in uml_class.get_fields():
+                fields.add(field.get_name())
+            if fields:
+                res[uml_class.get_name()] = fields
+        return res 
