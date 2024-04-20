@@ -144,7 +144,7 @@ class UML_Image:
             direction = self.__vec([src_center_x, src_center_y], [dst_center_x, dst_center_y])
             # slope
             # m = dy / dx
-            m = direction[1] / direction[0] + 1e-11
+            m = direction[1] / (direction[0] + 1e-11) + 1e-11
             # y - y0 = m(x - x0)
             # x0 = src_center_x
             # y0 = src_center_y

@@ -87,8 +87,8 @@ class GUI_View(tk.Tk):
 
     def last(self) -> None:
         if self._class_boxes:
-            self._camera_x = self._class_boxes[-1]['x'] - 100
-            self._camera_y = self._class_boxes[-1]['y'] - 100
+            self._camera_x = self._class_boxes[-1]['x'] - 250
+            self._camera_y = self._class_boxes[-1]['y'] - 250
         self._user_command.set('redraw')
 
     def draw(self, photo, class_boxes):

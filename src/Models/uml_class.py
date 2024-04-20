@@ -5,11 +5,11 @@ from Models.uml_visitor import UML_Visitable, UML_Visitor
 
 class UML_Class(UML_Named_Object, UML_Visitable): 
 
-    def __init__(self, name:str, position: list=[0, 0]):
+    def __init__(self, name:str, x: int=0, y: int=0):
         super().__init__(name)
         self._fields:list[UML_Field] = []
         self._methods:list[UML_Method] = []
-        self._position = position
+        self._position = [x, y]
 
 #===================================== Accessors =====================================#
     
