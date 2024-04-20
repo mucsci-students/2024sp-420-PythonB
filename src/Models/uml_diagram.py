@@ -39,7 +39,11 @@ class UML_Diagram(UML_Visitable):
             #if this doesn't error, the class already exists
             item = self.get_class(c_name)
         except ValueError:
-            self._classes.append(UML_Class(c_name))
+            line_height = 35
+            lowest_y = 0
+            for cls in self.get_all_classes():
+                lowest_y = max(lowest_y, cls.get_position_y() + line_height * (len(cls.get_fields()) + len(cls.get_methods()) + 3))
+            self._classes.append(UML_Class(c_name, [0, lowest_y]))
         
         if item is not None: 
             raise ValueError("Class %s already exists" % c_name)        
