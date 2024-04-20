@@ -85,6 +85,12 @@ class GUI_View(tk.Tk):
         self._camera_y = 0
         self._user_command.set('redraw')
 
+    def last(self) -> None:
+        if self._class_boxes:
+            self._camera_x = self._class_boxes[-1]['x'] - 100
+            self._camera_y = self._class_boxes[-1]['y'] - 100
+        self._user_command.set('redraw')
+
     def draw(self, photo, class_boxes):
         self._image = photo
         self.diagram_canvas.create_image(0, 0, anchor=tk.NW, image=self._image)
@@ -123,6 +129,7 @@ class GUI_View(tk.Tk):
         #Layout Menu (Return to Center)
         layout_menu = Menu(menu_bar, tearoff=0)
         layout_menu.add_command(label="Move Camera to Center", command=self.center)
+        layout_menu.add_command(label="Move Camera to Last Class", command=self.last)
         menu_bar.add_cascade(label="View", menu=layout_menu)
         # Help Menu
         help_menu = Menu(menu_bar, tearoff=0)
