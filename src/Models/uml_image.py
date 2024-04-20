@@ -10,7 +10,7 @@ class UML_Image:
         pygame.init()
         self.line_height = 35
         self.letter_width = 10
-        self.margin = 500
+        self.margin = 250
         self.background_color = (100, 100, 100)
         self.font_size = 25
         self._viewport_width = 1000
