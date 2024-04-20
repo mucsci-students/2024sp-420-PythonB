@@ -59,7 +59,7 @@ class CLI_Controller:
                 'class': None,
                 'field': self.get_classes(),
                 'method': self.get_classes(),
-                'param': None  # TODO
+                'param': self.get_methods()  # TODO
 
             },
             'delete': {
