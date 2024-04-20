@@ -151,47 +151,43 @@ class UML_Image:
             # y - y0 = m(x - x0)
             # x0 = src_center_x
             # y0 = src_center_y
-            intersection = 0, 0
+            intersection = [0, 0]
             dist = float('inf')
+            data = [dist, intersection]
             # y = m(x - x0) + y0
             # left: x = dst_x
             y = m * (dst_x - src_center_x) + src_center_y
             if dst_y <= y <= dst_y + dst_height:
-                temp = math.dist([src_center_x, src_center_y], [dst_x, y])
-                if temp < dist:
-                    dist = temp
-                    intersection = dst_x, y
+                self.__update_intersection([src_center_x, src_center_y], [dst_x, y], data)
             # right: x = dst_x + dst_width
             y = m * (dst_x + dst_width - src_center_x) + src_center_y
             if dst_y <= y <= dst_y + dst_height:
-                temp = math.dist([src_center_x, src_center_y], [dst_x + dst_width, y])
-                if temp < dist:
-                    dist = temp
-                    intersection = dst_x + dst_width, y
+                self.__update_intersection([src_center_x, src_center_y], [dst_x + dst_width, y], data)
             # x = (y - y0) / m + x0
             # top: y = dst_y
             x = (dst_y - src_center_y) / m + src_center_x
             if dst_x <= x <= dst_x + dst_width:
-                temp = math.dist([src_center_x, src_center_y], [x, dst_y])
-                if temp < dist:
-                    dist = temp
-                    intersection = x, dst_y
+                self.__update_intersection([src_center_x, src_center_y], [x, dst_y], data)
             # bot: y = dst_y + dst_height
             x = (dst_y + dst_height - src_center_y) / m + src_center_x
             if dst_x <= x <= dst_x + dst_width:
-                temp = math.dist([src_center_x, src_center_y], [x, dst_y + dst_height])
-                if temp < dist:
-                    dist = temp
-                    intersection = x, dst_y + dst_height
+                self.__update_intersection([src_center_x, src_center_y], [x, dst_y + dst_height], data)
             # draw an arrow from src_center to intersection
             if rel.get_type() == 'Aggregation':
-                self.__draw_aggregation(framebuffer, [src_center_x, src_center_y], intersection)
+                self.__draw_aggregation(framebuffer, [src_center_x, src_center_y], data[1])
             elif rel.get_type() == 'Composition':
-                self.__draw_composition(framebuffer, [src_center_x, src_center_y], intersection)
+                self.__draw_composition(framebuffer, [src_center_x, src_center_y], data[1])
             elif rel.get_type() == 'Inheritance':
-                self.__draw_inheritance(framebuffer, [src_center_x, src_center_y], intersection)
+                self.__draw_inheritance(framebuffer, [src_center_x, src_center_y], data[1])
             elif rel.get_type() == 'Realization':
-                self.__draw_realization(framebuffer, [src_center_x, src_center_y], intersection)
+                self.__draw_realization(framebuffer, [src_center_x, src_center_y], data[1])
+
+    def __update_intersection(self, start: list[int], end: list[int], data: list[float | list[int]]) -> None:
+        temp = math.dist(start, end)
+        if temp < data[0]:
+            data[0] = temp
+            data[1][0] = end[0]
+            data[1][1] = end[1]
 
     def __draw_class_boxes(self, framebuffer: pygame.Surface, font: pygame.font.Font, class_rects) -> None:
         for cls_x, cls_y, cls_width, cls_height, cls_name, text_fields, text_methods in class_rects:
