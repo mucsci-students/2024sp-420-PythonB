@@ -2,7 +2,6 @@ from Models.uml_diagram import UML_Diagram
 from prompt_toolkit import prompt
 from Views.cli_view import CLI_View
 from prompt_toolkit.completion import NestedCompleter
-from Views.relation_completer import RelationCompleter
 
 
 class CLI_Controller:
