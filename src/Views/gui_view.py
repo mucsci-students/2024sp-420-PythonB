@@ -320,7 +320,7 @@ class GUI_View(tk.Tk):
         field_options = {cb['name']: cb['fields'] for cb in self._class_boxes}
         dialog_params = [
             Dialog_Parts("combo", "Class", class_options),
-            Dialog_Parts("dynamic_combo", "Field", field_options)
+            Dialog_Parts("dynamic_combo", "Field", field_options, 1)
         ]
         Dialog_Factory.create("Delete Field", dialog_params, lambda result:self._user_command.set(f'delete field { result[0] } { result[1] }'))
 
@@ -329,7 +329,7 @@ class GUI_View(tk.Tk):
         field_options = {cb['name']: cb['fields'] for cb in self._class_boxes}
         dialog_params = [
             Dialog_Parts("combo", "Class", class_options),
-            Dialog_Parts("dynamic_combo", "Field", field_options),
+            Dialog_Parts("dynamic_combo", "Field", field_options, 1),
             Dialog_Parts("text", "New Name")
         ]
         Dialog_Factory.create("Rename Field", dialog_params, lambda result:self._user_command.set(f'rename field { result[0] } { result[1] } { result[2] }'))
@@ -348,64 +348,52 @@ class GUI_View(tk.Tk):
         meth_options = {cb['name']: list(cb['methods'].keys()) for cb in self._class_boxes}
         dialog_params = [
             Dialog_Parts("combo", "Class", class_options),
-            Dialog_Parts("dynamic_combo", "Method", meth_options)
+            Dialog_Parts("dynamic_combo", "Method", meth_options, 1)
         ]
-        Dialog_Factory.create("Delete Method", dialog_params, lambda result:self._user_command.set(f'delete method { result[0] } { result[1].rsplit(maxsplit = 1)[-1]}'))
+        Dialog_Factory.create("Delete Method", dialog_params, lambda result:self._user_command.set(f'delete method { result[0] } { result[1]}'))
 
     def rename_method(self):
         class_options = [cb['name'] for cb in self._class_boxes]
         meth_options = {cb['name']: list(cb['methods'].keys()) for cb in self._class_boxes}
         dialog_params = [
             Dialog_Parts("combo", "Class", class_options),
-            Dialog_Parts("dynamic_combo", "Method", meth_options),
+            Dialog_Parts("dynamic_combo", "Method", meth_options, 1),
             Dialog_Parts("text", "New Name")
         ]
-        Dialog_Factory.create("Rename Method", dialog_params, lambda result: self._user_command.set(f'rename method { result[0] } { result[1].rsplit(maxsplit = 1)[-1] } { result[2] }'))
+        Dialog_Factory.create("Rename Method", dialog_params, lambda result: self._user_command.set(f'rename method { result[0] } { result[1] } { result[2] }'))
 
     def add_param(self):
         class_options = [cb['name'] for cb in self._class_boxes]
         meth_options = {cb['name']: list(cb['methods'].keys()) for cb in self._class_boxes}
         dialog_params = [
             Dialog_Parts("combo", "Class", class_options),
-            Dialog_Parts("dynamic_combo", "Method", meth_options),
+            Dialog_Parts("dynamic_combo", "Method", meth_options, 1),
             Dialog_Parts("text", "Name")
         ]
-        Dialog_Factory.create("Add Parameter", dialog_params, lambda result:self._user_command.set(f'add param { result[0] } { result[1].rsplit(maxsplit = 1)[-1] } { result[2] }'))
+        Dialog_Factory.create("Add Parameter", dialog_params, lambda result:self._user_command.set(f'add param { result[0] } { result[1] } { result[2] }'))
 
     def delete_param(self):
         class_options = [cb['name'] for cb in self._class_boxes]
         meth_options = {cb['name']: list(cb['methods'].keys()) for cb in self._class_boxes}
-        # TODO: This will map method name to all params of methods with the same name, need to fix.
-        param_options = {}
-        for cb in self._class_boxes:
-            for method, params in cb['methods'].items():
-                if method not in param_options:
-                    param_options[method] = []
-                param_options[method].extend(params)
+        param_options = {cb['name']: cb['methods'] for cb in self._class_boxes}
         dialog_params = [
             Dialog_Parts("combo", "Class", class_options),
-            Dialog_Parts("dynamic_combo", "Method", meth_options),
-            Dialog_Parts("dynamic_combo", "Param", param_options)
+            Dialog_Parts("dynamic_combo", "Method", meth_options, 1),
+            Dialog_Parts("dynamic_combo", "Param", param_options, 2)
         ]
-        Dialog_Factory.create("Delete Parameter", dialog_params, lambda result:self._user_command.set(f'delete param { result[0] } { result[1].rsplit(maxsplit = 1)[-1] } { result[2] }'))
+        Dialog_Factory.create("Delete Parameter", dialog_params, lambda result:self._user_command.set(f'delete param { result[0] } { result[1] } { result[2] }'))
 
     def rename_param(self):
         class_options = [cb['name'] for cb in self._class_boxes]
         meth_options = {cb['name']: list(cb['methods'].keys()) for cb in self._class_boxes}
-        # TODO: This will map method name to all params of methods with the same name, need to fix.
-        param_options = {}
-        for cb in self._class_boxes:
-            for method, params in cb['methods'].items():
-                if method not in param_options:
-                    param_options[method] = []
-                param_options[method].extend(params)
+        param_options = {cb['name']: cb['methods'] for cb in self._class_boxes}
         dialog_params = [
             Dialog_Parts("combo", "Class", class_options),
-            Dialog_Parts("dynamic_combo", "Method", meth_options),
-            Dialog_Parts("dynamic_combo", "Param", param_options),
+            Dialog_Parts("dynamic_combo", "Method", meth_options, 1),
+            Dialog_Parts("dynamic_combo", "Param", param_options, 2),
             Dialog_Parts("text", "New Name")
         ]
-        Dialog_Factory.create("Delete Parameter", dialog_params, lambda result:self._user_command.set(f'delete param { result[0] } { result[1].rsplit(maxsplit = 1)[-1] } { result[2] } { result[3] }'))
+        Dialog_Factory.create("Delete Parameter", dialog_params, lambda result:self._user_command.set(f'delete param { result[0] } { result[1] } { result[2] } { result[3] }'))
 
     def add_relation(self):
         class_options = [cb['name'] for cb in self._class_boxes]
@@ -456,10 +444,11 @@ class Dialog_Parts:
 
     Values: The values of the rows in the Dialog Card
     """
-    def __init__(self, input_type:str, title:str, values = None):
+    def __init__(self, input_type:str, title:str, values = None, check_count=0):
         self._input_type = input_type
         self._title = title
         self._values = values
+        self._check_count = check_count
 
 class Dialog_Factory:
     """
@@ -481,7 +470,7 @@ class Dialog_Factory:
             Dialog_Factory._create(dialog_name, params, callback)
 
     @staticmethod
-    def _create(dialog_name, params, callback):
+    def _create(dialog_name, params: list[Dialog_Parts], callback):
         frame = tk.Tk()
         frame.title(dialog_name)
         selects = []
@@ -499,16 +488,22 @@ class Dialog_Factory:
         def action_destroy():
             frame.destroy()
 
-        def update_options(first_box, second_box, dy_values: dict):
+        def update_options(curr_box: ttk.Combobox, index: int, check_count: int, dy_values: dict):
             """
-            Updates the options in the Dynamic Combo based on selection of previous dropdown.
+            Updates the options in the Dynamic Combo based on selection of previous dropdowns.
             """
-            first_val = first_box.get()
-            second_box["values"] = dy_values[first_val]
-            if len(second_box["values"]) > 0:
-                second_box.current(0)
+            for i in range(index - check_count, index):
+                prev_selection = selects[i].get()
+                if prev_selection:
+                    dy_values = dy_values[prev_selection]
+                else:
+                    dy_values = []
+            curr_box["values"] = dy_values
+            if len(curr_box["values"]) > 0:
+                curr_box.current(0)
             else:
-                second_box.set('')
+                curr_box.set('')
+            curr_box.event_generate("<<ComboboxSelected>>")
 
         for i, p in enumerate(params):
             tk.Label(frame, text = f'{ p._title }:').grid(row = i, column = 0, padx = 5, pady = 5, sticky = tk.W)
@@ -523,11 +518,10 @@ class Dialog_Factory:
                 sel = tk.StringVar()
                 out = ttk.Combobox(frame, values = p._values, textvariable = sel, state = "readonly")
                 prev_combo = selects[i - 1]
-                update_options(prev_combo, out, p._values)
-                # Make references for callback functions as they will be reassigned with other values
-                out_ref = out
-                p_ref = p
-                prev_combo.bind("<<ComboboxSelected>>", lambda event: update_options(prev_combo, out_ref, p_ref._values))
+                update_options(out, i, p._check_count, p._values)
+                prev_combo.bind("<<ComboboxSelected>>",
+                                lambda event, curr_box=out, index=i, check_count=p._check_count, dy_values=p._values:\
+                                update_options(curr_box, index, check_count, dy_values))
             # Creates a text entry
             elif p._input_type == 'text':
                 out = tk.Entry(frame)
