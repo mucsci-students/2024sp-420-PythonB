@@ -13,9 +13,6 @@ class CLI_Controller:
         self.setup_autocomplete()
         return prompt("Command: ", completer=self._completer).strip()
 
-    def draw(self, diagram: UML_Diagram):
-        pass
-
     def get_diagram(self, diagram: UML_Diagram):
         self._diagram = diagram
 

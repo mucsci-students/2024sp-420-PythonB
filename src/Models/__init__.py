@@ -10,3 +10,4 @@ from .uml_relation import *
 from .uml_visitor import *
 from .uml_save_load import *
 from .uml_undo_redo import UML_States
+from .uml_image import *
