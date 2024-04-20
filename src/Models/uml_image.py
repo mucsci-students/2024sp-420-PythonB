@@ -14,23 +14,30 @@ class UML_Image:
         self.margin = 500
         self.background_color = (100, 100, 100)
         self.font_size = 25
+        self._viewport_width = 1000
+        self._viewport_height = 800
+        self._framebuffer = pygame.Surface((self._viewport_width, self._viewport_height))
 
-        self._framebuffer = pygame.Surface((self.margin * 2, self.margin * 2))
+    def draw_framebuffer(self, diagram: UML_Diagram, camera_pos: tuple[int, int]):
+        class_boxes, class_rects, _, _ = self.__generate_class_boxes_and_class_rects_and_boarders(diagram)
         self._framebuffer.fill(self.background_color)
-
-    def draw_framebuffer(self, diagram: UML_Diagram):
-        class_boxes, class_rects, left_border, right_border, top_border, bot_border = self.__generate_class_boxes_and_class_rects_and_boarders(diagram)
-        # margin
-        left_border -= self.margin
-        right_border += self.margin
-        top_border -= self.margin
-        bot_border += self.margin
-
-        width = right_border - left_border
-        height = bot_border - top_border
-        #padding
-        width += 3 * self.letter_width
-        height += 2 * self.line_height
+        font = pygame.font.Font(None, self.font_size)
+        # move camera
+        for class_rect in class_rects:
+            class_rect[0] -= camera_pos[0]
+            class_rect[0] -= self.margin
+            class_rect[1] -= camera_pos[1]
+            class_rect[1] -= self.margin
+        # draw relationship arrows
+        self.__draw_relationship_arrows(self._framebuffer, diagram, class_rects)
+        # draw class boxes
+        self.__draw_class_boxes(self._framebuffer, font, class_rects)
+        # generate image
+        tk_image = ImageTk.PhotoImage(Image.frombytes('RGB', (self._viewport_width, self._viewport_height), pygame.image.tostring(self._framebuffer, 'RGB')))
+        return tk_image, class_boxes
+    
+    def save_image(self, name: str, diagram: UML_Diagram):
+        _, class_rects, width, height = self.__generate_class_boxes_and_class_rects_and_boarders(diagram)
         framebuffer = pygame.Surface((width, height))
         framebuffer.fill(self.background_color)
         font = pygame.font.Font(None, self.font_size)
@@ -38,15 +45,7 @@ class UML_Image:
         self.__draw_relationship_arrows(framebuffer, diagram, class_rects)
         # draw class boxes
         self.__draw_class_boxes(framebuffer, font, class_rects)
-
-        self._framebuffer = framebuffer
-
-        image = Image.frombytes('RGB', (width, height), pygame.image.tostring(framebuffer, 'RGB'))
-        tk_image = ImageTk.PhotoImage(image)
-        return tk_image, class_boxes
-    
-    def save_image(self, name: str):
-        pygame.image.save(self._framebuffer, name)
+        pygame.image.save(framebuffer, name)
 
     # helpers #
 
@@ -92,7 +91,18 @@ class UML_Image:
             class_box['methods'] = {}
             for method in cls.get_methods():
                 class_box['methods'][method.get_name()] = [param.get_name() for param in method.get_params()]
-        return class_boxes, class_rects, left_border, right_border, top_border, bot_border
+        # margin
+        left_border -= self.margin
+        right_border += self.margin
+        top_border -= self.margin
+        bot_border += self.margin
+
+        width = right_border - left_border
+        height = bot_border - top_border
+        #padding
+        width += 3 * self.letter_width
+        height += 2 * self.line_height
+        return class_boxes, class_rects, width, height
 
     def __draw_relationship_arrows(self, framebuffer: pygame.Surface, diagram: UML_Diagram, class_rects) -> None:
         for rel in diagram.get_all_relations():

@@ -42,6 +42,12 @@ class GUI_View(tk.Tk):
         self._user_command = tk.StringVar()
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
+    def camera_pos(self) -> tuple[int, int]:
+        return self._camera_x, self._camera_y
+    
+    def viewport_size(self) -> tuple[int, int]:
+        return 1000, 800
+
     def error_message(self, message: str) -> None:
         messagebox.showinfo("Error - CWorld UML", message, parent=self)
 
@@ -81,19 +87,8 @@ class GUI_View(tk.Tk):
 
     def draw(self, photo, class_boxes):
         self._image = photo
-        # margin = 500
-        self.diagram_canvas.create_image(-500 - self._camera_x, -500 - self._camera_y, anchor=tk.NW, image=self._image)
+        self.diagram_canvas.create_image(0, 0, anchor=tk.NW, image=self._image)
         self._class_boxes = class_boxes
-        #debug: display lines bounding class boxes
-        for cb in self._class_boxes:
-            top_left = cb['x'] - self._camera_x, cb['y'] - self._camera_y
-            top_right = cb['x'] + cb['width'] - self._camera_x, cb['y'] - self._camera_y
-            bot_left = cb['x'] - self._camera_x, cb['y'] + cb['height'] - self._camera_y
-            bot_right = cb['x'] + cb['width'] - self._camera_x, cb['y'] + cb['height'] - self._camera_y
-            self.diagram_canvas.create_line(top_left, top_right)
-            self.diagram_canvas.create_line(top_right, bot_right)
-            self.diagram_canvas.create_line(bot_right, bot_left)
-            self.diagram_canvas.create_line(bot_left, top_left)
 
     def clear(self) -> None:
         self.diagram_canvas.delete("all")

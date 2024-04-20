@@ -46,14 +46,10 @@ class UML_Controller:
                     print(str(e))
                 else:
                     self._controller.error_message(str(e))
-                # This undo is unnecessary for most cases
-                # since the Diagram is not changed if Exception is thrown in most cases
-                # For example: if cmd contains invalid arguments, the diagram is not touched at all,
-                #               but this undo will undo to last state, which is not expected.
-                # self._states.undo()
                 continue
             if isinstance(self._controller, GUI_Controller):
-                self._controller.draw(self._diagram, *self._image.draw_framebuffer(self._diagram))
+                camera_pos = self._controller.get_camera_pos()
+                self._controller.draw(self._diagram, *self._image.draw_framebuffer(self._diagram, camera_pos))
 
     def __pick_controller(self, args:str = sys.argv) -> CLI_Controller | GUI_Controller: 
         if len(args) > 1 and str(args[1]).strip().lower() == 'cli':
@@ -104,7 +100,7 @@ class UML_Controller:
         if not os.path.exists(path):
             os.makedirs(path)
         path = os.path.join(path, filename + '.png')
-        self._image.save_image(path)
+        self._image.save_image(path, self._diagram)
 
 #=========================Parseing=========================#  
     def parse(self, input:str) -> list | str:

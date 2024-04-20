@@ -17,3 +17,9 @@ class GUI_Controller:
     def draw(self, diagram: UML_Diagram, image_data, class_boxes):
         self._gui_view.clear()
         self._gui_view.draw(image_data, class_boxes)
+
+    def get_camera_pos(self):
+        return self._gui_view.camera_pos()
+    
+    def get_viewport_size(self):
+        return self._gui_view.viewport_size()
