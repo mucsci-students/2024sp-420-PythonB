@@ -9,10 +9,11 @@ from Models.uml_diagram import UML_Diagram
 class UML_Image:
     def __init__(self) -> None:
         pygame.init()
-        self.line_height = 72
-        self.letter_width = 20
+        self.line_height = 35
+        self.letter_width = 10
         self.margin = 500
-        self.background_color = (64, 64, 64)
+        self.background_color = (100, 100, 100)
+        self.font_size = 25
 
         self._framebuffer = pygame.Surface((self.margin * 2, self.margin * 2))
         self._framebuffer.fill(self.background_color)
@@ -32,7 +33,7 @@ class UML_Image:
         height += 2 * self.line_height
         framebuffer = pygame.Surface((width, height))
         framebuffer.fill(self.background_color)
-        font = pygame.font.Font(None, 36)
+        font = pygame.font.Font(None, self.font_size)
         # draw relationship arrows
         self.__draw_relationship_arrows(framebuffer, diagram, class_rects)
         # draw class boxes
@@ -59,7 +60,6 @@ class UML_Image:
         for cls in diagram.get_all_classes():
             text_cls_width = len(cls.get_name()) * self.letter_width
             text_cls_height = self.line_height
-            text_cls_height += 2 * self.line_height
             text_fields = []
             for field in cls.get_fields():
                 text_field = '{} {}'.format(field.get_type(), field.get_name())
@@ -185,17 +185,21 @@ class UML_Image:
 
     def __draw_class_boxes(self, framebuffer: pygame.Surface, font: pygame.font.Font, class_rects) -> None:
         for cls_x, cls_y, cls_width, cls_height, cls_name, text_fields, text_methods in class_rects:
-            curr = 1
             pygame.draw.rect(framebuffer, (200, 200, 200), ((cls_x + self.margin, cls_y + self.margin), (cls_width, cls_height)))
+            curr = 1
             text_surface = font.render(cls_name, True, (0, 0, 0))
             framebuffer.blit(text_surface, (cls_x + (cls_width - len(cls_name) * self.letter_width) // 2 + self.margin,
                                             cls_y + curr * self.line_height + self.margin))
-            curr += 2
+            curr += 1
+            pygame.draw.line(framebuffer, (0, 0, 0), (cls_x + self.margin, cls_y + curr * self.line_height + self.margin),
+                             (cls_x + cls_width + self.margin, cls_y + curr * self.line_height + self.margin), 3)
             for text_field in text_fields:
                 text_surface = font.render(text_field, True, (0, 0, 0))
                 framebuffer.blit(text_surface, (cls_x + (cls_width - len(text_field) * self.letter_width) // 2 + self.margin,
                                                 cls_y + curr * self.line_height + self.margin))
                 curr += 1
+            pygame.draw.line(framebuffer, (0, 0, 0), (cls_x + self.margin, cls_y + curr * self.line_height + self.margin),
+                            (cls_x + cls_width + self.margin, cls_y + curr * self.line_height + self.margin), 3)
             for text_method in text_methods:
                 text_surface = font.render(text_method, True, (0, 0, 0))
                 framebuffer.blit(text_surface, (cls_x + (cls_width - len(text_method) * self.letter_width) // 2 + self.margin,

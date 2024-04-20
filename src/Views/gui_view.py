@@ -180,7 +180,7 @@ class GUI_View(tk.Tk):
                 self._btn_params.configure(state = "active")
 
     def create_diagram_space(self):
-        self.diagram_canvas = tk.Canvas(self, bg = 'white')
+        self.diagram_canvas = tk.Canvas(self, bg = '#{:02x}{:02x}{:02x}'.format(100, 100, 100))
         self.diagram_canvas.pack(side = tk.LEFT, padx = 10, pady = 10, fill = tk.BOTH, expand = True)
 
 #===================================== Menu Methods =====================================#
