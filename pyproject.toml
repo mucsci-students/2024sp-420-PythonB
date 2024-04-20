@@ -13,6 +13,7 @@ python = "^3.8"
 jsonschema = "*"
 prompt_toolkit = "*"
 customtkinter = "*"
+pygame = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
