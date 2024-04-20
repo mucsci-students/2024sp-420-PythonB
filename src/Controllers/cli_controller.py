@@ -16,7 +16,7 @@ class CLI_Controller:
     def draw(self, diagram: UML_Diagram):
         pass
 
-    def get_diagram(self, diagram: UML_Diagram):
+    def set_diagram(self, diagram: UML_Diagram):
         self._diagram = diagram
 
 # =========================CLI Specific Parseing=========================#
@@ -124,6 +124,7 @@ class CLI_Controller:
         ])
         class_reltype = dict((key, rel_types) for key in self.get_classes())
         return dict((key, class_reltype) for key in self.get_classes())
+        
 
     def get_classes(self) -> dict[str, None]:
         """
