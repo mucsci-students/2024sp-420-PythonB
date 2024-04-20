@@ -3,7 +3,6 @@ from prompt_toolkit import prompt
 from Views.cli_view import CLI_View
 from prompt_toolkit.completion import NestedCompleter
 from Views.relation_completer import RelationCompleter
-from collections import OrderedDict
 
 
 class CLI_Controller:
@@ -44,6 +43,7 @@ class CLI_Controller:
 
 # ========================= Autocomplete Functionality =========================#
 
+
     def setup_autocomplete(self):
         """
         Sets up autocomplete functionality using the NestedCompleter.
@@ -59,7 +59,7 @@ class CLI_Controller:
                 'class': None,
                 'field': self.get_classes(),
                 'method': self.get_classes(),
-                'param': self.get_methods()  # TODO
+                'param': self.get_methods()
 
             },
             'delete': {
@@ -93,7 +93,7 @@ class CLI_Controller:
             'quit': None
         })
 
-    def get_delete_relation(self) -> OrderedDict[str, set[str]]:
+    def get_delete_relation(self) -> dict[str, set[str]]:
         """
         Get a dictionary of relations to be deleted between classes.
 
@@ -101,7 +101,7 @@ class CLI_Controller:
             dict[str, set[str]]: A dictionary where keys are class names (str) and values are sets
                                 containing names of classes (str) with existing relations to be deleted.
         """
-        res = OrderedDict()
+        res = dict()
         for uml_class in self.get_classes():
             existing_relations = set()
             for rel in self._diagram.get_all_relations():
@@ -110,43 +110,43 @@ class CLI_Controller:
             if existing_relations:
                 res[uml_class] = existing_relations
         return res
-    
-    def get_add_relation(self) -> OrderedDict[str, OrderedDict[str, str]]:
+
+    def get_add_relation(self) -> dict[str, dict[str, str]]:
         """
         Suggests class, class, relationship type 
 
         Returns:
-        OrderedDict[str, OrderedDict[str, str]]: An ordered dictionary where keys are class names (str)
+        dict[str, dict[str, str]]: A dictionary where keys are class names (str)
                                                  and values are dictionaries of class names (str) and
                                                  corresponding relationship types (str).
         """
-        rel_types = OrderedDict([
+        rel_types = dict([
             ("Aggregation", None),
             ("Composition", None),
             ("Realization", None),
             ("Inheritance", None)
         ])
-        class_reltype = OrderedDict((key, rel_types) for key in self.get_classes())
-        return OrderedDict((key, class_reltype) for key in self.get_classes())
-    
-    def get_classes(self) -> OrderedDict[str, None]:
+        class_reltype = dict((key, rel_types) for key in self.get_classes())
+        return dict((key, class_reltype) for key in self.get_classes())
+
+    def get_classes(self) -> dict[str, None]:
         """
         Get a dictionary of class names.
 
         Returns:
-            OrderedDict[str, None]: An ordered dictionary where keys are class names (str) and values are None.
+            dict[str, None]: An dictionary where keys are class names (str) and values are None.
         """
-        return OrderedDict((c.get_name(), None) for c in self._diagram.get_all_classes())
+        return dict((c.get_name(), None) for c in self._diagram.get_all_classes())
 
-    def get_methods(self) -> OrderedDict[str, set[str]]:
+    def get_methods(self) -> dict[str, set[str]]:
         """
         Get a dictionary of methods for each class.
 
         Returns:
-            OrderedDict[str, set[str]]: An ordered dictionary where keys are class names (str) and
+            dict[str, set[str]]: A dictionary where keys are class names (str) and
                                         values are sets containing names of methods (str) for each class.
         """
-        res = OrderedDict()
+        res = dict()
         for uml_class in self._diagram.get_all_classes():
             methods = set()
             for method in uml_class.get_methods():
@@ -154,20 +154,25 @@ class CLI_Controller:
             if methods:
                 res[uml_class.get_name()] = methods
         return res
-    
-    def get_fields(self) -> OrderedDict[str, set[str]]:
+
+    def get_fields(self) -> dict[str, set[str]]:
         """
         Get a dictionary of fields for each class.
 
         Returns:
-            OrderedDict[str, set[str]]: An ordered dictionary where keys are class names (str) and
+            dict[str, set[str]]: A dictionary where keys are class names (str) and
                                         values are sets containing names of fields (str) for each class.
         """
-        res = OrderedDict()
+        res = dict()
         for uml_class in self._diagram.get_all_classes():
             fields = set()
             for field in uml_class.get_fields():
                 fields.add(field.get_name())
             if fields:
                 res[uml_class.get_name()] = fields
-        return res 
+        return res
+
+    def get_params(self) -> dict[str, dict[str, set[str]]]:
+        res = dict()
+        for uml_class in self._diagram.get_all_classes():
+            pass
