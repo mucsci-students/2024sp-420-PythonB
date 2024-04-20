@@ -73,7 +73,7 @@ class CLI_Controller:
                 'class': self.get_classes(),
                 'field': self.get_fields(),
                 'method': self.get_methods(),
-                'param': None  # TODO
+                'param': self.get_params()  # TODO
             },
             'list': {
                 'class': self.get_classes(),
@@ -174,5 +174,13 @@ class CLI_Controller:
 
     def get_params(self) -> dict[str, dict[str, set[str]]]:
         res = dict()
+        method_fields = dict()
         for uml_class in self._diagram.get_all_classes():
-            pass
+            for method in uml_class.get_methods():
+                params = set()
+                for param in method.get_params():
+                    params.add(param.get_name())
+                #if params:
+                nested_dict = {method.get_name(): params}
+                res[uml_class.get_name()] = nested_dict
+        return res
