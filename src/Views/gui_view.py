@@ -102,7 +102,6 @@ class GUI_View(tk.Tk):
         self.wait_variable(self._user_command)
         cmd = self._user_command.get()
         self._user_command.set('')
-        print('Debugging: {}'.format(cmd))
         return cmd
     
     def create_menu(self):
@@ -504,11 +503,6 @@ class Dialog_Factory:
             """
             Updates the options in the Dynamic Combo based on selection of previous dropdown.
             """
-            print('This is called')
-            print(first_box)
-            print(second_box)
-            print(dy_values)
-            print(dy_values)
             first_val = first_box.get()
             second_box["values"] = dy_values[first_val]
             if len(second_box["values"]) > 0:
