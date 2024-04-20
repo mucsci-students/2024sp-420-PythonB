@@ -36,7 +36,7 @@ class UML_Image:
         tk_image = ImageTk.PhotoImage(Image.frombytes('RGB', (self._viewport_width, self._viewport_height), pygame.image.tostring(self._framebuffer, 'RGB')))
         return tk_image, class_boxes
     
-    def save_image(self, name: str, diagram: UML_Diagram):
+    def save_image(self, diagram: UML_Diagram) -> pygame.Surface:
         _, class_rects, width, height = self.__generate_class_boxes_and_class_rects_and_boarders(diagram)
         framebuffer = pygame.Surface((width, height))
         framebuffer.fill(self.background_color)
@@ -45,7 +45,7 @@ class UML_Image:
         self.__draw_relationship_arrows(framebuffer, diagram, class_rects)
         # draw class boxes
         self.__draw_class_boxes(framebuffer, font, class_rects)
-        pygame.image.save(framebuffer, name)
+        return framebuffer
 
     # helpers #
 

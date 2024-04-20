@@ -60,4 +60,4 @@ def test_export_image():
     dgm1.add_relation('Class2', 'Class1', 'composition')
 
     image = UML_Image()
-    image.save_image('images/test.png', dgm1)
+    image.save_image(dgm1)

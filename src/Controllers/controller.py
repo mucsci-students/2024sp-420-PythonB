@@ -3,6 +3,8 @@ import re
 import os
 from pathlib import Path
 
+import pygame
+
 from Controllers.cli_controller import CLI_Controller
 from Controllers.gui_controller import GUI_Controller
 from Models.uml_diagram import UML_Diagram
@@ -100,7 +102,8 @@ class UML_Controller:
         if not os.path.exists(path):
             os.makedirs(path)
         path = os.path.join(path, filename + '.png')
-        self._image.save_image(path, self._diagram)
+        framebuffer = self._image.save_image(self._diagram)
+        pygame.image.save(framebuffer, path)
 
 #=========================Parseing=========================#  
     def parse(self, input:str) -> list | str:
