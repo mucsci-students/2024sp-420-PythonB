@@ -47,9 +47,6 @@ class CLI_Controller:
         """
         Sets up autocomplete functionality using the NestedCompleter.
 
-        Returns:
-        NestedCompleter: An instance of NestedCompleter configured with a dictionary representing available commands
-        and their respective subcommands or arguments.
         """
 
         self._completer = NestedCompleter.from_nested_dict({
@@ -172,8 +169,14 @@ class CLI_Controller:
         return res
 
     def get_params(self) -> dict[str, dict[str, set[str]]]:
+        """
+        Retrieve parameters of methods in each class.
+
+        Returns:
+            dict[str, dict[str, set[str]]]: A dictionary where keys are class names and values
+            are dictionaries containing method names as keys and sets of parameter names as values.
+        """
         res = dict()
-        method_fields = dict()
         for uml_class in self._diagram.get_all_classes():
             nested_dict = None
             for method in uml_class.get_methods():
