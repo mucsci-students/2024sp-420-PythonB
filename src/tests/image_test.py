@@ -32,7 +32,6 @@ def test_create_image_for_gui():
     dgm1.add_relation('Class3', 'Class3', 'Inheritance')
     dgm1.add_relation('Class4', 'Class4', 'Realization')
 
-    root = tk.Tk()
     image = UML_Image()
     image.draw_framebuffer(dgm1, [0, 0])
 

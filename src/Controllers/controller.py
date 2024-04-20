@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 
 import pygame
+from PIL import Image, ImageTk
 
 from Controllers.cli_controller import CLI_Controller
 from Controllers.gui_controller import GUI_Controller
@@ -51,7 +52,11 @@ class UML_Controller:
                 continue
             if isinstance(self._controller, GUI_Controller):
                 camera_pos = self._controller.get_camera_pos()
-                self._controller.draw(self._diagram, *self._image.draw_framebuffer(self._diagram, camera_pos))
+                viewport_size = self._controller.get_viewport_size()
+                framebuffer, class_boxes = self._image.draw_framebuffer(self._diagram, camera_pos)
+                # generate image here to make test easier
+                image = ImageTk.PhotoImage(Image.frombytes('RGB', tuple(viewport_size), pygame.image.tostring(framebuffer, 'RGB')))
+                self._controller.draw(self._diagram, image, class_boxes)
 
     def __pick_controller(self, args:str = sys.argv) -> CLI_Controller | GUI_Controller: 
         if len(args) > 1 and str(args[1]).strip().lower() == 'cli':

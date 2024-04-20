@@ -2,7 +2,6 @@ import os
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
 import pygame
 import math
-from PIL import Image, ImageTk
 
 from Models.uml_diagram import UML_Diagram
 
@@ -32,9 +31,7 @@ class UML_Image:
         self.__draw_relationship_arrows(self._framebuffer, diagram, class_rects)
         # draw class boxes
         self.__draw_class_boxes(self._framebuffer, font, class_rects)
-        # generate image
-        tk_image = ImageTk.PhotoImage(Image.frombytes('RGB', (self._viewport_width, self._viewport_height), pygame.image.tostring(self._framebuffer, 'RGB')))
-        return tk_image, class_boxes
+        return self._framebuffer, class_boxes
     
     def save_image(self, diagram: UML_Diagram) -> pygame.Surface:
         _, class_rects, width, height = self.__generate_class_boxes_and_class_rects_and_boarders(diagram)
