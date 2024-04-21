@@ -10,8 +10,8 @@ class UML_Image:
         self.letter_width = 10
         self.margin = 250
         self.background_color = (100, 100, 100)
-        self.font_size = 25
-        self.header_font_size = 30
+        self.font_size = 15
+        self.header_font_size = 25
         self._viewport_width = 1000
         self._viewport_height = 800
         self._image = Image.new("RGB", (self._viewport_width, self._viewport_height), self.background_color)
@@ -196,25 +196,32 @@ class UML_Image:
             data[1][1] = end[1]
 
     def __draw_class_boxes(self, draw: ImageDraw.ImageDraw, class_rects) -> None:
-        font = ImageFont.load_default()
         for cls_x, cls_y, cls_width, cls_height, cls_name, text_fields, text_methods in class_rects:
+            border_color = (0, 0, 0)
+            border_thickness = 2
+            
             draw.rectangle([cls_x + self.margin, cls_y + self.margin, cls_x + cls_width + self.margin, cls_y + cls_height + self.margin],
-                           fill=(200, 200, 200))
+                           outline=border_color, fill=(200, 200, 200), width=border_thickness)
             curr = 1
+
+            # Text formatting
+            class_font = self.header_font
+            regular_font = self.font
+
             draw.text((cls_x + (cls_width - len(cls_name) * self.letter_width) // 2 + self.margin, cls_y + curr * self.line_height + self.margin),
-                      cls_name, fill=(0, 0, 0), font=font)
+                      cls_name, fill=(0, 0, 0), font=class_font)
             curr += 1
             draw.line([cls_x + self.margin, cls_y + curr * self.line_height + self.margin,
                        cls_x + cls_width + self.margin, cls_y + curr * self.line_height + self.margin], fill=(0, 0, 0), width=3)
             for text_field in text_fields:
                 draw.text((cls_x + (cls_width - len(text_field) * self.letter_width) // 2 + self.margin, cls_y + curr * self.line_height + self.margin),
-                      text_field, fill=(0, 0, 0), font=font)
+                      text_field, fill=(0, 0, 0), font=regular_font)
                 curr += 1
             draw.line([cls_x + self.margin, cls_y + curr * self.line_height + self.margin,
                     cls_x + cls_width + self.margin, cls_y + curr * self.line_height + self.margin], fill=(0, 0, 0), width=3)
             for text_method in text_methods:
                 draw.text((cls_x + (cls_width - len(text_method) * self.letter_width) // 2 + self.margin, cls_y + curr * self.line_height + self.margin),
-                      text_method, fill=(0, 0, 0), font=font)
+                      text_method, fill=(0, 0, 0), font=regular_font)
                 curr += 1
 
     def __vec(self, p1: list[int], p2: list[int]):
