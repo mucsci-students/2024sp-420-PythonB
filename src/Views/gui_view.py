@@ -28,6 +28,7 @@ class GUI_View(tk.Tk):
         self._sidebar_buttons = []
         self.create_menu()
         self.create_sidebar()
+        self.create_scrollbar()
         self.update_button_state()
         self.create_diagram_space()
         self._camera_x = 0
@@ -79,6 +80,40 @@ class GUI_View(tk.Tk):
             self._camera_x -= delta_x
             self._camera_y -= delta_y
             self._user_command.set('redraw')
+
+    def __boarder_x(self) -> tuple[float, float]:
+        low = 0
+        high = 0
+        for cb in self._class_boxes:
+            low = min(low, cb['x'])
+            high = max(high, cb['x'] + cb['width'])
+        low -= 500
+        high += 500
+        return low, high
+    
+    def __boarder_y(self) -> tuple[float, float]:
+        low = 0
+        high = 0
+        for cb in self._class_boxes:
+            low = min(low, cb['y'])
+            high = max(high, cb['y'] + cb['height'])
+        low -= 500
+        high += 500
+        return low, high
+
+    def on_scroll_x(self, op: str, *args) -> None:
+        if op == 'moveto':
+            pos = float(args[0]) # [0.0, 1.0]
+            start, end = self.__boarder_x()
+            self._camera_x = start + pos * (end - start)
+            self._user_command.set('redraw')
+
+    def on_scroll_y(self, op: str, *args) -> None:
+        if op == 'moveto':
+            pos = float(args[0]) # [0.0, 1.0]
+            start, end = self.__boarder_y()
+            self._camera_y = start + pos * (end - start)
+            self._user_command.set('redraw')
             
     def center(self) -> None:
         self._camera_x = 0
@@ -89,6 +124,13 @@ class GUI_View(tk.Tk):
         self._image = photo
         self.diagram_canvas.create_image(0, 0, anchor=tk.NW, image=self._image)
         self._class_boxes = class_boxes
+        low_x, high_x = self.__boarder_x()
+        low_y, high_y = self.__boarder_y()
+        pos_x = (self._camera_x - low_x) / (high_x - low_x)
+        pos_y = (self._camera_y - low_y) / (high_y - low_y)
+        print(self._camera_x, self._camera_y, pos_x, pos_y)
+        self._scrollbar_x.set(pos_x, pos_x + 0.2)
+        self._scrollbar_y.set(pos_y, pos_y + 0.2)
 
     def clear(self) -> None:
         self.diagram_canvas.delete("all")
@@ -155,6 +197,12 @@ class GUI_View(tk.Tk):
 
         self._btn_relations = ctk.CTkButton(self._sidebar, text="Relationships", command=self.relations_options_menu)
         self._btn_relations.pack(fill=tk.X, padx=(5, 5), pady=(5, 5))
+
+    def create_scrollbar(self):
+        self._scrollbar_x = tk.Scrollbar(self, orient="horizontal", command=self.on_scroll_x)
+        self._scrollbar_x.pack(side="bottom", fill="x")
+        self._scrollbar_y = tk.Scrollbar(self, orient="vertical", command=self.on_scroll_y)
+        self._scrollbar_y.pack(side="right", fill="y")
 
     def update_button_state(self):
         self._btn_class.configure(state = "disabled")
