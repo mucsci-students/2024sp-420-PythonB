@@ -60,7 +60,7 @@ class UML_Image:
         class_boxes = []
         class_rects = []
         for cls in diagram.get_all_classes():
-            text_cls_width = len(cls.get_name()) * self.letter_width
+            text_cls_width = len(cls.get_name()) * (1.75 * self.letter_width)
             text_cls_height = self.line_height
             text_fields = []
             for field in cls.get_fields():
