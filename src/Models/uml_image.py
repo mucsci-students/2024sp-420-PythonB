@@ -1,13 +1,11 @@
-import os
-os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
-import pygame
 import math
+
+from PIL import Image, ImageDraw, ImageFont
 
 from Models.uml_diagram import UML_Diagram
 
 class UML_Image:
     def __init__(self) -> None:
-        pygame.init()
         self.line_height = 35
         self.letter_width = 10
         self.margin = 250
@@ -15,12 +13,17 @@ class UML_Image:
         self.font_size = 25
         self._viewport_width = 1000
         self._viewport_height = 800
-        self._framebuffer = pygame.Surface((self._viewport_width, self._viewport_height))
+        self._image = Image.new("RGB", (self._viewport_width, self._viewport_height), self.background_color)
+        self._draw = ImageDraw.Draw(self._image)
 
-    def draw_framebuffer(self, diagram: UML_Diagram, camera_pos: tuple[int, int]):
+    def draw_framebuffer(self, diagram: UML_Diagram, camera_pos: tuple[int, int], viewport_size: tuple[int, int]):
         class_boxes, class_rects, _, _ = self.__generate_class_boxes_and_class_rects_and_boarders(diagram)
-        self._framebuffer.fill(self.background_color)
-        font = pygame.font.Font(None, self.font_size)
+        if viewport_size[0] != self._viewport_width or viewport_size[1] != self._viewport_height:
+            self._viewport_width, self._viewport_height = viewport_size
+            self._image = Image.new("RGB", viewport_size, self.background_color)
+            self._draw = ImageDraw.Draw(self._image)
+        # reset background
+        self._draw.rectangle([0, 0, self._viewport_width, self._viewport_height], fill=self.background_color)
         # move camera
         for class_rect in class_rects:
             class_rect[0] -= camera_pos[0]
@@ -28,23 +31,23 @@ class UML_Image:
             class_rect[1] -= camera_pos[1]
             class_rect[1] -= self.margin
         # draw relationship arrows
-        self.__draw_relationship_arrows(self._framebuffer, diagram, class_rects)
+        self.__draw_relationship_arrows(self._draw, diagram, class_rects)
         # draw class boxes
-        self.__draw_class_boxes(self._framebuffer, font, class_rects)
-        return self._framebuffer, class_boxes
+        self.__draw_class_boxes(self._draw, class_rects)
+        return self._image, class_boxes
     
-    def save_image(self, diagram: UML_Diagram) -> pygame.Surface:
+    def save_image(self, diagram: UML_Diagram) -> Image:
         _, class_rects, width, height = self.__generate_class_boxes_and_class_rects_and_boarders(diagram)
-        framebuffer = pygame.Surface((width, height))
-        framebuffer.fill(self.background_color)
-        font = pygame.font.Font(None, self.font_size)
+        image = Image.new("RGB", (width, height), self.background_color)
+        draw = ImageDraw.Draw(image)
+        draw.rectangle([0, 0, width, height], fill=self.background_color)
         # draw relationship arrows
-        self.__draw_relationship_arrows(framebuffer, diagram, class_rects)
+        self.__draw_relationship_arrows(draw, diagram, class_rects)
         # draw class boxes
-        self.__draw_class_boxes(framebuffer, font, class_rects)
-        return framebuffer
+        self.__draw_class_boxes(draw, class_rects)
+        return image
 
-    # helpers #
+    ############################################## helpers ################################################
 
     def __generate_class_boxes_and_class_rects_and_boarders(self, diagram: UML_Diagram):
         left_border = 0
@@ -101,7 +104,7 @@ class UML_Image:
         height += 2 * self.line_height
         return class_boxes, class_rects, width, height
 
-    def __draw_relationship_arrows(self, framebuffer: pygame.Surface, diagram: UML_Diagram, class_rects) -> None:
+    def __draw_relationship_arrows(self, draw: ImageDraw.ImageDraw, diagram: UML_Diagram, class_rects) -> None:
         for rel in diagram.get_all_relations():
             for rect in class_rects:
                 if rect[4] == rel.get_src_name():
@@ -115,24 +118,27 @@ class UML_Image:
             #self relationship
             if rel.get_src_name() == rel.get_dst_name():
                 radius = 0.5 * min(src_width, src_height)
-                draw_area = src_x - radius, src_y - radius, 2 * radius, 2 * radius
+                #bounding(left, top, right, bottom)
+                bbox = src_x - radius, src_y - radius, src_x + radius, src_y + radius
                 # draw line
                 if rel.get_type() == 'Realization':
                     segment_count = 40
-                    delta_angle = 2 * math.pi / segment_count
+                    delta_angle = 360 / segment_count
                     for i in range(0, segment_count, 2):
-                        pygame.draw.arc(framebuffer, (0, 0, 0), draw_area, i * delta_angle, (i + 1) * delta_angle, 5)
+                        start_angle = i * delta_angle
+                        end_angle = (i + 1) * delta_angle
+                        draw.arc(bbox, start_angle, end_angle, fill=(0, 0, 0), width=5)
                     # draw arrow
-                    self.__draw_triangle(framebuffer, [src_x - radius, src_y + radius - 5], [src_x, src_y + radius - 5], (255, 255, 255))
+                    self.__draw_triangle(draw, [src_x - radius, src_y + radius - 5], [src_x, src_y + radius - 5], (255, 255, 255))
                 else:
-                    pygame.draw.arc(framebuffer, (0, 0, 0), draw_area, 0, 2 * math.pi, 5)
+                    draw.arc(bbox, 0, 360, fill=(0, 0, 0), width=5)
                     # draw arrow
                     if rel.get_type() == 'Aggregation':
-                        self.__draw_diamond(framebuffer, [src_x - radius, src_y + radius - 5], [src_x, src_y + radius - 5], (255, 255, 255))
+                        self.__draw_diamond(draw, [src_x - radius, src_y + radius - 5], [src_x, src_y + radius - 5], (255, 255, 255))
                     elif rel.get_type() == 'Composition':
-                        self.__draw_diamond(framebuffer, [src_x - radius, src_y + radius - 5], [src_x, src_y + radius - 5], (0, 0, 0))
+                        self.__draw_diamond(draw, [src_x - radius, src_y + radius - 5], [src_x, src_y + radius - 5], (0, 0, 0))
                     elif rel.get_type() == 'Inheritance':
-                        self.__draw_triangle(framebuffer, [src_x - radius, src_y + radius - 5], [src_x, src_y + radius - 5], (255, 255, 255))
+                        self.__draw_triangle(draw, [src_x - radius, src_y + radius - 5], [src_x, src_y + radius - 5], (255, 255, 255))
                 continue
             # from
             src_center_x = (src_x + src_x + src_width) // 2
@@ -171,13 +177,13 @@ class UML_Image:
                 self.__update_intersection([src_center_x, src_center_y], [x, dst_y + dst_height], data)
             # draw an arrow from src_center to intersection
             if rel.get_type() == 'Aggregation':
-                self.__draw_aggregation(framebuffer, [src_center_x, src_center_y], data[1])
+                self.__draw_aggregation(draw, [src_center_x, src_center_y], data[1])
             elif rel.get_type() == 'Composition':
-                self.__draw_composition(framebuffer, [src_center_x, src_center_y], data[1])
+                self.__draw_composition(draw, [src_center_x, src_center_y], data[1])
             elif rel.get_type() == 'Inheritance':
-                self.__draw_inheritance(framebuffer, [src_center_x, src_center_y], data[1])
+                self.__draw_inheritance(draw, [src_center_x, src_center_y], data[1])
             elif rel.get_type() == 'Realization':
-                self.__draw_realization(framebuffer, [src_center_x, src_center_y], data[1])
+                self.__draw_realization(draw, [src_center_x, src_center_y], data[1])
 
     def __update_intersection(self, start: list[int], end: list[int], data: list[float | list[int]]) -> None:
         temp = math.dist(start, end)
@@ -186,27 +192,26 @@ class UML_Image:
             data[1][0] = end[0]
             data[1][1] = end[1]
 
-    def __draw_class_boxes(self, framebuffer: pygame.Surface, font: pygame.font.Font, class_rects) -> None:
+    def __draw_class_boxes(self, draw: ImageDraw.ImageDraw, class_rects) -> None:
+        font = ImageFont.load_default()
         for cls_x, cls_y, cls_width, cls_height, cls_name, text_fields, text_methods in class_rects:
-            pygame.draw.rect(framebuffer, (200, 200, 200), ((cls_x + self.margin, cls_y + self.margin), (cls_width, cls_height)))
+            draw.rectangle([cls_x + self.margin, cls_y + self.margin, cls_x + cls_width + self.margin, cls_y + cls_height + self.margin],
+                           fill=(200, 200, 200))
             curr = 1
-            text_surface = font.render(cls_name, True, (0, 0, 0))
-            framebuffer.blit(text_surface, (cls_x + (cls_width - len(cls_name) * self.letter_width) // 2 + self.margin,
-                                            cls_y + curr * self.line_height + self.margin))
+            draw.text((cls_x + (cls_width - len(cls_name) * self.letter_width) // 2 + self.margin, cls_y + curr * self.line_height + self.margin),
+                      cls_name, fill=(0, 0, 0), font=font)
             curr += 1
-            pygame.draw.line(framebuffer, (0, 0, 0), (cls_x + self.margin, cls_y + curr * self.line_height + self.margin),
-                             (cls_x + cls_width + self.margin, cls_y + curr * self.line_height + self.margin), 3)
+            draw.line([cls_x + self.margin, cls_y + curr * self.line_height + self.margin,
+                       cls_x + cls_width + self.margin, cls_y + curr * self.line_height + self.margin], fill=(0, 0, 0), width=3)
             for text_field in text_fields:
-                text_surface = font.render(text_field, True, (0, 0, 0))
-                framebuffer.blit(text_surface, (cls_x + (cls_width - len(text_field) * self.letter_width) // 2 + self.margin,
-                                                cls_y + curr * self.line_height + self.margin))
+                draw.text((cls_x + (cls_width - len(text_field) * self.letter_width) // 2 + self.margin, cls_y + curr * self.line_height + self.margin),
+                      text_field, fill=(0, 0, 0), font=font)
                 curr += 1
-            pygame.draw.line(framebuffer, (0, 0, 0), (cls_x + self.margin, cls_y + curr * self.line_height + self.margin),
-                            (cls_x + cls_width + self.margin, cls_y + curr * self.line_height + self.margin), 3)
+            draw.line([cls_x + self.margin, cls_y + curr * self.line_height + self.margin,
+                    cls_x + cls_width + self.margin, cls_y + curr * self.line_height + self.margin], fill=(0, 0, 0), width=3)
             for text_method in text_methods:
-                text_surface = font.render(text_method, True, (0, 0, 0))
-                framebuffer.blit(text_surface, (cls_x + (cls_width - len(text_method) * self.letter_width) // 2 + self.margin,
-                                                cls_y + curr * self.line_height + self.margin))
+                draw.text((cls_x + (cls_width - len(text_method) * self.letter_width) // 2 + self.margin, cls_y + curr * self.line_height + self.margin),
+                      text_method, fill=(0, 0, 0), font=font)
                 curr += 1
 
     def __vec(self, p1: list[int], p2: list[int]):
@@ -225,7 +230,7 @@ class UML_Image:
     def __multiply(self, v, x):
         return v[0] * x, v[1] * x
     
-    def __draw_diamond(self, framebuffer: pygame.Surface, start: list[int], end: list[int], color: tuple[int, int, int], side_length: int=30) -> None:
+    def __draw_diamond(self, draw: ImageDraw.ImageDraw, start: list[int], end: list[int], color: tuple[int, int, int], side_length: int=30) -> None:
         orgin = self.__vec(start, end)
         left = self.__normalized(self.__rotate(orgin, -5 * math.pi / 6))
         right = self.__normalized(self.__rotate(orgin, 5 * math.pi / 6))
@@ -233,38 +238,37 @@ class UML_Image:
         p2 = end[0] + right[0] * side_length, end[1] + right[1] * side_length
         v = self.__normalized(self.__vec(end, start))
         to = end[0] + v[0] * side_length * 3**0.5, end[1] + v[1] * side_length * 3**0.5
-        pygame.draw.polygon(framebuffer, color, [end, p1, to, p2])
+        draw.polygon([*end, *p1, *to, *p2], fill=color)
 
-    def __draw_triangle(self, framebuffer: pygame.Surface, start: list[int], end: list[int], color: tuple[int, int, int], side_length: int=40) -> None:
-
+    def __draw_triangle(self, draw: ImageDraw.ImageDraw, start: list[int], end: list[int], color: tuple[int, int, int], side_length: int=40) -> None:
         orgin = self.__vec(start, end)
         left = self.__normalized(self.__rotate(orgin, -5 * math.pi / 6))
         right = self.__normalized(self.__rotate(orgin, 5 * math.pi / 6))
         p1 = end[0] + left[0] * side_length, end[1] + left[1] * side_length
         p2 = end[0] + right[0] * side_length, end[1] + right[1] * side_length
-        pygame.draw.polygon(framebuffer, color, [end, p1, p2])
+        draw.polygon([*end, *p1, *p2], fill=color)
     
-    def __draw_aggregation(self, framebuffer: pygame.Surface, start: list[int], end: list[int]) -> None:
+    def __draw_aggregation(self, draw: ImageDraw.ImageDraw, start: list[int], end: list[int]) -> None:
         # line with white diamond
-        pygame.draw.line(framebuffer, (0, 0, 0), start, end, 5)
-        self.__draw_diamond(framebuffer, start, end, (255, 255, 255))
+        draw.line([*start, *end], fill=(0, 0, 0), width=5)
+        self.__draw_diamond(draw, start, end, (255, 255, 255))
 
-    def __draw_composition(self, framebuffer: pygame.Surface, start: list[int], end: list[int]) -> None:
+    def __draw_composition(self, draw: ImageDraw.ImageDraw, start: list[int], end: list[int]) -> None:
         # line with solid diamond
-        pygame.draw.line(framebuffer, (0, 0, 0), start, end, 5)
-        self.__draw_diamond(framebuffer, start, end, (0, 0, 0))
+        draw.line([*start, *end], fill=(0, 0, 0), width=5)
+        self.__draw_diamond(draw, start, end, (0, 0, 0))
 
-    def __draw_inheritance(self, framebuffer: pygame.Surface, start: list[int], end: list[int]) -> None:
+    def __draw_inheritance(self, draw: ImageDraw.ImageDraw, start: list[int], end: list[int]) -> None:
         # line with white triangle
-        pygame.draw.line(framebuffer, (0, 0, 0), start, end, 5)
-        self.__draw_triangle(framebuffer, start, end, (255, 255, 255))
+        draw.line([*start, *end], fill=(0, 0, 0), width=5)
+        self.__draw_triangle(draw, start, end, (255, 255, 255))
 
-    def __draw_realization(self, framebuffer: pygame.Surface, start: list[int], end: list[int]) -> None:
+    def __draw_realization(self, draw: ImageDraw.ImageDraw, start: list[int], end: list[int]) -> None:
         # dash line with white triangle
         delta_len = 10
         segment_count = int(math.dist(start, end) / delta_len)
         direction = self.__normalized(self.__vec(start, end))
         for i in range(0, segment_count, 2):
-            pygame.draw.line(framebuffer, (0, 0, 0), self.__add(start, self.__multiply(direction, i * delta_len)),
-                             self.__add(start, self.__multiply(direction, (i + 1) * delta_len)), 5)
-        self.__draw_triangle(framebuffer, start, end, (255, 255, 255))
+            draw.line([*self.__add(start, self.__multiply(direction, i * delta_len)), *self.__add(start, self.__multiply(direction, (i + 1) * delta_len))],
+                      fill=(0, 0, 0), width=5)
+        self.__draw_triangle(draw, start, end, (255, 255, 255))

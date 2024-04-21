@@ -3,8 +3,7 @@ import re
 import os
 from pathlib import Path
 
-import pygame
-from PIL import Image, ImageTk
+from PIL import ImageTk
 
 from Controllers.cli_controller import CLI_Controller
 from Controllers.gui_controller import GUI_Controller
@@ -55,10 +54,8 @@ class UML_Controller:
             if isinstance(self._controller, GUI_Controller):
                 camera_pos = self._controller.get_camera_pos()
                 viewport_size = self._controller.get_viewport_size()
-                framebuffer, class_boxes = self._image.draw_framebuffer(self._diagram, camera_pos)
-                # generate image here to make test easier
-                image = ImageTk.PhotoImage(Image.frombytes('RGB', tuple(viewport_size), pygame.image.tostring(framebuffer, 'RGB')))
-                self._controller.draw(self._diagram, image, class_boxes)
+                image, class_boxes = self._image.draw_framebuffer(self._diagram, camera_pos, viewport_size)
+                self._controller.draw(self._diagram, ImageTk.PhotoImage(image), class_boxes)
 
     def __pick_controller(self, args:str = sys.argv) -> CLI_Controller | GUI_Controller: 
         if len(args) > 1 and str(args[1]).strip().lower() == 'cli':
@@ -109,8 +106,7 @@ class UML_Controller:
         if not os.path.exists(path):
             os.makedirs(path)
         path = os.path.join(path, filename + '.png')
-        framebuffer = self._image.save_image(self._diagram)
-        pygame.image.save(framebuffer, path)
+        self._image.save_image(self._diagram).save(path)
 
 #=========================Parseing=========================#  
     def parse(self, input:str) -> list | str:
