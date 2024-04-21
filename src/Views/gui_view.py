@@ -85,6 +85,12 @@ class GUI_View(tk.Tk):
         self._camera_y = 0
         self._user_command.set('redraw')
 
+    def last(self) -> None:
+        if self._class_boxes:
+            self._camera_x = self._class_boxes[-1]['x'] - 250
+            self._camera_y = self._class_boxes[-1]['y'] - 250
+        self._user_command.set('redraw')
+
     def draw(self, photo, class_boxes):
         self._image = photo
         self.diagram_canvas.create_image(0, 0, anchor=tk.NW, image=self._image)
@@ -123,6 +129,7 @@ class GUI_View(tk.Tk):
         #Layout Menu (Return to Center)
         layout_menu = Menu(menu_bar, tearoff=0)
         layout_menu.add_command(label="Move Camera to Center", command=self.center)
+        layout_menu.add_command(label="Move Camera to Last Class", command=self.last)
         menu_bar.add_cascade(label="View", menu=layout_menu)
         # Help Menu
         help_menu = Menu(menu_bar, tearoff=0)
@@ -414,22 +421,6 @@ class GUI_View(tk.Tk):
             Dialog_Parts("combo", "Destination", class_options)
         ]
         Dialog_Factory.create("Add Relation", dialog_params, lambda result:self._user_command.set("delete relation " + result[0] + " " + result[1]))
-
-#===================================== Helper Functions =====================================#
-            
-    def get_next_position(self):
-        spacing = 10  # Spacing between class boxes
-        box_width = 150  # Assume a fixed width for now
-        x, y = 50, 50  # Starting position for the first class box
-
-        if self._class_boxes:
-            # Get the position of the last class box
-            index = len(self._class_boxes) - 1
-            last_box = self._class_boxes[index]
-            x, y = last_box._x, last_box._y
-            # Move to the next position to the right
-            x += box_width + spacing
-        return x, y
 
 #===================================== Dialog Factory =====================================#
         
