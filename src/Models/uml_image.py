@@ -43,7 +43,7 @@ class UML_Image:
         self.__draw_class_boxes(draw, class_rects)
         return image
 
-    # helpers #
+    ############################################## helpers ################################################
 
     def __generate_class_boxes_and_class_rects_and_boarders(self, diagram: UML_Diagram):
         left_border = 0
