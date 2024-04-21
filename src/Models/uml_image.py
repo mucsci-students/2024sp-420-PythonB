@@ -6,15 +6,18 @@ from Models.uml_diagram import UML_Diagram
 
 class UML_Image:
     def __init__(self) -> None:
-        self.line_height = 35
-        self.letter_width = 10
+        self.line_height = 30
+        self.letter_width = 8
         self.margin = 250
         self.background_color = (100, 100, 100)
-        self.font_size = 25
+        self.font_size = 15
+        self.header_font_size = 20
         self._viewport_width = 1000
         self._viewport_height = 800
         self._image = Image.new("RGB", (self._viewport_width, self._viewport_height), self.background_color)
         self._draw = ImageDraw.Draw(self._image)
+        self.font = ImageFont.truetype("Anonymous Pro.ttf", self.font_size)  # Regular for fields and methods
+        self.header_font = ImageFont.truetype("Anonymous Pro B.ttf", self.header_font_size)  # Bold for class name
 
     def draw_framebuffer(self, diagram: UML_Diagram, camera_pos: tuple[int, int], viewport_size: tuple[int, int]):
         class_boxes, class_rects, _, _ = self.__generate_class_boxes_and_class_rects_and_boarders(diagram)
@@ -57,7 +60,7 @@ class UML_Image:
         class_boxes = []
         class_rects = []
         for cls in diagram.get_all_classes():
-            text_cls_width = len(cls.get_name()) * self.letter_width
+            text_cls_width = len(cls.get_name()) * (1.75 * self.letter_width)
             text_cls_height = self.line_height
             text_fields = []
             for field in cls.get_fields():
@@ -74,7 +77,7 @@ class UML_Image:
                 text_cls_height += self.line_height
             #padding
             text_cls_width += 5 * self.letter_width
-            text_cls_height += self.line_height
+            #text_cls_height += self.line_height
             left_border = min(left_border, cls.get_position_x())
             right_border = max(right_border, cls.get_position_x() + text_cls_width)
             top_border = min(top_border, cls.get_position_y())
@@ -193,25 +196,32 @@ class UML_Image:
             data[1][1] = end[1]
 
     def __draw_class_boxes(self, draw: ImageDraw.ImageDraw, class_rects) -> None:
-        font = ImageFont.load_default()
         for cls_x, cls_y, cls_width, cls_height, cls_name, text_fields, text_methods in class_rects:
+            border_color = (0, 0, 0)
+            border_thickness = 2
+            
             draw.rectangle([cls_x + self.margin, cls_y + self.margin, cls_x + cls_width + self.margin, cls_y + cls_height + self.margin],
-                           fill=(200, 200, 200))
-            curr = 1
-            draw.text((cls_x + (cls_width - len(cls_name) * self.letter_width) // 2 + self.margin, cls_y + curr * self.line_height + self.margin),
-                      cls_name, fill=(0, 0, 0), font=font)
+                           outline=border_color, fill=(200, 200, 200), width=border_thickness)
+            curr = 0
+
+            # Text formatting
+            class_font = self.header_font
+            regular_font = self.font
+
+            draw.text((cls_x +(cls_width - len(cls_name) * self.letter_width) // 2 + self.margin, cls_y + curr * self.line_height + self.margin),
+                      cls_name, fill=(0, 0, 0), font=class_font)
             curr += 1
-            draw.line([cls_x + self.margin, cls_y + curr * self.line_height + self.margin,
-                       cls_x + cls_width + self.margin, cls_y + curr * self.line_height + self.margin], fill=(0, 0, 0), width=3)
+            draw.line([cls_x + self.margin, cls_y + curr * self.line_height + self.margin - 10,
+                       cls_x + cls_width + self.margin, cls_y + curr * self.line_height + self.margin - 10], fill=(0, 0, 0), width=2)
             for text_field in text_fields:
                 draw.text((cls_x + (cls_width - len(text_field) * self.letter_width) // 2 + self.margin, cls_y + curr * self.line_height + self.margin),
-                      text_field, fill=(0, 0, 0), font=font)
+                      text_field, fill=(0, 0, 0), font=regular_font)
                 curr += 1
-            draw.line([cls_x + self.margin, cls_y + curr * self.line_height + self.margin,
-                    cls_x + cls_width + self.margin, cls_y + curr * self.line_height + self.margin], fill=(0, 0, 0), width=3)
+            draw.line([cls_x + self.margin, cls_y + curr * self.line_height + self.margin - 10,
+                    cls_x + cls_width + self.margin, cls_y + curr * self.line_height + self.margin - 10], fill=(0, 0, 0), width=2)
             for text_method in text_methods:
                 draw.text((cls_x + (cls_width - len(text_method) * self.letter_width) // 2 + self.margin, cls_y + curr * self.line_height + self.margin),
-                      text_method, fill=(0, 0, 0), font=font)
+                      text_method, fill=(0, 0, 0), font=regular_font)
                 curr += 1
 
     def __vec(self, p1: list[int], p2: list[int]):
