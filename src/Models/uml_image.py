@@ -16,8 +16,12 @@ class UML_Image:
         self._image = Image.new("RGB", (self._viewport_width, self._viewport_height), self.background_color)
         self._draw = ImageDraw.Draw(self._image)
 
-    def draw_framebuffer(self, diagram: UML_Diagram, camera_pos: tuple[int, int]):
+    def draw_framebuffer(self, diagram: UML_Diagram, camera_pos: tuple[int, int], viewport_size: tuple[int, int]):
         class_boxes, class_rects, _, _ = self.__generate_class_boxes_and_class_rects_and_boarders(diagram)
+        if viewport_size[0] != self._viewport_width or viewport_size[1] != self._viewport_height:
+            self._viewport_width, self._viewport_height = viewport_size
+            self._image = Image.new("RGB", viewport_size, self.background_color)
+            self._draw = ImageDraw.Draw(self._image)
         # reset background
         self._draw.rectangle([0, 0, self._viewport_width, self._viewport_height], fill=self.background_color)
         # move camera
@@ -121,7 +125,9 @@ class UML_Image:
                     segment_count = 40
                     delta_angle = 360 / segment_count
                     for i in range(0, segment_count, 2):
-                        draw.arc(bbox, i * delta_angle, (i + 1) * delta_angle, fill=(0, 0, 0), width=5)
+                        start_angle = i * delta_angle
+                        end_angle = (i + 1) * delta_angle
+                        draw.arc(bbox, start_angle, end_angle, fill=(0, 0, 0), width=5)
                     # draw arrow
                     self.__draw_triangle(draw, [src_x - radius, src_y + radius - 5], [src_x, src_y + radius - 5], (255, 255, 255))
                 else:

@@ -54,7 +54,7 @@ class UML_Controller:
             if isinstance(self._controller, GUI_Controller):
                 camera_pos = self._controller.get_camera_pos()
                 viewport_size = self._controller.get_viewport_size()
-                image, class_boxes = self._image.draw_framebuffer(self._diagram, camera_pos)
+                image, class_boxes = self._image.draw_framebuffer(self._diagram, camera_pos, viewport_size)
                 self._controller.draw(self._diagram, ImageTk.PhotoImage(image), class_boxes)
 
     def __pick_controller(self, args:str = sys.argv) -> CLI_Controller | GUI_Controller: 
