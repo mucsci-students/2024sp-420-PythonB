@@ -1,5 +1,3 @@
-import tkinter as tk
-
 from Models.uml_diagram import UML_Diagram
 from Models.uml_image import UML_Image
 

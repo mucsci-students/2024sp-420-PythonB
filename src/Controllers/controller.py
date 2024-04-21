@@ -3,6 +3,8 @@ import re
 import os
 from pathlib import Path
 
+from PIL import ImageTk
+
 from Controllers.cli_controller import CLI_Controller
 from Controllers.gui_controller import GUI_Controller
 from Models.uml_diagram import UML_Diagram
@@ -53,7 +55,7 @@ class UML_Controller:
                 camera_pos = self._controller.get_camera_pos()
                 viewport_size = self._controller.get_viewport_size()
                 image, class_boxes = self._image.draw_framebuffer(self._diagram, camera_pos)
-                self._controller.draw(self._diagram, image, class_boxes)
+                self._controller.draw(self._diagram, ImageTk.PhotoImage(image), class_boxes)
 
     def __pick_controller(self, args:str = sys.argv) -> CLI_Controller | GUI_Controller: 
         if len(args) > 1 and str(args[1]).strip().lower() == 'cli':

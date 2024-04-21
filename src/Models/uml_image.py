@@ -1,6 +1,6 @@
 import math
 
-from PIL import Image, ImageDraw, ImageFont, ImageTk
+from PIL import Image, ImageDraw, ImageFont
 
 from Models.uml_diagram import UML_Diagram
 
@@ -30,7 +30,7 @@ class UML_Image:
         self.__draw_relationship_arrows(self._draw, diagram, class_rects)
         # draw class boxes
         self.__draw_class_boxes(self._draw, class_rects)
-        return ImageTk.PhotoImage(self._image), class_boxes
+        return self._image, class_boxes
     
     def save_image(self, diagram: UML_Diagram) -> Image:
         _, class_rects, width, height = self.__generate_class_boxes_and_class_rects_and_boarders(diagram)
