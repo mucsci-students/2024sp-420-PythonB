@@ -10,7 +10,7 @@ class UML_Image:
         pygame.init()
         self.line_height = 35
         self.letter_width = 10
-        self.margin = 500
+        self.margin = 250
         self.background_color = (100, 100, 100)
         self.font_size = 25
         self._viewport_width = 1000
@@ -147,7 +147,7 @@ class UML_Image:
             direction = self.__vec([src_center_x, src_center_y], [dst_center_x, dst_center_y])
             # slope
             # m = dy / dx
-            m = direction[1] / direction[0] + 1e-11
+            m = direction[1] / (direction[0] + 1e-11) + 1e-11
             # y - y0 = m(x - x0)
             # x0 = src_center_x
             # y0 = src_center_y
