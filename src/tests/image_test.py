@@ -41,7 +41,8 @@ def test_create_image_for_gui():
     dgm1.add_relation('Class4', 'Class4', 'Realization')
 
     image = UML_Image()
-    image.draw_framebuffer(dgm1, [0, 0])
+    image.draw_framebuffer(dgm1, [0, 0], [1000, 800])
+    image.draw_framebuffer(dgm1, [0, 0], [1920, 1080])
 
 def test_export_image():
     dgm1 = UML_Diagram()
