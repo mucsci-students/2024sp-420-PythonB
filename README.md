@@ -12,6 +12,7 @@ within a UML diagram.
 * Attribute Handling: Manage attributes for each class, including adding, renaming, and deletion.
 * Relationship Management: Define and modify relationships between classes, such as association, inheritance, and composition.
 * Save/Load Functionality: Save your current diagram state to a JSON file and load it back into the application for continued management.
+* Export as Image: Export the diagram as a png image file.
 
 # Setup and Installation
 
@@ -75,6 +76,7 @@ It is recommended you use a virtual environment when running this program. Instr
 
 `` save <file_name> `` - Saves the diagram. <br>
 `` load <file_name> `` - Loads a diagram.  <br>
+`` export <file_name> `` - Export the diagram as a png image file.  <br>
 `` undo `` - Undoes the last command.  <br>
 `` redo `` - Undoes an undo.  <br>
 `` quit `` - Quits the program. <br>

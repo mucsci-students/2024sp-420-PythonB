@@ -454,7 +454,7 @@ class GUI_View(tk.Tk):
             Dialog_Parts("dynamic_combo", "Param", param_options, 2),
             Dialog_Parts("text", "New Name")
         ]
-        Dialog_Factory.create("Delete Parameter", dialog_params, lambda result:self._user_command.set(f'delete param { result[0] } { result[1] } { result[2] } { result[3] }'))
+        Dialog_Factory.create("Rename Parameter", dialog_params, lambda result:self._user_command.set(f'rename param { result[0] } { result[1] } { result[2] } { result[3] }'))
 
     def add_relation(self):
         class_options = [cb['name'] for cb in self._class_boxes]
