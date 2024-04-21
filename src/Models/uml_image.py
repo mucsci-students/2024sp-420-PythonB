@@ -11,10 +11,13 @@ class UML_Image:
         self.margin = 250
         self.background_color = (100, 100, 100)
         self.font_size = 25
+        self.header_font_size = 30
         self._viewport_width = 1000
         self._viewport_height = 800
         self._image = Image.new("RGB", (self._viewport_width, self._viewport_height), self.background_color)
         self._draw = ImageDraw.Draw(self._image)
+        self.font = ImageFont.truetype("Anonymous Pro.ttf", self.font_size)  # Regular for fields and methods
+        self.header_font = ImageFont.truetype("Anonymous Pro B.ttf", self.header_font_size)  # Bold for class name
 
     def draw_framebuffer(self, diagram: UML_Diagram, camera_pos: tuple[int, int], viewport_size: tuple[int, int]):
         class_boxes, class_rects, _, _ = self.__generate_class_boxes_and_class_rects_and_boarders(diagram)
