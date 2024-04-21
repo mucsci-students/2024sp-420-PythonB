@@ -40,17 +40,24 @@ class GUI_View(tk.Tk):
         self.diagram_canvas.bind('<Button-1>', self.on_click)
         self.diagram_canvas.bind("<ButtonRelease-1>", self.on_release)
         self.diagram_canvas.bind('<B1-Motion>', self.on_move)
+        self.diagram_canvas.bind('<Configure>', self.on_resize)
         self._user_command = tk.StringVar()
         self.protocol("WM_DELETE_WINDOW", self.on_close)
+        self._canvas_width = window_width
+        self._canvas_height = window_height
 
     def camera_pos(self) -> tuple[int, int]:
         return self._camera_x, self._camera_y
     
     def viewport_size(self) -> tuple[int, int]:
-        return 1000, 800
+        return self._canvas_width, self._canvas_height
 
     def error_message(self, message: str) -> None:
         messagebox.showinfo("Error - CWorld UML", message, parent=self)
+
+    def on_resize(self, event: tk.Event) -> None:
+        self._canvas_width = event.width
+        self._canvas_height = event.height
 
     def on_close(self) -> None:
         self._user_command.set('quit')
@@ -128,7 +135,6 @@ class GUI_View(tk.Tk):
         low_y, high_y = self.__boarder_y()
         pos_x = (self._camera_x - low_x) / (high_x - low_x)
         pos_y = (self._camera_y - low_y) / (high_y - low_y)
-        print(self._camera_x, self._camera_y, pos_x, pos_y)
         self._scrollbar_x.set(pos_x, pos_x + 0.2)
         self._scrollbar_y.set(pos_y, pos_y + 0.2)
 

@@ -17,8 +17,11 @@ class UML_Image:
         self._viewport_height = 800
         self._framebuffer = pygame.Surface((self._viewport_width, self._viewport_height))
 
-    def draw_framebuffer(self, diagram: UML_Diagram, camera_pos: tuple[int, int]):
+    def draw_framebuffer(self, diagram: UML_Diagram, camera_pos: tuple[int, int], viewport_size: tuple[int, int]):
         class_boxes, class_rects, _, _ = self.__generate_class_boxes_and_class_rects_and_boarders(diagram)
+        if viewport_size[0] != self._viewport_width or viewport_size[1] != self._viewport_height:
+            self._viewport_width, self._viewport_height = viewport_size
+            self._framebuffer = pygame.Surface(viewport_size)
         self._framebuffer.fill(self.background_color)
         font = pygame.font.Font(None, self.font_size)
         # move camera

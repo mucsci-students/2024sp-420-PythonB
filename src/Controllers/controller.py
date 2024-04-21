@@ -55,7 +55,7 @@ class UML_Controller:
             if isinstance(self._controller, GUI_Controller):
                 camera_pos = self._controller.get_camera_pos()
                 viewport_size = self._controller.get_viewport_size()
-                framebuffer, class_boxes = self._image.draw_framebuffer(self._diagram, camera_pos)
+                framebuffer, class_boxes = self._image.draw_framebuffer(self._diagram, camera_pos, viewport_size)
                 # generate image here to make test easier
                 image = ImageTk.PhotoImage(Image.frombytes('RGB', tuple(viewport_size), pygame.image.tostring(framebuffer, 'RGB')))
                 self._controller.draw(self._diagram, image, class_boxes)
