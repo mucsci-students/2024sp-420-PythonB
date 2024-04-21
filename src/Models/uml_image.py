@@ -212,13 +212,13 @@ class UML_Image:
                       cls_name, fill=(0, 0, 0), font=class_font)
             curr += 1
             draw.line([cls_x + self.margin, cls_y + curr * self.line_height + self.margin - 10,
-                       cls_x + cls_width + self.margin, cls_y + curr * self.line_height + self.margin - 10], fill=(0, 0, 0), width=3)
+                       cls_x + cls_width + self.margin, cls_y + curr * self.line_height + self.margin - 10], fill=(0, 0, 0), width=2)
             for text_field in text_fields:
                 draw.text((cls_x + (cls_width - len(text_field) * self.letter_width) // 2 + self.margin, cls_y + curr * self.line_height + self.margin),
                       text_field, fill=(0, 0, 0), font=regular_font)
                 curr += 1
             draw.line([cls_x + self.margin, cls_y + curr * self.line_height + self.margin - 10,
-                    cls_x + cls_width + self.margin, cls_y + curr * self.line_height + self.margin - 10], fill=(0, 0, 0), width=3)
+                    cls_x + cls_width + self.margin, cls_y + curr * self.line_height + self.margin - 10], fill=(0, 0, 0), width=2)
             for text_method in text_methods:
                 draw.text((cls_x + (cls_width - len(text_method) * self.letter_width) // 2 + self.margin, cls_y + curr * self.line_height + self.margin),
                       text_method, fill=(0, 0, 0), font=regular_font)
