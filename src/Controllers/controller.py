@@ -40,7 +40,8 @@ class UML_Controller:
                 # For now this will ensure the state is not saved
                 #     when doing list commands(commands that starts with 'list' prefix)
                 elif not data[0].__name__.startswith('list'):
-                    self._states.save_state(self._diagram)
+                    if isinstance(self._controller, CLI_Controller) or self._controller.should_save():
+                        self._states.save_state(self._diagram)
             except KeyboardInterrupt:
                 self.quit()
             except EOFError:
