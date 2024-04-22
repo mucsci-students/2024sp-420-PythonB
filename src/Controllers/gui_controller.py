@@ -23,3 +23,6 @@ class GUI_Controller:
     
     def get_viewport_size(self):
         return self._gui_view.viewport_size()
+    
+    def should_save(self) -> bool:
+        return self._gui_view.should_save()

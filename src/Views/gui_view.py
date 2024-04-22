@@ -45,13 +45,18 @@ class GUI_View(tk.Tk):
         self.protocol("WM_DELETE_WINDOW", self.on_close)
         self._canvas_width = window_width
         self._canvas_height = window_height
+        
+        self._should_save = True
 
     def camera_pos(self) -> tuple[int, int]:
         return self._camera_x, self._camera_y
     
     def viewport_size(self) -> tuple[int, int]:
         return self._canvas_width, self._canvas_height
-
+    
+    def should_save(self) -> bool:
+        return self._should_save
+    
     def error_message(self, message: str) -> None:
         messagebox.showinfo("Error - CWorld UML", message, parent=self)
 
@@ -70,9 +75,12 @@ class GUI_View(tk.Tk):
             if cb['x'] <= self._cursor_x + self._camera_x <= cb['x'] + cb['width'] and cb['y'] <= self._cursor_y + self._camera_y <= cb['y'] + cb['height']:
                 self._dragged_class_box = cb
                 break
+        self._should_save = False
 
     def on_release(self, event: tk.Event) -> None:
         self._dragged_class_box = None
+        self._should_save = True
+        self._user_command.set('redraw')
 
     def on_move(self, event: tk.Event) -> None:
         delta_x = event.x - self._cursor_x
