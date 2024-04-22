@@ -102,3 +102,8 @@ January 2024 to March 2024:
 
 March 2024 to Present: 
 - Ganga Acharya, Marshall Feng, Peter Freedman, Adam Glick-Lynch, Tim Moser
+
+## Acknowledgments and Licenses
+
+### Third-Party Assets
+- **Font**: Anonymous Pro by Mark Simonson. This font is used under the SIL Open Font License (OFL). More information about this license is available at [SIL Open Font License](https://openfontlicense.org).
