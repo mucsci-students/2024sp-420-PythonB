@@ -16,8 +16,8 @@ class UML_Image:
         self._viewport_height = 800
         self._image = Image.new("RGB", (self._viewport_width, self._viewport_height), self.background_color)
         self._draw = ImageDraw.Draw(self._image)
-        self.font = ImageFont.truetype("Anonymous Pro.ttf", self.font_size)  # Regular for fields and methods
-        self.header_font = ImageFont.truetype("Anonymous Pro B.ttf", self.header_font_size)  # Bold for class name
+        self.font = ImageFont.truetype("fonts/Anonymous Pro.ttf", self.font_size)  # Regular for fields and methods
+        self.header_font = ImageFont.truetype("fonts/Anonymous Pro B.ttf", self.header_font_size)  # Bold for class name
 
     def draw_framebuffer(self, diagram: UML_Diagram, camera_pos: tuple[int, int], viewport_size: tuple[int, int]):
         class_boxes, class_rects, _, _ = self.__generate_class_boxes_and_class_rects_and_boarders(diagram)
