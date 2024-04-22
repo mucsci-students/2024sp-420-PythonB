@@ -5,11 +5,11 @@ from Models.uml_visitor import UML_Visitable, UML_Visitor
 
 class UML_Class(UML_Named_Object, UML_Visitable): 
 
-    def __init__(self, name:str):
+    def __init__(self, name:str, x: int=0, y: int=0):
         super().__init__(name)
         self._fields:list[UML_Field] = []
         self._methods:list[UML_Method] = []
-        self._position = [0] * 2
+        self._position = [x, y]
 
 #===================================== Accessors =====================================#
     
@@ -37,10 +37,10 @@ class UML_Class(UML_Named_Object, UML_Visitable):
     def get_position(self) -> list[int]:
         return self._position
     
-    def get_position_x(self) -> list[int]:
+    def get_position_x(self) -> int:
         return self._position[0]
     
-    def get_position_y(self) -> list[int]:
+    def get_position_y(self) -> int:
         return self._position[1]
     
     def accept(self, uml_visitor: UML_Visitor):
@@ -85,20 +85,8 @@ class UML_Class(UML_Named_Object, UML_Visitable):
     def __find_name(self, name:str, loc:list) -> UML_Field | UML_Method | None:
         return next((v for v in loc if v.get_name() == name), None)
     
-    def __str_list(self, l:list) -> str:
-        """Custom list format used in to_string"""
-        out = ""
-        for f in l: 
-            out += '\n      ' + str(f)
-        return out
-    
 #===================================== Operators =====================================#
-    
-    def __hash__(self) -> int:
-        return hash(self._name) \
-        + hash(self._fields) \
-        + hash(self._methods)
-    
+        
     def __eq__(self, o) -> bool:
         if self is o: 
             return True
@@ -111,16 +99,3 @@ class UML_Class(UML_Named_Object, UML_Visitable):
         and self._fields == o._fields
         # position does not need to be equal
     
-    def __str__ (self):
-        """ Strings a class in the following format: 
-
-        Class:
-            Fields:
-                field1
-                field2
-            Methods:
-                method1
-                method2
-        """
-        return '%s:' % self._name + '\n   Fields:' + self.__str_list(self._fields) \
-                + '\n   Methods:' + self.__str_list(self._methods)

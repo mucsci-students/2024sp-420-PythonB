@@ -1,9 +1,11 @@
 save_folder
+images
 poetry.lock
 __pycache__
 dist
 .vscode
 .pytest_cache
+.coverage
 
 #virtual environment directory name
 .venv

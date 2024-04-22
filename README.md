@@ -12,6 +12,7 @@ within a UML diagram.
 * Attribute Handling: Manage attributes for each class, including adding, renaming, and deletion.
 * Relationship Management: Define and modify relationships between classes, such as association, inheritance, and composition.
 * Save/Load Functionality: Save your current diagram state to a JSON file and load it back into the application for continued management.
+* Export as Image: Export the diagram as a png image file.
 
 # Setup and Installation
 
@@ -75,6 +76,7 @@ It is recommended you use a virtual environment when running this program. Instr
 
 `` save <file_name> `` - Saves the diagram. <br>
 `` load <file_name> `` - Loads a diagram.  <br>
+`` export <file_name> `` - Export the diagram as a png image file.  <br>
 `` undo `` - Undoes the last command.  <br>
 `` redo `` - Undoes an undo.  <br>
 `` quit `` - Quits the program. <br>
@@ -83,14 +85,25 @@ It is recommended you use a virtual environment when running this program. Instr
 'pytest'  - from the source directory of the project, automatically finds and executes all test files.
 
 ### Design Patterns
-- MVC       - MVC is used as an organizational structure for the program. It can be seen in the names of the folders that contain controllers, the model, and the different views. 
-- Singleton - The file uml_undo_redo.py contains a definition for a UML_States class; only one of these can ever exist in the program. The definition of ``__new__ `` only creates a new instance of the object if one is not already created. 
-- Visitor   - There are two examples of visitor in the program; uml_save_load.py and uml_list.py are both implementations of the uml_visitor.py interface, which in turn relies on accept methods defined in each other object in the model. This structure allows recursive descent through the diagram while storing extra location data (tab depth in the case of listing), which helps to keep listing and converting to json clean and maintainable. 
-- Memento   - The file uml_undo_redo.py contains a definition for a UML_States class; this class is an example of a memento for the diagram. Upon successful execution of a command, around line 38 of the file controller.py, the diagram is converted to JSON and stored as a state in that list. From there, undo and redo can be used to restore past or future diagram states. If a command or GUI action fails, the diagram will automatically revert to the last valid state (as can be seen around line 45 of the controller) if a valid state exists. 
-- Decorator - The file controller.py is a decorator for the cli_controller.py and gui_controller.py files. controller.py has a method beginning around line 49 titled __pick_controller that decides which controller needs to be instantiated for the current instance of the program. That controller is then decorated with the functionality of controller.py, enabling it to run the program. 
+- MVC       - MVC is used as an organizational structure for the program. It can be seen in the names of the folders that contain controllers, the model, and the different views.
+
+- Singleton - The file uml_undo_redo.py contains a definition for a UML_States class; only one of these can ever exist in the program. The definition of ``__new__ `` only creates a new instance of the object if one is not already created.
+
+- Visitor   - There are two examples of visitor in the program; uml_save_load.py and uml_list.py are both implementations of the uml_visitor.py interface, which in turn relies on accept methods defined in each other object in the model. This structure allows recursive descent through the diagram while storing extra location data (tab depth in the case of listing), which helps to keep listing and converting to json clean and maintainable.
+
+- Memento   - The file uml_undo_redo.py contains a definition for a UML_States class; this class is an example of a memento for the diagram. Upon successful execution of a command, around line 38 of the file controller.py, the diagram is converted to JSON and stored as a state in that list. From there, undo and redo can be used to restore past or future diagram states. If a command or GUI action fails, the diagram will automatically revert to the last valid state (as can be seen around line 45 of the controller) if a valid state exists.
+
+- Decorator - The file controller.py is a decorator for the cli_controller.py and gui_controller.py files. controller.py has a method beginning around line 49 titled __pick_controller that decides which controller needs to be instantiated for the current instance of the program. That controller is then decorated with the functionality of controller.py, enabling it to run the program.
+
+- Factory - The GUI View has a factory for constructing all of the dialog boxes that the user interacts with, such as when adding a class to the diagram. The Diagram_Factory is towards the bottom of the GUI View under the Dialog Factory seperator.
 ## Authors
 January 2024 to March 2024:
 - Zhang Chen, Jillian Daggs, Katie Downlin, Patrick McCullough, Danish Zubari 
 
 March 2024 to Present: 
 - Ganga Acharya, Marshall Feng, Peter Freedman, Adam Glick-Lynch, Tim Moser
+
+## Acknowledgments and Licenses
+
+### Third-Party Assets
+- **Font**: Anonymous Pro by Mark Simonson. This font is used under the SIL Open Font License (OFL). More information about this license is available at [SIL Open Font License](https://openfontlicense.org).

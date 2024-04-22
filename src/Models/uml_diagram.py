@@ -1,7 +1,6 @@
 from Models.uml_class import UML_Class
 from Models.uml_relation import UML_Relation, rel_types
 from Models.uml_visitor import UML_Visitable, UML_Visitor
-import datetime #for default filename
 
 class UML_Diagram(UML_Visitable): 
 
@@ -21,7 +20,7 @@ class UML_Diagram(UML_Visitable):
         item = next((r for r in self._relations if 
                      r.get_src_name() == r_src and r.get_dst_name() == r_dst), None)
         if item is None: 
-            raise ValueError("Relation between {0} and {1} does not exist.".format(r_src, r_dst))
+            raise ValueError("Relation between {0} and {1} does not exist".format(r_src, r_dst))
         return item
         
     def get_all_classes(self) -> list[UML_Class]:
@@ -40,7 +39,13 @@ class UML_Diagram(UML_Visitable):
             #if this doesn't error, the class already exists
             item = self.get_class(c_name)
         except ValueError:
-            self._classes.append(UML_Class(c_name))
+            line_height = 30
+            lowest_y = 0
+            highest_x = 0
+            for cls in self.get_all_classes():
+                highest_x = max(highest_x, cls.get_position_x() + len(c_name) * 10)
+                lowest_y = max(lowest_y, cls.get_position_y() + line_height * (len(cls.get_fields()) + len(cls.get_methods()) + 3))
+            self._classes.append(UML_Class(c_name, highest_x + 25, lowest_y + 25))
         
         if item is not None: 
             raise ValueError("Class %s already exists" % c_name)        
@@ -53,13 +58,11 @@ class UML_Diagram(UML_Visitable):
         except ValueError: 
             if r_type.title() not in rel_types: 
                 raise ValueError("Relation type %s is invalid" % r_type)
-            if r_src == r_dst: 
-                raise ValueError("A class cannot have a relation with itself.")
             
             self._relations.append(UML_Relation(self.get_class(r_src), self.get_class(r_dst), r_type))
             return
 
-        raise ValueError("Relation between {0} and {1} already exists.".format(r_src, r_dst))
+        raise ValueError("Relation between {0} and {1} already exists".format(r_src, r_dst))
         
         
     def delete_class(self, c_name:str) -> None:
@@ -94,19 +97,7 @@ class UML_Diagram(UML_Visitable):
         
         return self._classes == o._classes and self._relations == o._relations
     
-    def __str__(self):
-        """Strings a diagram in the following format: 
-            
-            Classes:
-                class1
-                class2
-            Relationships:
-                relation 1
-                relation 2
-        """
-        #TODO: fix this string override - join doesn't work right in this case
-        return 'Classes:' + '\n\t'.join(str(c) for c in self._classes) + '\n' \
-                + 'Relationships:' + '\n\t'.join(str(r) for r in self._relations)
+
     
 
 

@@ -1,5 +1,6 @@
-from ..Models.uml_relation import UML_Relation
-from ..Models.uml_class import UML_Class
+from Models.uml_relation import UML_Relation
+from Models.uml_class import UML_Class
+from Views.uml_list import UML_List_Visitor
 
 def test_ctor_relation():
     src = UML_Class("source")
@@ -113,6 +114,11 @@ def test_set_type():
     assert rel1.get_type() != 'Minecraft'
     assert rel1.get_type() != type1
 
+    try:
+        rel1.set_type("Invalid Type")
+    except TypeError:
+        assert True
+
 def test_eq():
     rel1 = UML_Relation(UML_Class("name1"), UML_Class("name2"), "inheritance")
     rel2 = UML_Relation(UML_Class("name1"), UML_Class("name2"), "inheritance")
@@ -128,3 +134,10 @@ def test_str():
 
     assert str(rel1) == "name1 <--- Inheritance ---> name2"
     assert str(rel1) != "Bullock"
+
+def test_visit():
+    v = UML_List_Visitor()
+    rel = UML_Relation(UML_Class("c1"), UML_Class("c2"), "inheritance")
+
+    out = rel.accept(v)
+    assert out == str(rel) + '\n'

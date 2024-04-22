@@ -166,12 +166,12 @@ def load_diagram(obj):
 
 ################################################################################
 
-def load_schema():
+def load_schema(filename: str = 'uml_schema.json'):
     """
     Load schema file
     Error if schema file not found
     """
-    path = os.path.join(os.path.dirname(__file__), '../', 'schema', 'uml_schema.json')
+    path = os.path.join(os.path.dirname(__file__), '../', 'schema', filename)
     if not os.path.exists(path):
         raise ValueError("Schema file not found.")
     with open(path, 'r') as file:

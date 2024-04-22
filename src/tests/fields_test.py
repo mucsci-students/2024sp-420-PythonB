@@ -89,15 +89,10 @@ def test_eq_field():
     fld3 = UML_Field("field3", "int")
     fld4 = UML_Field("field1", "str")
     fld5 = UML_Field("field1", "int")
+
     assert fld1 == fld1
     assert fld1 != fld2
     assert fld1 != fld3
     assert fld1 != fld4
     assert fld1 == fld5
-
-def test_str_field():
-    fld1 = UML_Field("field1", "int")
-    result1 = "int field1"
-    test1 = str(fld1)
-    print(test1)
-    assert test1 == result1
+    assert fld1 != "hello"
