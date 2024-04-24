@@ -78,9 +78,10 @@ class GUI_View(tk.Tk):
         self._should_save = False
 
     def on_release(self, event: tk.Event) -> None:
-        self._dragged_class_box = None
+        if self._dragged_class_box:
+            self._dragged_class_box = None
+            self._user_command.set('redraw')
         self._should_save = True
-        self._user_command.set('redraw')
 
     def on_move(self, event: tk.Event) -> None:
         delta_x = event.x - self._cursor_x
