@@ -259,28 +259,27 @@ class GUI_View(tk.Tk):
 #===================================== Menu Methods =====================================#
 
     def open_file(self):
-        file_name = filedialog.askopenfilename(initialdir='saves/', defaultextension=".json",
+        filepath = filedialog.askopenfilename(initialdir='saves/', defaultextension=".json",
                                                 filetypes=[("JSON files", "*.json"), ("All files", "*.*")])
-        if not file_name:
+        if not filepath:
             return
-        new_command = 'load ' + file_name[file_name.rfind('/') + 1:].removesuffix('.json')
+        new_command = '__GUI__load ' + filepath
         self._user_command.set(new_command)
 
-
     def save_file(self):
-        file_name = filedialog.asksaveasfilename(initialfile='untitled.json', initialdir='saves/', defaultextension=".json",
+        filepath = filedialog.asksaveasfilename(initialfile='untitled', initialdir='saves/', defaultextension=".json",
                                                 filetypes=[("JSON files", "*.json"), ("All files", "*.*")])
-        if not file_name:
+        if not filepath:
             return
-        new_command = 'save ' + file_name[file_name.rfind('/') + 1:].removesuffix('.json')
+        new_command = '__GUI__save ' + filepath
         self._user_command.set(new_command)
 
     def export_image(self):
-        file_name = filedialog.asksaveasfilename(initialfile='untitled.png', initialdir='images/', defaultextension=".png",
+        filepath = filedialog.asksaveasfilename(initialfile='untitled', initialdir='images/', defaultextension=".png",
                                                 filetypes=[("PNG files", "*.png"), ("All files", "*.*")])
-        if not file_name:
+        if not filepath:
             return
-        new_command = 'export ' + file_name[file_name.rfind('/') + 1:].removesuffix('.png')
+        new_command = '__GUI__export ' + filepath
         self._user_command.set(new_command)
     
     def show_help_messagebox(self):

@@ -109,14 +109,44 @@ class UML_Controller:
         path = os.path.join(path, filename + '.png')
         self._image.save_image(self._diagram).save(path)
 
+    ## GUI file commands ##
+
+    def save2(self, filepath: str) -> None:
+        """GUI save"""
+        with open(filepath, 'w') as file:
+            file.write(diagram_to_json(self._diagram))
+
+    def load2(self, filepath: str) -> None:
+        """GUI load"""
+        self._diagram.replace_content(json_to_diagram(Path(filepath).read_text()))
+
+    def export_image2(self, filepath: str) -> None:
+        """GUI export"""
+        self._image.save_image(self._diagram).save(filepath)
+
 #=========================Parseing=========================#  
     def parse(self, input:str) -> list | str:
+        # For GUI use only
+        # Path of a file may contains ":" or "/", which are not allowed as arguments.
+        if input.startswith('__GUI__'):
+            return self.gui_file_command(input)
+        
         tokens = self.check_args(input.split())
         
         if len(tokens) < 3 or tokens[0] == 'list': 
             return self.short_command(tokens)
         else: 
             return self.instance_command(tokens)
+        
+    def gui_file_command(self, input: str) -> list:
+        tokens = input.removeprefix('__GUI__').split()
+        match tokens[0]:
+            case 'save':
+                return [self.save2, tokens[1]]
+            case 'load':
+                return [self.load2, tokens[1]]
+            case 'export':
+                return [self.export_image2, tokens[1]]
         
     def short_command(self, tokens:list[str]) -> list:
         """Parses all forms of the following commands, returning appropriate lists for each: 
