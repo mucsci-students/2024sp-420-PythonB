@@ -16,7 +16,9 @@ class UML_Image:
         self._viewport_height = 800
         self._image = Image.new("RGB", (self._viewport_width, self._viewport_height), self.background_color)
         self._draw = ImageDraw.Draw(self._image)
+        # Each letter is 8 pixels wide
         self.font = ImageFont.truetype("fonts/Anonymous Pro.ttf", self.font_size)  # Regular for fields and methods
+        # Each letter is 11 pixels wide
         self.header_font = ImageFont.truetype("fonts/Anonymous Pro B.ttf", self.header_font_size)  # Bold for class name
 
     def draw_framebuffer(self, diagram: UML_Diagram, camera_pos: tuple[int, int], viewport_size: tuple[int, int]):
@@ -60,7 +62,9 @@ class UML_Image:
         class_boxes = []
         class_rects = []
         for cls in diagram.get_all_classes():
-            text_cls_width = len(cls.get_name()) * (2 * self.letter_width)
+            # This 11 is class name letter width
+            # This 10 is padding
+            text_cls_width = len(cls.get_name()) * 11 + 10
             text_cls_height = self.line_height
             text_fields = []
             for field in cls.get_fields():
@@ -208,7 +212,8 @@ class UML_Image:
             class_font = self.header_font
             regular_font = self.font
 
-            draw.text((cls_x +(cls_width - len(cls_name) * self.letter_width) // 2 + self.margin, cls_y + curr * self.line_height + self.margin),
+            # This 11 is class name letter width
+            draw.text((cls_x + (cls_width - len(cls_name) * 11) // 2 + self.margin, cls_y + curr * self.line_height + self.margin),
                       cls_name, fill=(0, 0, 0), font=class_font)
             curr += 1
             draw.line([cls_x + self.margin, cls_y + curr * self.line_height + self.margin - 10,
