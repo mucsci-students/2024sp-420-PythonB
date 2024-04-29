@@ -34,12 +34,18 @@ class UML_Controller:
                 ret = data[0](*data[1:])
                 if isinstance(ret, str) and isinstance(self._controller, CLI_Controller):
                     print(ret) 
-                # For now this is only for undo/redo
+                # For undo/redo
                 if isinstance(ret, UML_Diagram):
                     self._diagram = ret
-                # For now this will ensure the state is not saved
-                #     when doing list commands(commands that starts with 'list' prefix)
-                elif not data[0].__name__.startswith('list'):
+                # This will ensure the state is not saved
+                #     when doing list   commands(commands that starts with 'list'   prefix)
+                #     when doing save   commands(commands that starts with 'save'   prefix)
+                #     when doing load   commands(commands that starts with 'load'   prefix)
+                #     when doing export commands(commands that starts with 'export' prefix)
+                elif not data[0].__name__.startswith('list') and \
+                     not data[0].__name__.startswith('save') and \
+                     not data[0].__name__.startswith('load') and \
+                     not data[0].__name__.startswith('export'):
                     if isinstance(self._controller, CLI_Controller) or self._controller.should_save():
                         self._states.save_state(self._diagram)
             except KeyboardInterrupt:
