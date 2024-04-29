@@ -44,6 +44,7 @@ class GUI_View(tk.Tk):
         self.diagram_canvas.focus_set() # necessary for ctrl+z and ctrl+y binds (Why?)
         self.diagram_canvas.bind('<Control-z>', self.on_ctrl_z)
         self.diagram_canvas.bind('<Control-y>', self.on_ctrl_y)
+        self.diagram_canvas.bind('<MouseWheel>', self.on_mouse_scroll)
         self._user_command = tk.StringVar()
         self.protocol("WM_DELETE_WINDOW", self.on_close)
         self._canvas_width = window_width
@@ -82,8 +83,8 @@ class GUI_View(tk.Tk):
 
     def on_release(self, event: tk.Event) -> None:
         if self._dragged_class_box:
+            self._user_command.set(' '.join(['move', self._dragged_class_box['name'], 'x0', 'y0']))
             self._dragged_class_box = None
-            self._user_command.set('redraw')
         self._should_save = True
 
     def on_move(self, event: tk.Event) -> None:
@@ -133,6 +134,15 @@ class GUI_View(tk.Tk):
             start, end = self.__boarder_y()
             self._camera_y = start + pos * (end - start)
             self._user_command.set('redraw')
+
+    def on_mouse_scroll(self, event: tk.Event) -> None:
+        if event.state & 0x1:  # Check if Shift key is pressed
+            # Shift key is pressed, perform horizontal move
+            self._camera_x -= event.delta
+        else:
+            # Shift key is not pressed, perform vertical move
+            self._camera_y -= event.delta
+        self._user_command.set('redraw')
 
     def on_ctrl_z(self, event: tk.Event) -> None:
         self.undo()
