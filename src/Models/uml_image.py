@@ -136,16 +136,26 @@ class UML_Image:
                         end_angle = (i + 1) * delta_angle
                         draw.arc(bbox, start_angle, end_angle, fill=(0, 0, 0), width=5)
                     # draw arrow
-                    self.__draw_triangle(draw, [src_x - radius, src_y + radius - 5], [src_x, src_y + radius - 5], (255, 255, 255))
+                    self.__draw_triangle(draw, [src_x - radius, src_y + radius - 5],
+                                         [src_x, src_y + radius - 5], (255, 255, 255), min(radius, 35))
                 else:
                     draw.arc(bbox, 0, 360, fill=(0, 0, 0), width=5)
                     # draw arrow
                     if rel.get_type() == 'Aggregation':
-                        self.__draw_diamond(draw, [src_x - radius, src_y + radius - 5], [src_x, src_y + radius - 5], (255, 255, 255))
+                        side_length = min(radius, 25)
+                        root_3_half = 0.8660254037844386
+                        theta = math.asin(side_length * root_3_half / radius)
+                        self.__draw_diamond(draw, [src_x - radius * math.sin(2 * theta), src_y + radius * math.cos(2 * theta)],
+                                            [src_x, src_y + radius], (255, 255, 255))
                     elif rel.get_type() == 'Composition':
-                        self.__draw_diamond(draw, [src_x - radius, src_y + radius - 5], [src_x, src_y + radius - 5], (0, 0, 0))
+                        side_length = min(radius, 25)
+                        root_3_half = 0.8660254037844386
+                        theta = math.asin(side_length * root_3_half / radius)
+                        self.__draw_diamond(draw, [src_x - radius * math.sin(2 * theta), src_y + radius * math.cos(2 * theta)],
+                                            [src_x, src_y + radius], (0, 0, 0), min(radius, 25))
                     elif rel.get_type() == 'Inheritance':
-                        self.__draw_triangle(draw, [src_x - radius, src_y + radius - 5], [src_x, src_y + radius - 5], (255, 255, 255))
+                        self.__draw_triangle(draw, [src_x - radius, src_y + radius - 5],
+                                             [src_x, src_y + radius - 5], (255, 255, 255), min(radius, 35))
                 continue
             # from
             src_center_x = (src_x + src_x + src_width) // 2
@@ -245,7 +255,7 @@ class UML_Image:
     def __multiply(self, v, x):
         return v[0] * x, v[1] * x
     
-    def __draw_diamond(self, draw: ImageDraw.ImageDraw, start: list[int], end: list[int], color: tuple[int, int, int], side_length: int=30) -> None:
+    def __draw_diamond(self, draw: ImageDraw.ImageDraw, start: list[int], end: list[int], color: tuple[int, int, int], side_length: int=25) -> None:
         orgin = self.__vec(start, end)
         left = self.__normalized(self.__rotate(orgin, -5 * math.pi / 6))
         right = self.__normalized(self.__rotate(orgin, 5 * math.pi / 6))
@@ -255,7 +265,7 @@ class UML_Image:
         to = end[0] + v[0] * side_length * 3**0.5, end[1] + v[1] * side_length * 3**0.5
         draw.polygon([*end, *p1, *to, *p2], fill=color)
 
-    def __draw_triangle(self, draw: ImageDraw.ImageDraw, start: list[int], end: list[int], color: tuple[int, int, int], side_length: int=40) -> None:
+    def __draw_triangle(self, draw: ImageDraw.ImageDraw, start: list[int], end: list[int], color: tuple[int, int, int], side_length: int=35) -> None:
         orgin = self.__vec(start, end)
         left = self.__normalized(self.__rotate(orgin, -5 * math.pi / 6))
         right = self.__normalized(self.__rotate(orgin, 5 * math.pi / 6))
