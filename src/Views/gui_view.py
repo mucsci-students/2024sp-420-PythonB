@@ -273,7 +273,7 @@ class GUI_View(tk.Tk):
                                                 filetypes=[("JSON files", "*.json"), ("All files", "*.*")])
         if not filepath:
             return
-        new_command = '__GUI__load ' + filepath
+        new_command = '__GUI__load' + '\n' + filepath
         self._user_command.set(new_command)
 
     def save_file(self):
@@ -281,7 +281,7 @@ class GUI_View(tk.Tk):
                                                 filetypes=[("JSON files", "*.json"), ("All files", "*.*")])
         if not filepath:
             return
-        new_command = '__GUI__save ' + filepath
+        new_command = '__GUI__save' + '\n' + filepath
         self._user_command.set(new_command)
 
     def export_image(self):
@@ -289,7 +289,7 @@ class GUI_View(tk.Tk):
                                                 filetypes=[("PNG files", "*.png"), ("All files", "*.*")])
         if not filepath:
             return
-        new_command = '__GUI__export ' + filepath
+        new_command = '__GUI__export' + '\n' + filepath
         self._user_command.set(new_command)
     
     def show_help_messagebox(self):

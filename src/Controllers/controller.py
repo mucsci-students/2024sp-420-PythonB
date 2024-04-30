@@ -147,7 +147,7 @@ class UML_Controller:
             return self.instance_command(tokens)
         
     def gui_file_command(self, input: str) -> list:
-        tokens = input.removeprefix('__GUI__').split()
+        tokens = input.removeprefix('__GUI__').split('\n')
         match tokens[0]:
             case 'save':
                 return [self.save2, tokens[1]]
