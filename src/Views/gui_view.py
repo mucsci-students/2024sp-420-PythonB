@@ -67,6 +67,7 @@ class GUI_View(tk.Tk):
     def on_resize(self, event: tk.Event) -> None:
         self._canvas_width = event.width
         self._canvas_height = event.height
+        self._user_command.set('redraw')
 
     def on_close(self) -> None:
         self._user_command.set('quit')
