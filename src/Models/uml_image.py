@@ -136,8 +136,11 @@ class UML_Image:
                         end_angle = (i + 1) * delta_angle
                         draw.arc(bbox, start_angle, end_angle, fill=(0, 0, 0), width=5)
                     # draw arrow
-                    self.__draw_triangle(draw, [src_x - radius, src_y + radius - 5],
-                                         [src_x, src_y + radius - 5], (255, 255, 255), min(radius, 35))
+                    side_length = min(radius, 35)
+                    root_3_fourth = 0.4330127018922193
+                    theta = math.asin(side_length * root_3_fourth / radius)
+                    self.__draw_triangle(draw, [src_x - radius * math.sin(2 * theta), src_y + radius * math.cos(2 * theta)],
+                                         [src_x, src_y + radius], (255, 255, 255), min(radius, 35))
                 else:
                     draw.arc(bbox, 0, 360, fill=(0, 0, 0), width=5)
                     # draw arrow
@@ -154,8 +157,11 @@ class UML_Image:
                         self.__draw_diamond(draw, [src_x - radius * math.sin(2 * theta), src_y + radius * math.cos(2 * theta)],
                                             [src_x, src_y + radius], (0, 0, 0), min(radius, 25))
                     elif rel.get_type() == 'Inheritance':
-                        self.__draw_triangle(draw, [src_x - radius, src_y + radius - 5],
-                                             [src_x, src_y + radius - 5], (255, 255, 255), min(radius, 35))
+                        side_length = min(radius, 35)
+                        root_3_fourth = 0.4330127018922193
+                        theta = math.asin(side_length * root_3_fourth / radius)
+                        self.__draw_triangle(draw, [src_x - radius * math.sin(2 * theta), src_y + radius * math.cos(2 * theta)],
+                                             [src_x, src_y + radius], (255, 255, 255), min(radius, 35))
                 continue
             # from
             src_center_x = (src_x + src_x + src_width) // 2
