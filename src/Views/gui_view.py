@@ -49,7 +49,7 @@ class GUI_View(tk.Tk):
         self.protocol("WM_DELETE_WINDOW", self.on_close)
         self._canvas_width = window_width
         self._canvas_height = window_height
-        
+        self._margin = 10
         self._should_save = True
 
     def camera_pos(self) -> tuple[int, int]:
@@ -107,8 +107,8 @@ class GUI_View(tk.Tk):
         for cb in self._class_boxes:
             low = min(low, cb['x'])
             high = max(high, cb['x'] + cb['width'])
-        low -= 500
-        high += 500
+        low -= self._margin
+        high += self._margin
         return low, high
 
     def __boarder_y(self) -> tuple[float, float]:
@@ -117,8 +117,8 @@ class GUI_View(tk.Tk):
         for cb in self._class_boxes:
             low = min(low, cb['y'])
             high = max(high, cb['y'] + cb['height'])
-        low -= 500
-        high += 500
+        low -= self._margin
+        high += self._margin
         return low, high
 
     def on_scroll_x(self, op: str, *args) -> None:
@@ -165,12 +165,19 @@ class GUI_View(tk.Tk):
         self._image = photo
         self.diagram_canvas.create_image(0, 0, anchor=tk.NW, image=self._image)
         self._class_boxes = class_boxes
+
         low_x, high_x = self.__boarder_x()
+        low_x = min(low_x, self._camera_x)
+        high_x = max(high_x, self._camera_x + self._canvas_width)
         low_y, high_y = self.__boarder_y()
+        low_y = min(low_y, self._camera_y)
+        high_y = max(high_y, self._camera_y + self._canvas_height)
         pos_x = (self._camera_x - low_x) / (high_x - low_x)
         pos_y = (self._camera_y - low_y) / (high_y - low_y)
-        self._scrollbar_x.set(pos_x, pos_x + 0.2)
-        self._scrollbar_y.set(pos_y, pos_y + 0.2)
+        delta_x = self._canvas_width / (high_x - low_x)
+        delta_y = self._canvas_height / (high_y - low_y)
+        self._scrollbar_x.set(pos_x, pos_x + delta_x)
+        self._scrollbar_y.set(pos_y, pos_y + delta_y)
 
     def clear(self) -> None:
         self.diagram_canvas.delete("all")
