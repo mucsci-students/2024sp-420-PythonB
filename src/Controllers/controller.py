@@ -40,11 +40,10 @@ class UML_Controller:
                 # This will ensure the state is not saved
                 #     when doing list   commands(commands that starts with 'list'   prefix)
                 #     when doing save   commands(commands that starts with 'save'   prefix)
-                #     when doing load   commands(commands that starts with 'load'   prefix)
                 #     when doing export commands(commands that starts with 'export' prefix)
                 elif not data[0].__name__.startswith('list') and \
+                     not data[0].__name__.startswith('redraw') and \
                      not data[0].__name__.startswith('save') and \
-                     not data[0].__name__.startswith('load') and \
                      not data[0].__name__.startswith('export'):
                     if isinstance(self._controller, CLI_Controller) or self._controller.should_save():
                         self._states.save_state(self._diagram)
@@ -130,6 +129,9 @@ class UML_Controller:
         """GUI export"""
         self._image.save_image(self._diagram).save(filepath)
 
+    def redraw(self) -> None:
+        pass
+
 #=========================Parseing=========================#  
     def parse(self, input:str) -> list | str:
         # For GUI use only
@@ -145,7 +147,7 @@ class UML_Controller:
             return self.instance_command(tokens)
         
     def gui_file_command(self, input: str) -> list:
-        tokens = input.removeprefix('__GUI__').split()
+        tokens = input.removeprefix('__GUI__').split('\n')
         match tokens[0]:
             case 'save':
                 return [self.save2, tokens[1]]
@@ -171,7 +173,7 @@ class UML_Controller:
             case 'help':
                 return self._controller.parse_help_cmd(tokens)
             case 'redraw':
-                return [lambda: None]
+                return [self.redraw]
             case 'export':
                 return [self.export_image, tokens.pop(0)]
             case _:

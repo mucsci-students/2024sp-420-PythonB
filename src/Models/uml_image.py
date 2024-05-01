@@ -8,7 +8,7 @@ class UML_Image:
     def __init__(self) -> None:
         self.line_height = 30
         self.letter_width = 8
-        self.margin = 250
+        self.margin = 100
         self.background_color = (100, 100, 100)
         self.font_size = 15
         self.header_font_size = 20
@@ -22,7 +22,7 @@ class UML_Image:
         self.header_font = ImageFont.truetype("fonts/Anonymous Pro B.ttf", self.header_font_size)  # Bold for class name
 
     def draw_framebuffer(self, diagram: UML_Diagram, camera_pos: tuple[int, int], viewport_size: tuple[int, int]):
-        class_boxes, class_rects, _, _ = self.__generate_class_boxes_and_class_rects_and_boarders(diagram)
+        class_boxes, class_rects, _, _, _, _ = self.__generate_class_boxes_and_class_rects_and_boarders(diagram)
         if viewport_size[0] != self._viewport_width or viewport_size[1] != self._viewport_height:
             self._viewport_width, self._viewport_height = viewport_size
             self._image = Image.new("RGB", viewport_size, self.background_color)
@@ -42,10 +42,16 @@ class UML_Image:
         return self._image, class_boxes
     
     def save_image(self, diagram: UML_Diagram) -> Image:
-        _, class_rects, width, height = self.__generate_class_boxes_and_class_rects_and_boarders(diagram)
+        _, class_rects, width, height, left_boarder, top_boarder = self.__generate_class_boxes_and_class_rects_and_boarders(diagram)
         image = Image.new("RGB", (width, height), self.background_color)
         draw = ImageDraw.Draw(image)
         draw.rectangle([0, 0, width, height], fill=self.background_color)
+        # move camera
+        for class_rect in class_rects:
+            class_rect[0] -= left_boarder
+            class_rect[0] -= self.margin
+            class_rect[1] -= top_boarder
+            class_rect[1] -= self.margin
         # draw relationship arrows
         self.__draw_relationship_arrows(draw, diagram, class_rects)
         # draw class boxes
@@ -109,7 +115,7 @@ class UML_Image:
         #padding
         width += 3 * self.letter_width
         height += 2 * self.line_height
-        return class_boxes, class_rects, width, height
+        return class_boxes, class_rects, width, height, left_border, top_border
 
     def __draw_relationship_arrows(self, draw: ImageDraw.ImageDraw, diagram: UML_Diagram, class_rects) -> None:
         for rel in diagram.get_all_relations():
@@ -136,16 +142,32 @@ class UML_Image:
                         end_angle = (i + 1) * delta_angle
                         draw.arc(bbox, start_angle, end_angle, fill=(0, 0, 0), width=5)
                     # draw arrow
-                    self.__draw_triangle(draw, [src_x - radius, src_y + radius - 5], [src_x, src_y + radius - 5], (255, 255, 255))
+                    side_length = min(radius, 35)
+                    root_3_fourth = 0.4330127018922193
+                    theta = math.asin(side_length * root_3_fourth / radius)
+                    self.__draw_triangle(draw, [src_x - radius * math.sin(2 * theta), src_y + radius * math.cos(2 * theta)],
+                                         [src_x, src_y + radius], (255, 255, 255), min(radius, 35))
                 else:
                     draw.arc(bbox, 0, 360, fill=(0, 0, 0), width=5)
                     # draw arrow
                     if rel.get_type() == 'Aggregation':
-                        self.__draw_diamond(draw, [src_x - radius, src_y + radius - 5], [src_x, src_y + radius - 5], (255, 255, 255))
+                        side_length = min(radius, 25)
+                        root_3_half = 0.8660254037844386
+                        theta = math.asin(side_length * root_3_half / radius)
+                        self.__draw_diamond(draw, [src_x - radius * math.sin(2 * theta), src_y + radius * math.cos(2 * theta)],
+                                            [src_x, src_y + radius], (255, 255, 255))
                     elif rel.get_type() == 'Composition':
-                        self.__draw_diamond(draw, [src_x - radius, src_y + radius - 5], [src_x, src_y + radius - 5], (0, 0, 0))
+                        side_length = min(radius, 25)
+                        root_3_half = 0.8660254037844386
+                        theta = math.asin(side_length * root_3_half / radius)
+                        self.__draw_diamond(draw, [src_x - radius * math.sin(2 * theta), src_y + radius * math.cos(2 * theta)],
+                                            [src_x, src_y + radius], (0, 0, 0), min(radius, 25))
                     elif rel.get_type() == 'Inheritance':
-                        self.__draw_triangle(draw, [src_x - radius, src_y + radius - 5], [src_x, src_y + radius - 5], (255, 255, 255))
+                        side_length = min(radius, 35)
+                        root_3_fourth = 0.4330127018922193
+                        theta = math.asin(side_length * root_3_fourth / radius)
+                        self.__draw_triangle(draw, [src_x - radius * math.sin(2 * theta), src_y + radius * math.cos(2 * theta)],
+                                             [src_x, src_y + radius], (255, 255, 255), min(radius, 35))
                 continue
             # from
             src_center_x = (src_x + src_x + src_width) // 2
@@ -245,7 +267,7 @@ class UML_Image:
     def __multiply(self, v, x):
         return v[0] * x, v[1] * x
     
-    def __draw_diamond(self, draw: ImageDraw.ImageDraw, start: list[int], end: list[int], color: tuple[int, int, int], side_length: int=30) -> None:
+    def __draw_diamond(self, draw: ImageDraw.ImageDraw, start: list[int], end: list[int], color: tuple[int, int, int], side_length: int=25) -> None:
         orgin = self.__vec(start, end)
         left = self.__normalized(self.__rotate(orgin, -5 * math.pi / 6))
         right = self.__normalized(self.__rotate(orgin, 5 * math.pi / 6))
@@ -255,7 +277,7 @@ class UML_Image:
         to = end[0] + v[0] * side_length * 3**0.5, end[1] + v[1] * side_length * 3**0.5
         draw.polygon([*end, *p1, *to, *p2], fill=color)
 
-    def __draw_triangle(self, draw: ImageDraw.ImageDraw, start: list[int], end: list[int], color: tuple[int, int, int], side_length: int=40) -> None:
+    def __draw_triangle(self, draw: ImageDraw.ImageDraw, start: list[int], end: list[int], color: tuple[int, int, int], side_length: int=35) -> None:
         orgin = self.__vec(start, end)
         left = self.__normalized(self.__rotate(orgin, -5 * math.pi / 6))
         right = self.__normalized(self.__rotate(orgin, 5 * math.pi / 6))
