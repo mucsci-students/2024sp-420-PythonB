@@ -17,7 +17,7 @@ within a UML diagram.
 # Setup and Installation
 
 ## Pre-Requisites
-<B>Python 3.8 or higher. You can download Python [here](https://www.python.org/downloads/)</B>
+<B>Python 3.10 or higher. You can download Python [here](https://www.python.org/downloads/)</B>
 
 # Download the Project
 
