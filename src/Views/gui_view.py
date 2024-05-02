@@ -103,8 +103,8 @@ class GUI_View(tk.Tk):
             self._user_command.set('redraw')
 
     def __boarder_x(self) -> tuple[float, float]:
-        low = 0
-        high = 0
+        low = float('inf')
+        high = float('-inf')
         for cb in self._class_boxes:
             low = min(low, cb['x'])
             high = max(high, cb['x'] + cb['width'])
@@ -113,8 +113,8 @@ class GUI_View(tk.Tk):
         return low, high
 
     def __boarder_y(self) -> tuple[float, float]:
-        low = 0
-        high = 0
+        low = float('inf')
+        high = float('-inf')
         for cb in self._class_boxes:
             low = min(low, cb['y'])
             high = max(high, cb['y'] + cb['height'])
@@ -126,14 +126,14 @@ class GUI_View(tk.Tk):
         if op == 'moveto':
             pos = float(args[0]) # [0.0, 1.0]
             start, end = self.__boarder_x()
-            self._camera_x = start + pos * (end - start)
+            self._camera_x = round(start + pos * (end - start))
             self._user_command.set('redraw')
 
     def on_scroll_y(self, op: str, *args) -> None:
         if op == 'moveto':
             pos = float(args[0]) # [0.0, 1.0]
             start, end = self.__boarder_y()
-            self._camera_y = start + pos * (end - start)
+            self._camera_y = round(start + pos * (end - start))
             self._user_command.set('redraw')
 
     def on_mouse_scroll(self, event: tk.Event) -> None:
@@ -167,18 +167,22 @@ class GUI_View(tk.Tk):
         self.diagram_canvas.create_image(0, 0, anchor=tk.NW, image=self._image)
         self._class_boxes = class_boxes
 
-        low_x, high_x = self.__boarder_x()
-        low_x = min(low_x, self._camera_x)
-        high_x = max(high_x, self._camera_x + self._canvas_width)
-        low_y, high_y = self.__boarder_y()
-        low_y = min(low_y, self._camera_y)
-        high_y = max(high_y, self._camera_y + self._canvas_height)
-        pos_x = (self._camera_x - low_x) / (high_x - low_x)
-        pos_y = (self._camera_y - low_y) / (high_y - low_y)
-        delta_x = self._canvas_width / (high_x - low_x)
-        delta_y = self._canvas_height / (high_y - low_y)
-        self._scrollbar_x.set(pos_x, pos_x + delta_x)
-        self._scrollbar_y.set(pos_y, pos_y + delta_y)
+        if self._class_boxes:
+            low_x, high_x = self.__boarder_x()
+            low_x = min(low_x, self._camera_x)
+            high_x = max(high_x, self._camera_x + self._canvas_width)
+            low_y, high_y = self.__boarder_y()
+            low_y = min(low_y, self._camera_y)
+            high_y = max(high_y, self._camera_y + self._canvas_height)
+            pos_x = (self._camera_x - low_x) / (high_x - low_x)
+            pos_y = (self._camera_y - low_y) / (high_y - low_y)
+            delta_x = self._canvas_width / (high_x - low_x)
+            delta_y = self._canvas_height / (high_y - low_y)
+            self._scrollbar_x.set(pos_x, pos_x + delta_x)
+            self._scrollbar_y.set(pos_y, pos_y + delta_y)
+        else:
+            self._scrollbar_x.set(0.0, 1.0)
+            self._scrollbar_y.set(0.0, 1.0)
 
     def clear(self) -> None:
         self.diagram_canvas.delete("all")
