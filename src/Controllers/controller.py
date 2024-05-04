@@ -34,12 +34,17 @@ class UML_Controller:
                 ret = data[0](*data[1:])
                 if isinstance(ret, str) and isinstance(self._controller, CLI_Controller):
                     print(ret) 
-                # For now this is only for undo/redo
+                # For undo/redo
                 if isinstance(ret, UML_Diagram):
                     self._diagram = ret
-                # For now this will ensure the state is not saved
-                #     when doing list commands(commands that starts with 'list' prefix)
-                elif not data[0].__name__.startswith('list'):
+                # This will ensure the state is not saved
+                #     when doing list   commands(commands that starts with 'list'   prefix)
+                #     when doing save   commands(commands that starts with 'save'   prefix)
+                #     when doing export commands(commands that starts with 'export' prefix)
+                elif not data[0].__name__.startswith('list') and \
+                     not data[0].__name__.startswith('redraw') and \
+                     not data[0].__name__.startswith('save') and \
+                     not data[0].__name__.startswith('export'):
                     if isinstance(self._controller, CLI_Controller) or self._controller.should_save():
                         self._states.save_state(self._diagram)
             except KeyboardInterrupt:
@@ -109,14 +114,47 @@ class UML_Controller:
         path = os.path.join(path, filename + '.png')
         self._image.save_image(self._diagram).save(path)
 
+    ## GUI file commands ##
+
+    def save2(self, filepath: str) -> None:
+        """GUI save"""
+        with open(filepath, 'w') as file:
+            file.write(diagram_to_json(self._diagram))
+
+    def load2(self, filepath: str) -> None:
+        """GUI load"""
+        self._diagram.replace_content(json_to_diagram(Path(filepath).read_text()))
+
+    def export_image2(self, filepath: str) -> None:
+        """GUI export"""
+        self._image.save_image(self._diagram).save(filepath)
+
+    def redraw(self) -> None:
+        pass
+
 #=========================Parseing=========================#  
     def parse(self, input:str) -> list | str:
+        # For GUI use only
+        # Path of a file may contains ":" or "/", which are not allowed as arguments.
+        if input.startswith('__GUI__'):
+            return self.gui_file_command(input)
+        
         tokens = self.check_args(input.split())
         
         if len(tokens) < 3 or tokens[0] == 'list': 
             return self.short_command(tokens)
         else: 
             return self.instance_command(tokens)
+        
+    def gui_file_command(self, input: str) -> list:
+        tokens = input.removeprefix('__GUI__').split('\n')
+        match tokens[0]:
+            case 'save':
+                return [self.save2, tokens[1]]
+            case 'load':
+                return [self.load2, tokens[1]]
+            case 'export':
+                return [self.export_image2, tokens[1]]
         
     def short_command(self, tokens:list[str]) -> list:
         """Parses all forms of the following commands, returning appropriate lists for each: 
@@ -135,7 +173,7 @@ class UML_Controller:
             case 'help':
                 return self._controller.parse_help_cmd(tokens)
             case 'redraw':
-                return [lambda: None]
+                return [self.redraw]
             case 'export':
                 return [self.export_image, tokens.pop(0)]
             case _:

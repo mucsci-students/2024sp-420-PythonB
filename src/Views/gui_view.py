@@ -41,11 +41,15 @@ class GUI_View(tk.Tk):
         self.diagram_canvas.bind("<ButtonRelease-1>", self.on_release)
         self.diagram_canvas.bind('<B1-Motion>', self.on_move)
         self.diagram_canvas.bind('<Configure>', self.on_resize)
+        self.diagram_canvas.focus_set() # necessary for ctrl+z and ctrl+y binds (Why?)
+        self.diagram_canvas.bind('<Control-z>', self.on_ctrl_z)
+        self.diagram_canvas.bind('<Control-y>', self.on_ctrl_y)
+        self.diagram_canvas.bind('<MouseWheel>', self.on_mouse_scroll)
         self._user_command = tk.StringVar()
         self.protocol("WM_DELETE_WINDOW", self.on_close)
         self._canvas_width = window_width
         self._canvas_height = window_height
-        
+        self._margin = 10
         self._should_save = True
 
     def camera_pos(self) -> tuple[int, int]:
@@ -63,6 +67,7 @@ class GUI_View(tk.Tk):
     def on_resize(self, event: tk.Event) -> None:
         self._canvas_width = event.width
         self._canvas_height = event.height
+        self._user_command.set('redraw')
 
     def on_close(self) -> None:
         self._user_command.set('quit')
@@ -78,9 +83,10 @@ class GUI_View(tk.Tk):
         self._should_save = False
 
     def on_release(self, event: tk.Event) -> None:
-        self._dragged_class_box = None
+        if self._dragged_class_box:
+            self._user_command.set(' '.join(['move', self._dragged_class_box['name'], 'x0', 'y0']))
+            self._dragged_class_box = None
         self._should_save = True
-        self._user_command.set('redraw')
 
     def on_move(self, event: tk.Event) -> None:
         delta_x = event.x - self._cursor_x
@@ -97,38 +103,53 @@ class GUI_View(tk.Tk):
             self._user_command.set('redraw')
 
     def __boarder_x(self) -> tuple[float, float]:
-        low = 0
-        high = 0
+        low = float('inf')
+        high = float('-inf')
         for cb in self._class_boxes:
             low = min(low, cb['x'])
             high = max(high, cb['x'] + cb['width'])
-        low -= 500
-        high += 500
+        low -= self._margin
+        high += self._margin
         return low, high
 
     def __boarder_y(self) -> tuple[float, float]:
-        low = 0
-        high = 0
+        low = float('inf')
+        high = float('-inf')
         for cb in self._class_boxes:
             low = min(low, cb['y'])
             high = max(high, cb['y'] + cb['height'])
-        low -= 500
-        high += 500
+        low -= self._margin
+        high += self._margin
         return low, high
 
     def on_scroll_x(self, op: str, *args) -> None:
         if op == 'moveto':
             pos = float(args[0]) # [0.0, 1.0]
             start, end = self.__boarder_x()
-            self._camera_x = start + pos * (end - start)
+            self._camera_x = round(start + pos * (end - start))
             self._user_command.set('redraw')
 
     def on_scroll_y(self, op: str, *args) -> None:
         if op == 'moveto':
             pos = float(args[0]) # [0.0, 1.0]
             start, end = self.__boarder_y()
-            self._camera_y = start + pos * (end - start)
+            self._camera_y = round(start + pos * (end - start))
             self._user_command.set('redraw')
+
+    def on_mouse_scroll(self, event: tk.Event) -> None:
+        if event.state & 0x1:  # Check if Shift key is pressed
+            # Shift key is pressed, perform horizontal move
+            self._camera_x -= event.delta
+        else:
+            # Shift key is not pressed, perform vertical move
+            self._camera_y -= event.delta
+        self._user_command.set('redraw')
+
+    def on_ctrl_z(self, event: tk.Event) -> None:
+        self.undo()
+
+    def on_ctrl_y(self, event: tk.Event) -> None:
+        self.redo()
             
     def center(self) -> None:
         self._camera_x = 0
@@ -145,12 +166,23 @@ class GUI_View(tk.Tk):
         self._image = photo
         self.diagram_canvas.create_image(0, 0, anchor=tk.NW, image=self._image)
         self._class_boxes = class_boxes
-        low_x, high_x = self.__boarder_x()
-        low_y, high_y = self.__boarder_y()
-        pos_x = (self._camera_x - low_x) / (high_x - low_x)
-        pos_y = (self._camera_y - low_y) / (high_y - low_y)
-        self._scrollbar_x.set(pos_x, pos_x + 0.2)
-        self._scrollbar_y.set(pos_y, pos_y + 0.2)
+
+        if self._class_boxes:
+            low_x, high_x = self.__boarder_x()
+            low_x = min(low_x, self._camera_x)
+            high_x = max(high_x, self._camera_x + self._canvas_width)
+            low_y, high_y = self.__boarder_y()
+            low_y = min(low_y, self._camera_y)
+            high_y = max(high_y, self._camera_y + self._canvas_height)
+            pos_x = (self._camera_x - low_x) / (high_x - low_x)
+            pos_y = (self._camera_y - low_y) / (high_y - low_y)
+            delta_x = self._canvas_width / (high_x - low_x)
+            delta_y = self._canvas_height / (high_y - low_y)
+            self._scrollbar_x.set(pos_x, pos_x + delta_x)
+            self._scrollbar_y.set(pos_y, pos_y + delta_y)
+        else:
+            self._scrollbar_x.set(0.0, 1.0)
+            self._scrollbar_y.set(0.0, 1.0)
 
     def clear(self) -> None:
         self.diagram_canvas.delete("all")
@@ -249,28 +281,27 @@ class GUI_View(tk.Tk):
 #===================================== Menu Methods =====================================#
 
     def open_file(self):
-        file_name = filedialog.askopenfilename(initialdir='saves/', defaultextension=".json",
+        filepath = filedialog.askopenfilename(initialdir='saves/', defaultextension=".json",
                                                 filetypes=[("JSON files", "*.json"), ("All files", "*.*")])
-        if not file_name:
+        if not filepath:
             return
-        new_command = 'load ' + file_name[file_name.rfind('/') + 1:].removesuffix('.json')
+        new_command = '__GUI__load' + '\n' + filepath
         self._user_command.set(new_command)
 
-
     def save_file(self):
-        file_name = filedialog.asksaveasfilename(initialfile='untitled.json', initialdir='saves/', defaultextension=".json",
+        filepath = filedialog.asksaveasfilename(initialfile='untitled', initialdir='saves/', defaultextension=".json",
                                                 filetypes=[("JSON files", "*.json"), ("All files", "*.*")])
-        if not file_name:
+        if not filepath:
             return
-        new_command = 'save ' + file_name[file_name.rfind('/') + 1:].removesuffix('.json')
+        new_command = '__GUI__save' + '\n' + filepath
         self._user_command.set(new_command)
 
     def export_image(self):
-        file_name = filedialog.asksaveasfilename(initialfile='untitled.png', initialdir='images/', defaultextension=".png",
+        filepath = filedialog.asksaveasfilename(initialfile='untitled', initialdir='images/', defaultextension=".png",
                                                 filetypes=[("PNG files", "*.png"), ("All files", "*.*")])
-        if not file_name:
+        if not filepath:
             return
-        new_command = 'export ' + file_name[file_name.rfind('/') + 1:].removesuffix('.png')
+        new_command = '__GUI__export' + '\n' + filepath
         self._user_command.set(new_command)
     
     def show_help_messagebox(self):
